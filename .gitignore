@@ -1,0 +1,26 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
+# compiled python
+*.pyc
+
+# visual studio solution generated files
+*.suo
+
+distrib/
+build/python/*.*
+
+# certain local files
+rms_*.bat
+
