@@ -46,14 +46,14 @@ To use OSX you will have to download SWIG yourself.
 
 Quick Start - Python
 ====================
-0. Install Python 2.7
-1. open your meshmixer.ini file (paths below) and add the following 
-   line under the [Options] section: 
+[0] Install Python 2.7  
+[1] open your meshmixer.ini file (paths below) and add the following 
+   line under the [Options] section:   
 
->      EnableRemoteStoredCommandServer=true
+    EnableRemoteStoredCommandServer=true
 
-2. start meshmixer, import bunny
-3. run the script \distrib\python\test.py 
+[2] start meshmixer, import bunny  
+[3] run the script \distrib\python\test.py 
    If your bunny is cut in half, the script worked
 
    
