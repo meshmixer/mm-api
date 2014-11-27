@@ -1,10 +1,11 @@
-Autodesk Meshmixer API package (mm-api)  
+# Autodesk Meshmixer API  (mm-api)  
 v0.2 November 2014  
 copyright (c) 2014 Autodesk Corporation    http://www.autodesk.com  
 contact:   Ryan.Schmidt@Autodesk.com       http://autodeskresearch.com/people/ryanschmidt  
+See LICENSE file for license information  
 
-[WARNING] This API distribution is compatible with meshmixer 2.7
-          It may not work with previous or later versions.
+**WARNING** This API distribution is compatible with meshmixer 2.7.
+It may not work with previous or later versions.
 
 Do you have the latest code? Sync here: https://github.com/meshmixer/mm-api
 
@@ -38,8 +39,8 @@ Since the SWIG wrappers are somewhat verbose / unpleasant to use,
 for Python we are also developing a cleaner interface on top-level
 of the SWIG wrapper. See details below.
 
-[WARNING] Currently the python setup included in the distribution is for Windows only.
-          To use OSX you will have to download SWIG yourself.
+**WARNING** Currently the python setup included in the distribution is for Windows only. 
+To use OSX you will have to download SWIG yourself.
 
 
 
@@ -64,14 +65,14 @@ Setup
 To enable remote control of meshmixer, you must insert the following line
 in your meshmixer.ini file, under the [Options] section:
    
->   EnableRemoteStoredCommandServer=true
+    EnableRemoteStoredCommandServer=true
    
 Now on startup meshmixer will listen for remote commands (see details below).
 
 You can find your meshmixer.ini file here:
 
->     (Windows) C:\Users\<username>\AppData\Roaming\Autodesk\meshmixer.ini
->	 (OSX)     /Users/<username>/.config/Autodesk/meshmixer.ini
+    (Windows) C:\Users\<username>\AppData\Roaming\Autodesk\meshmixer.ini  
+    (OSX)     /Users/<username>/.config/Autodesk/meshmixer.ini
 
 To build API packages from scratch, run the top-level build_python_distrib.bat file.
 This will require Visual Studio 2012 to be installed on your machine.
