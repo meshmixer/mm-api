@@ -18,6 +18,7 @@
 # visual studio solution generated files
 *.suo
 
+distrib/
 build/python/*.*
 
 # certain local files
