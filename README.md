@@ -1,14 +1,14 @@
-Autodesk Meshmixer API package (mm-api)
-v0.2 November 2014
-copyright (c) 2014 Autodesk Corporation    http://www.autodesk.com
-contact:   Ryan.Schmidt@Autodesk.com       http://autodeskresearch.com/people/ryanschmidt
+Autodesk Meshmixer API package (mm-api)  
+v0.2 November 2014  
+copyright (c) 2014 Autodesk Corporation    http://www.autodesk.com  
+contact:   Ryan.Schmidt@Autodesk.com       http://autodeskresearch.com/people/ryanschmidt  
 
 [WARNING] This API distribution is compatible with meshmixer 2.7
           It may not work with previous or later versions.
 
 Do you have the latest code? Sync here: https://github.com/meshmixer/mm-api
 
-===================================================
+
 CAUTION! PRE-ALPHA RELEASE! CHANGES ARE COMING! 
 ===================================================
 The Meshmixer API is under active development, and it is highly
@@ -22,7 +22,7 @@ Why release this API before it stabilizes? Because we need
 your feedback! Please let us know which parts of Meshmixer
 you would like to see exposed in the API.
 
-===============
+
 What is mm-api?
 ===============
 The Autodesk Meshmixer desktop application is remotely-controllable via a 
@@ -42,33 +42,36 @@ of the SWIG wrapper. See details below.
           To use OSX you will have to download SWIG yourself.
 
 
-====================
+
 Quick Start - Python
 ====================
-0) Install Python 2.7
-1) open your meshmixer.ini file (paths below) and add the following 
+0. Install Python 2.7
+1. open your meshmixer.ini file (paths below) and add the following 
    line under the [Options] section: 
-      EnableRemoteStoredCommandServer=true
-2) start meshmixer, import bunny
-3) run the script \distrib\python\test.py 
+
+>      EnableRemoteStoredCommandServer=true
+
+2. start meshmixer, import bunny
+3. run the script \distrib\python\test.py 
    If your bunny is cut in half, the script worked
 
    
    
-========
+
 Setup
 ========
 
 To enable remote control of meshmixer, you must insert the following line
 in your meshmixer.ini file, under the [Options] section:
    
-   EnableRemoteStoredCommandServer=true
+>   EnableRemoteStoredCommandServer=true
    
 Now on startup meshmixer will listen for remote commands (see details below).
 
 You can find your meshmixer.ini file here:
-     (Windows) C:\Users\<username>\AppData\Roaming\Autodesk\meshmixer.ini
-	 (OSX)     /Users/<username>/.config/Autodesk/meshmixer.ini
+
+>     (Windows) C:\Users\<username>\AppData\Roaming\Autodesk\meshmixer.ini
+>	 (OSX)     /Users/<username>/.config/Autodesk/meshmixer.ini
 
 To build API packages from scratch, run the top-level build_python_distrib.bat file.
 This will require Visual Studio 2012 to be installed on your machine.
@@ -78,9 +81,14 @@ If you received a .zip file, then \distrib\python may already exist.
 In this case you do not need Visual Studio, simply a Python 2.7 interpreter.
 
 
-=======
-Python
-=======
+C++ Details
+==============
+
+(coming soon. But basically you create a StoredCommands object, call its functions to append to the command stream, and then serialize this object and send the data to meshmixer via UDP socket. You have to do that part yourself! We recommend using Qt, it is really easy, and is what we use on the meshmixer side. IP/Port details below)
+
+
+Python Details
+==============
 
 We are currently focusing on creating a cleaner wrapper for the API in Python.
 This "mm" python module is stored in \python\mm\
@@ -103,7 +111,7 @@ future changes in the SWIG-generated API.
 (Have you made improvements to the mm module? Make a pull request!)
 
 
-===============
+
 Documentation ?  
 ===============
 Currently we do not have any stand-alone documentation for the API capabilities.
@@ -117,7 +125,7 @@ Many examples of Python API usage are available inside the functions of
 the mm Python module. Usage in other languages is very similar.
 	  
 	  
-===============
+
 Technical Notes
 ===============
 
@@ -151,10 +159,10 @@ This approach does prevent sending large amounts of data (for example full meshe
 and so it is likely to be re-designed in the future. 
 
 
-===========
+
 Changelog
 ===========
 (only significant changes that will impact usage/compatibility)
 
-[November 27, 2014]
+#### [November 27, 2014]
 - initial release, compatible with mm 2.7
