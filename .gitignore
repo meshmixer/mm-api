@@ -1,3 +1,6 @@
+# emacs-edited files
+*~
+
 # Compiled Object files
 *.slo
 *.lo
@@ -18,7 +21,11 @@
 # visual studio solution generated files
 *.suo
 
+# build outputs
 build/python/*.*
+
+# document build
+python/doc/_build
 
 # certain local files
 rms_*.bat
