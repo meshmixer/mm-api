@@ -1,8 +1,8 @@
 import mmapi;
 from frame import *;
 
-# returns pair of 3-float tuples (min, max)
 def get_selected_bounding_box(remote):
+    """return the axis-aligned bounding box of the selected objects as two 3-tuples (min, max)"""
     cmd = mmapi.StoredCommands()
     key1 = cmd.AppendQueryCommand_GetBoundingBox()
     remote.runCommand(cmd)
@@ -13,8 +13,8 @@ def get_selected_bounding_box(remote):
     return ( (fMin[0],fMin[1],fMin[2]), (fMax[0],fMax[1],fMax[2]) )
 
 
-# returns pair of 3-float tuples (min, max)
 def get_face_selection_bounding_box(remote):
+    """return the axis-aligned bounding box of the selected faces as two 3-tuples (min, max). Requires active face selection."""
     cmd = mmapi.StoredCommands()
     key1 = cmd.AppendQueryCommand_GetSelectedFacesBoundingBox()
     remote.runCommand(cmd)
@@ -27,8 +27,8 @@ def get_face_selection_bounding_box(remote):
     else:
         return ( (0,0,0), (0,0,0) )
 
-# returns pair of 3-float tuples (min, max)
 def get_face_selection_centroid(remote):
+    """return the geometric centroid of the selected faces as a 3-tuple. Requires active face selection."""
     cmd = mmapi.StoredCommands()
     key1 = cmd.AppendQueryCommand_GetSelectedFacesCentroid()
     remote.runCommand(cmd)
@@ -41,9 +41,8 @@ def get_face_selection_centroid(remote):
         return ( 0,0,0 )
 
 
-# args are 3-float origin,direction
-# returns tuple (bHit, hit_frame) 
 def find_nearest(remote, position):
+    """Find the nearest point on the 3D surface to the input 3-tuple. Returns a tuple (bOK, hitFrame), where bOK is a boolean indicating if a nereast point was found, and hitFrame is an mmFrame at the hit point, with Z axis oriented to the surface normal"""
     cmd = mmapi.StoredCommands()
     v = mmapi.vec3f()
     key = cmd.AppendQueryCommand_FindNearestPoint(position[0], position[1], position[2]);
@@ -55,9 +54,8 @@ def find_nearest(remote, position):
     return (bOK, hitFrame)
 
 
-# args are 3-float origin,direction
-# returns tuple (bHit, hit_frame) 
 def find_ray_hit(remote, ray_origin, ray_direction):
+    """Find the intersection of a ray (specified by 3-tuples for origin and direction) and the 3D surface. Returns a tuple (bOK, hitFrame), where bOK is a boolean indicating if a hit was found, and hitFrame is an mmFrame at the hit point, with Z axis oriented to the surface normal"""
     cmd = mmapi.StoredCommands()
     o = mmapi.vec3f()
     o.x = ray_origin[0]; o.y = ray_origin[1]; o.z = ray_origin[2]
@@ -71,8 +69,3 @@ def find_ray_hit(remote, ray_origin, ray_direction):
     hitFrame.setFromMM(frame)
     return (bOK, hitFrame)
 
-
-def select_inside_sphere(remote, sphere_center, sphere_radius):
-    cmd = mmapi.StoredCommands()
-    cmd.AppendSelectCommand_InsideSphere( sphere_center[0],sphere_center[1],sphere_center[2], sphere_radius )
-    remote.runCommand(cmd)

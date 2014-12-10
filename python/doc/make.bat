@@ -73,7 +73,9 @@ if errorlevel 9009 (
 
 
 if "%1" == "html" (
+	copy /Y NUL ..\mm\mmapi.py
 	%SPHINXBUILD% -b html %ALLSPHINXOPTS% %BUILDDIR%/html
+	del ..\mm\mmapi.py
 	if errorlevel 1 exit /b 1
 	echo.
 	echo.Build finished. The HTML pages are in %BUILDDIR%/html.

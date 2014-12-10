@@ -3,23 +3,24 @@ from convert import *;
 
 
 def begin_tool(remote, tool_name):
-    """begin execution of the Tool called tool_name"""
+    """Begin execution of the Tool called tool_name"""
     cmd = mmapi.StoredCommands()
     cmd.AppendBeginToolCommand(tool_name)
     remote.runCommand(cmd)
 
 def accept_tool(remote):
-    """accept current tool"""
+    """Accept the current tool"""
     cmd = mmapi.StoredCommands()
     cmd.AppendCompleteToolCommand("accept")
     remote.runCommand(cmd)
 def cancel_tool(remote):
-    """cancel current tool"""
+    """Cancel the current tool"""
     cmd = mmapi.StoredCommands()
     cmd.AppendCompleteToolCommand("cancel")
     remote.runCommand(cmd)
 
 def set_toolparam(remote, param_name, f):
+    """Set the parameter param_name of the current tool. This function handles int,float,boolean,vector3,and matrix9 inputs"""
     cmd = mmapi.StoredCommands()
     if type(f) in (int, float, bool):
         key = cmd.AppendToolParameterCommand(param_name, f)
@@ -33,7 +34,7 @@ def set_toolparam(remote, param_name, f):
 
 
 def get_toolparam(remote, param_name):
-    """returns current parameter value, or empty list if not found"""
+    """Returns the current value of the given Tool parameter, or empty list if the parameter is not found."""
     cmd = mmapi.StoredCommands()
     key = cmd.AppendGetToolParameterCommand(param_name)
     remote.runCommand(cmd)
@@ -58,7 +59,7 @@ def get_toolparam(remote, param_name):
 
 
 def tool_utility_command(remote, command_name, arg = -99):
-    """run tool utility command, with optional argument"""
+    """Run a Tool utility command, with optional argument (see ::AppendToolUtilityCommand in StoredCommands.h)"""
     cmd = mmapi.StoredCommands()
     if ( isinstance(arg, int) and arg == -99 ):
         cmd.AppendToolUtilityCommand( command_name )
@@ -68,7 +69,7 @@ def tool_utility_command(remote, command_name, arg = -99):
 
 
 def toolquery_new_groups(remote):
-    """get list of new groups created by last tool"""
+    """Get a list of new groups created by last tool (NOTE: many Tools do not support this yet!)"""
     cmd = mmapi.StoredCommands()
     key = cmd.AppendToolQuery_NewGroups()
     remote.runCommand(cmd)
