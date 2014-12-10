@@ -167,3 +167,10 @@ Changelog
 
 #### [November 27, 2014]
 - initial release, compatible with mm 2.7
+ 
+
+API TODO
+=========
+- import reference object
+- ortho/perspective toggle
+
