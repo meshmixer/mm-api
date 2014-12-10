@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>mm.util &mdash; mm-python 0.2 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="mm-python 0.2 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">mm-python 0.2 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for mm.util</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">mmapi</span><span class="p">;</span>
+<span class="kn">from</span> <span class="nn">frame</span> <span class="kn">import</span> <span class="o">*</span><span class="p">;</span>
+
+<div class="viewcode-block" id="get_selected_bounding_box"><a class="viewcode-back" href="../../index.html#mm.util.get_selected_bounding_box">[docs]</a><span class="k">def</span> <span class="nf">get_selected_bounding_box</span><span class="p">(</span><span class="n">remote</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;return the axis-aligned bounding box of the selected objects as two 3-tuples (min, max)&quot;&quot;&quot;</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="n">mmapi</span><span class="o">.</span><span class="n">StoredCommands</span><span class="p">()</span>
+    <span class="n">key1</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">AppendQueryCommand_GetBoundingBox</span><span class="p">()</span>
+    <span class="n">remote</span><span class="o">.</span><span class="n">runCommand</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+
+    <span class="n">fMin</span> <span class="o">=</span> <span class="n">mmapi</span><span class="o">.</span><span class="n">floatArray</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">fMax</span> <span class="o">=</span> <span class="n">mmapi</span><span class="o">.</span><span class="n">floatArray</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">bOK</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">GetQueryResult_GetBoundingBox</span><span class="p">(</span><span class="n">key1</span><span class="p">,</span> <span class="n">fMin</span><span class="p">,</span> <span class="n">fMax</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span> <span class="p">(</span><span class="n">fMin</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">fMin</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">fMin</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="p">(</span><span class="n">fMax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">fMax</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">fMax</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="get_face_selection_bounding_box"><a class="viewcode-back" href="../../index.html#mm.util.get_face_selection_bounding_box">[docs]</a><span class="k">def</span> <span class="nf">get_face_selection_bounding_box</span><span class="p">(</span><span class="n">remote</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;return the axis-aligned bounding box of the selected faces as two 3-tuples (min, max). Requires active face selection.&quot;&quot;&quot;</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="n">mmapi</span><span class="o">.</span><span class="n">StoredCommands</span><span class="p">()</span>
+    <span class="n">key1</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">AppendQueryCommand_GetSelectedFacesBoundingBox</span><span class="p">()</span>
+    <span class="n">remote</span><span class="o">.</span><span class="n">runCommand</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+
+    <span class="n">fMin</span> <span class="o">=</span> <span class="n">mmapi</span><span class="o">.</span><span class="n">floatArray</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">fMax</span> <span class="o">=</span> <span class="n">mmapi</span><span class="o">.</span><span class="n">floatArray</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">bOK</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">GetQueryResult_GetSelectedFacesBoundingBox</span><span class="p">(</span><span class="n">key1</span><span class="p">,</span> <span class="n">fMin</span><span class="p">,</span> <span class="n">fMax</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">bOK</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span> <span class="p">(</span><span class="n">fMin</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">fMin</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">fMin</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="p">(</span><span class="n">fMax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">fMax</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">fMax</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="p">)</span>
+</div>
+<div class="viewcode-block" id="get_face_selection_centroid"><a class="viewcode-back" href="../../index.html#mm.util.get_face_selection_centroid">[docs]</a><span class="k">def</span> <span class="nf">get_face_selection_centroid</span><span class="p">(</span><span class="n">remote</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;return the geometric centroid of the selected faces as a 3-tuple. Requires active face selection.&quot;&quot;&quot;</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="n">mmapi</span><span class="o">.</span><span class="n">StoredCommands</span><span class="p">()</span>
+    <span class="n">key1</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">AppendQueryCommand_GetSelectedFacesCentroid</span><span class="p">()</span>
+    <span class="n">remote</span><span class="o">.</span><span class="n">runCommand</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+
+    <span class="n">vCentroid</span> <span class="o">=</span> <span class="n">mmapi</span><span class="o">.</span><span class="n">floatArray</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">bOK</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">GetQueryResult_GetSelectedFacesCentroid</span><span class="p">(</span><span class="n">key1</span><span class="p">,</span> <span class="n">vCentroid</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">bOK</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span> <span class="n">vCentroid</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">vCentroid</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">vCentroid</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span> <span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="find_nearest"><a class="viewcode-back" href="../../index.html#mm.util.find_nearest">[docs]</a><span class="k">def</span> <span class="nf">find_nearest</span><span class="p">(</span><span class="n">remote</span><span class="p">,</span> <span class="n">position</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Find the nearest point on the 3D surface to the input 3-tuple. Returns a tuple (bOK, hitFrame), where bOK is a boolean indicating if a nereast point was found, and hitFrame is an mmFrame at the hit point, with Z axis oriented to the surface normal&quot;&quot;&quot;</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="n">mmapi</span><span class="o">.</span><span class="n">StoredCommands</span><span class="p">()</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">mmapi</span><span class="o">.</span><span class="n">vec3f</span><span class="p">()</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">AppendQueryCommand_FindNearestPoint</span><span class="p">(</span><span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">position</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">position</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+    <span class="n">remote</span><span class="o">.</span><span class="n">runCommand</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+    <span class="n">frame</span> <span class="o">=</span> <span class="n">mmapi</span><span class="o">.</span><span class="n">frame3f</span><span class="p">()</span>
+    <span class="n">bOK</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">GetQueryResult_FindNearestPoint</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
+    <span class="n">hitFrame</span> <span class="o">=</span> <span class="n">mmFrame</span><span class="p">()</span>
+    <span class="n">hitFrame</span><span class="o">.</span><span class="n">setFromMM</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">bOK</span><span class="p">,</span> <span class="n">hitFrame</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="find_ray_hit"><a class="viewcode-back" href="../../index.html#mm.util.find_ray_hit">[docs]</a><span class="k">def</span> <span class="nf">find_ray_hit</span><span class="p">(</span><span class="n">remote</span><span class="p">,</span> <span class="n">ray_origin</span><span class="p">,</span> <span class="n">ray_direction</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Find the intersection of a ray (specified by 3-tuples for origin and direction) and the 3D surface. Returns a tuple (bOK, hitFrame), where bOK is a boolean indicating if a hit was found, and hitFrame is an mmFrame at the hit point, with Z axis oriented to the surface normal&quot;&quot;&quot;</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="n">mmapi</span><span class="o">.</span><span class="n">StoredCommands</span><span class="p">()</span>
+    <span class="n">o</span> <span class="o">=</span> <span class="n">mmapi</span><span class="o">.</span><span class="n">vec3f</span><span class="p">()</span>
+    <span class="n">o</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">ray_origin</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span> <span class="n">o</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">ray_origin</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span> <span class="n">o</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">ray_origin</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">mmapi</span><span class="o">.</span><span class="n">vec3f</span><span class="p">()</span>
+    <span class="n">d</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">ray_direction</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span> <span class="n">d</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">ray_direction</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span> <span class="n">d</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">ray_direction</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">AppendQueryCommand_FindRayIntersection</span><span class="p">(</span><span class="n">o</span><span class="p">,</span><span class="n">d</span><span class="p">)</span>
+    <span class="n">remote</span><span class="o">.</span><span class="n">runCommand</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+    <span class="n">frame</span> <span class="o">=</span> <span class="n">mmapi</span><span class="o">.</span><span class="n">frame3f</span><span class="p">()</span>
+    <span class="n">bOK</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">GetQueryResult_FindRayIntersection</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
+    <span class="n">hitFrame</span> <span class="o">=</span> <span class="n">mmFrame</span><span class="p">()</span>
+    <span class="n">hitFrame</span><span class="o">.</span><span class="n">setFromMM</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">bOK</span><span class="p">,</span> <span class="n">hitFrame</span><span class="p">)</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">mm-python 0.2 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2014, Autodesk.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3b2.
+    </div>
+  </body>
+</html>

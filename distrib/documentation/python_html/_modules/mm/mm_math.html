@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>mm.mm_math &mdash; mm-python 0.2 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="mm-python 0.2 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">mm-python 0.2 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for mm.mm_math</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">math</span>
+
+<div class="viewcode-block" id="addvs"><a class="viewcode-back" href="../../index.html#mm.mm_math.addvs">[docs]</a><span class="k">def</span> <span class="nf">addvs</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span><span class="n">s</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;add scalar to elements of vector&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">+</span><span class="n">s</span><span class="p">,</span> <span class="n">vec</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="subvs"><a class="viewcode-back" href="../../index.html#mm.mm_math.subvs">[docs]</a><span class="k">def</span> <span class="nf">subvs</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span><span class="n">s</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;subtract scalar from elements of vector&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">-</span><span class="n">s</span><span class="p">,</span> <span class="n">vec</span><span class="p">)</span> 
+</div>
+<div class="viewcode-block" id="mulvs"><a class="viewcode-back" href="../../index.html#mm.mm_math.mulvs">[docs]</a><span class="k">def</span> <span class="nf">mulvs</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span><span class="n">s</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;multiply elements of vector by scalar&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="n">s</span><span class="p">,</span> <span class="n">vec</span><span class="p">)</span> </div>
+<div class="viewcode-block" id="divvs"><a class="viewcode-back" href="../../index.html#mm.mm_math.divvs">[docs]</a><span class="k">def</span> <span class="nf">divvs</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span><span class="n">s</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;divide elements of vector by scalar&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">/</span><span class="n">s</span><span class="p">,</span> <span class="n">vec</span><span class="p">)</span> 
+</div>
+<div class="viewcode-block" id="addv3s"><a class="viewcode-back" href="../../index.html#mm.mm_math.addv3s">[docs]</a><span class="k">def</span> <span class="nf">addv3s</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="n">scalar</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;add scalar to elements of 3-vector&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">vec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">scalar</span><span class="p">,</span> <span class="n">vec</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">scalar</span><span class="p">,</span> <span class="n">vec</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="n">scalar</span><span class="p">)</span></div>
+<div class="viewcode-block" id="subv3s"><a class="viewcode-back" href="../../index.html#mm.mm_math.subv3s">[docs]</a><span class="k">def</span> <span class="nf">subv3s</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="n">scalar</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;subtract scalar from elements of 3-vector&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">vec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">scalar</span><span class="p">,</span> <span class="n">vec</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">scalar</span><span class="p">,</span> <span class="n">vec</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">-</span><span class="n">scalar</span><span class="p">)</span></div>
+<div class="viewcode-block" id="mulv3s"><a class="viewcode-back" href="../../index.html#mm.mm_math.mulv3s">[docs]</a><span class="k">def</span> <span class="nf">mulv3s</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="n">scalar</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;multiply elements of 3-vector by scalar&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">vec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">scalar</span><span class="p">,</span> <span class="n">vec</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">scalar</span><span class="p">,</span> <span class="n">vec</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">scalar</span><span class="p">)</span></div>
+<div class="viewcode-block" id="divv3s"><a class="viewcode-back" href="../../index.html#mm.mm_math.divv3s">[docs]</a><span class="k">def</span> <span class="nf">divv3s</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="n">scalar</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;divide elements of 3-vector by scalar&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">vec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">scalar</span><span class="p">,</span> <span class="n">vec</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">scalar</span><span class="p">,</span> <span class="n">vec</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">/</span><span class="n">scalar</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="negv3"><a class="viewcode-back" href="../../index.html#mm.mm_math.negv3">[docs]</a><span class="k">def</span> <span class="nf">negv3</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;negate 3-vector&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span></div>
+<div class="viewcode-block" id="subv3"><a class="viewcode-back" href="../../index.html#mm.mm_math.subv3">[docs]</a><span class="k">def</span> <span class="nf">subv3</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;subtract 3-vector b from a&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">-</span><span class="n">b</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span></div>
+<div class="viewcode-block" id="addv3"><a class="viewcode-back" href="../../index.html#mm.mm_math.addv3">[docs]</a><span class="k">def</span> <span class="nf">addv3</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;add 3-vector b to a&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="n">b</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span></div>
+<div class="viewcode-block" id="dotv3"><a class="viewcode-back" href="../../index.html#mm.mm_math.dotv3">[docs]</a><span class="k">def</span> <span class="nf">dotv3</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;dot product of 3-vectors a and b&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">b</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span></div>
+<div class="viewcode-block" id="lerpv3"><a class="viewcode-back" href="../../index.html#mm.mm_math.lerpv3">[docs]</a><span class="k">def</span> <span class="nf">lerpv3</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">t</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;linear interplation (1-t)*a + (t)*b&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">t</span><span class="p">)</span><span class="o">*</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">*</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>  <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">t</span><span class="p">)</span><span class="o">*</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">*</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">t</span><span class="p">)</span><span class="o">*</span><span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">*</span><span class="n">b</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="deg_to_rad"><a class="viewcode-back" href="../../index.html#mm.mm_math.deg_to_rad">[docs]</a><span class="k">def</span> <span class="nf">deg_to_rad</span><span class="p">(</span><span class="n">angle</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;convert angle from degrees to radians&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">angle</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">180.0</span></div>
+<div class="viewcode-block" id="rad_to_deg"><a class="viewcode-back" href="../../index.html#mm.mm_math.rad_to_deg">[docs]</a><span class="k">def</span> <span class="nf">rad_to_deg</span><span class="p">(</span><span class="n">angle</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;convert angle from radians to degrees&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">angle</span> <span class="o">*</span> <span class="mf">180.0</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
+
+</div>
+<div class="viewcode-block" id="make_rotX_matrix"><a class="viewcode-back" href="../../index.html#mm.mm_math.make_rotX_matrix">[docs]</a><span class="k">def</span> <span class="nf">make_rotX_matrix</span><span class="p">(</span><span class="n">angle</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;construct matrix that rotates around X axis by angle (in radians)&quot;&quot;&quot;</span>
+    <span class="n">c0</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+    <span class="n">s0</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">c0</span><span class="p">,</span> <span class="o">-</span><span class="n">s0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">s0</span><span class="p">,</span> <span class="n">c0</span> <span class="p">)</span></div>
+<div class="viewcode-block" id="make_rotY_matrix"><a class="viewcode-back" href="../../index.html#mm.mm_math.make_rotY_matrix">[docs]</a><span class="k">def</span> <span class="nf">make_rotY_matrix</span><span class="p">(</span><span class="n">angle</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;construct matrix that rotates around Y axis by angle (in radians)&quot;&quot;&quot;</span>
+    <span class="n">c0</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+    <span class="n">s0</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span> <span class="n">c0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">s0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">s0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">c0</span> <span class="p">)</span></div>
+<div class="viewcode-block" id="make_rotZ_matrix"><a class="viewcode-back" href="../../index.html#mm.mm_math.make_rotZ_matrix">[docs]</a><span class="k">def</span> <span class="nf">make_rotZ_matrix</span><span class="p">(</span><span class="n">angle</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;construct matrix that rotates around Z axis by angle (in radians)&quot;&quot;&quot;</span>
+    <span class="n">c0</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+    <span class="n">s0</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span> <span class="n">c0</span><span class="p">,</span> <span class="o">-</span><span class="n">s0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">s0</span><span class="p">,</span> <span class="n">c0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="p">)</span>
+</div>
+<div class="viewcode-block" id="make_matrix_from_axes"><a class="viewcode-back" href="../../index.html#mm.mm_math.make_matrix_from_axes">[docs]</a><span class="k">def</span> <span class="nf">make_matrix_from_axes</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;construct orientation matrix from basis vectors&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+             <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">z</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+             <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">z</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="p">)</span>
+</div>
+<div class="viewcode-block" id="transpose"><a class="viewcode-back" href="../../index.html#mm.mm_math.transpose">[docs]</a><span class="k">def</span> <span class="nf">transpose</span><span class="p">(</span><span class="n">matrix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;return the transpose of a matrix stored as a 9-element tuple&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">matrix</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">matrix</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">matrix</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span>
+            <span class="n">matrix</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">matrix</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">matrix</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span>
+            <span class="n">matrix</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">matrix</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">matrix</span><span class="p">[</span><span class="mi">8</span><span class="p">])</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">mm-python 0.2 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2014, Autodesk.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3b2.
+    </div>
+  </body>
+</html>

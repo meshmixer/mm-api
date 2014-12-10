@@ -1,0 +1,1332 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Tool Parameters &mdash; mm-python 0.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="mm-python 0.2 documentation" href="index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">mm-python 0.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="tool-parameters">
+<span id="tool-params-label"></span><h1>Tool Parameters<a class="headerlink" href="#tool-parameters" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><strong>vector3f</strong> is a 3-float list</li>
+<li><strong>matrix3f</strong> is a 9-float3x3 row-major matrix</li>
+</ul>
+<div class="section" id="select">
+<h2>select<a class="headerlink" href="#select" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="56%" />
+<col width="44%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>size</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>brushType</td>
+<td>integer</td>
+</tr>
+<tr class="row-odd"><td>symmetry</td>
+<td>boolean</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="volumebrush">
+<h2>volumeBrush<a class="headerlink" href="#volumebrush" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="49%" />
+<col width="19%" />
+<col width="32%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>strength</td>
+<td>float</td>
+<td>range [0,1]</td>
+</tr>
+<tr class="row-even"><td>size</td>
+<td>float</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>depth</td>
+<td>float</td>
+<td>range [-1,1]</td>
+</tr>
+<tr class="row-even"><td>lazyness</td>
+<td>float</td>
+<td>range [0,1]</td>
+</tr>
+<tr class="row-odd"><td>refine</td>
+<td>float</td>
+<td>range [0,1]</td>
+</tr>
+<tr class="row-even"><td>reduce</td>
+<td>float</td>
+<td>range [0,1]</td>
+</tr>
+<tr class="row-odd"><td>refineSmooth</td>
+<td>float</td>
+<td>range [0,1]</td>
+</tr>
+<tr class="row-even"><td>attractStrength</td>
+<td>float</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>volumetric</td>
+<td>boolean</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>symmetric</td>
+<td>boolean</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>surfSnap</td>
+<td>boolean</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>continuous</td>
+<td>boolean</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>enableRefinement</td>
+<td>boolean</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>restrictToGroup</td>
+<td>boolean</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>holdBoundary</td>
+<td>boolean</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>preserveGroups</td>
+<td>boolean</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>brushOnTarget</td>
+<td>boolean</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>adaptiveRefinement</td>
+<td>boolean</td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="surfacebrush">
+<h2>surfaceBrush<a class="headerlink" href="#surfacebrush" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="68%" />
+<col width="32%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>restrictToGroup</td>
+<td>boolean</td>
+</tr>
+<tr class="row-even"><td>holdBoundary</td>
+<td>boolean</td>
+</tr>
+<tr class="row-odd"><td>preserveGroups</td>
+<td>boolean</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="stamp">
+<h2>stamp<a class="headerlink" href="#stamp" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="65%" />
+<col width="35%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>snapDimension</td>
+<td>boolean</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="erase">
+<h2>erase<a class="headerlink" href="#erase" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="8%" />
+<col width="77%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>density</td>
+<td>float</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>smooth</td>
+<td>float</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>scale</td>
+<td>float</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>boundaryRotate</td>
+<td>float</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>replaceType</td>
+<td>integer</td>
+<td>values:  MinimalFill = 0, FlatRefinedMesh = 1, MVCPlanarDeformation = 2</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="discard">
+<h2>discard<a class="headerlink" href="#discard" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="reduce">
+<h2>reduce<a class="headerlink" href="#reduce" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="22%" />
+<col width="9%" />
+<col width="69%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>percentage</td>
+<td>float</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>maxDeviation</td>
+<td>float</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>maxDeviationWorld</td>
+<td>float</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>smooth</td>
+<td>float</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>normalThreshold</td>
+<td>float</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>goalType</td>
+<td>integer</td>
+<td>Percentage = 0, TriangleBudget = 1,   MaxDeviation = 2</td>
+</tr>
+<tr class="row-odd"><td>triangleCount</td>
+<td>integer</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>reduceMetric</td>
+<td>integer</td>
+<td>Uniform = 0, QuadricError = 1</td>
+</tr>
+<tr class="row-odd"><td>preserveGroups</td>
+<td>boolean</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>preserveBoundary</td>
+<td>boolean</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>adaptive</td>
+<td>boolean</td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="remesh">
+<h2>remesh<a class="headerlink" href="#remesh" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="23%" />
+<col width="11%" />
+<col width="67%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>density</td>
+<td>float</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>smooth</td>
+<td>float</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>normalThreshold</td>
+<td>float</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>boundaryMode</td>
+<td>integer</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>remeshType</td>
+<td>integer</td>
+<td>values: Uniform = 0,     Adaptive_Normal = 1</td>
+</tr>
+<tr class="row-even"><td>preserveGroups</td>
+<td>boolean</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>adaptive</td>
+<td>boolean</td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="extrude">
+<h2>extrude<a class="headerlink" href="#extrude" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="8%" />
+<col width="77%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>offset</td>
+<td>float</td>
+<td>range [-inf, inf]</td>
+</tr>
+<tr class="row-even"><td>harden</td>
+<td>float</td>
+<td>range [0,1]</td>
+</tr>
+<tr class="row-odd"><td>density</td>
+<td>float</td>
+<td>range [0,1]</td>
+</tr>
+<tr class="row-even"><td>endType</td>
+<td>integer</td>
+<td>values: Offset = 0, Flat = 1</td>
+</tr>
+<tr class="row-odd"><td>directionType</td>
+<td>integer</td>
+<td>values: Normal = 0, Constant = 1, XAxis = 2, YAxis = 3,   ZAxis = 4</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="extract">
+<h2>extract<a class="headerlink" href="#extract" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="5%" />
+<col width="86%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>offset</td>
+<td>float</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>endType</td>
+<td>integer</td>
+<td>values: OffsetDistance = 0,        PlanarFlat = 1</td>
+</tr>
+<tr class="row-odd"><td>directionType</td>
+<td>integer</td>
+<td>values: NormalDirection = 0,       ConstantDirection = 1,  UnitXDirection = 2,     UnitYDirection = 3,     UnitZDirection = 4</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="offset">
+<h2>offset<a class="headerlink" href="#offset" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="65%" />
+<col width="35%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>offset</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>offsetWorld</td>
+<td>float</td>
+</tr>
+<tr class="row-odd"><td>soften</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>softenWorld</td>
+<td>float</td>
+</tr>
+<tr class="row-odd"><td>connected</td>
+<td>boolean</td>
+</tr>
+<tr class="row-even"><td>fixedBoundary</td>
+<td>boolean</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="handle">
+<h2>handle<a class="headerlink" href="#handle" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="46%" />
+<col width="54%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>smooth</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>refine</td>
+<td>float</td>
+</tr>
+<tr class="row-odd"><td>flip</td>
+<td>boolean</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="bridge">
+<h2>bridge<a class="headerlink" href="#bridge" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="55%" />
+<col width="45%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>refine</td>
+<td>float</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="join">
+<h2>join<a class="headerlink" href="#join" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="weldboundaries">
+<h2>weldBoundaries<a class="headerlink" href="#weldboundaries" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="separate">
+<h2>separate<a class="headerlink" href="#separate" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="planecut">
+<h2>planeCut<a class="headerlink" href="#planecut" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="6%" />
+<col width="6%" />
+<col width="89%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>cutType</td>
+<td>integer</td>
+<td>values:       PreciseGeometricCut = 0, PreciseGeometricSlice = 1,     NearestPointAttach = 2, RefinedICPAttach = 3   (default=0)</td>
+</tr>
+<tr class="row-even"><td>fillType</td>
+<td>integer</td>
+<td>values:       NoFill = 0,     CentroidRefinedFill = 1, DelaunayFill = 2,      DelaunayRefinedFill = 3  (default=3)</td>
+</tr>
+<tr class="row-odd"><td>hardEdge</td>
+<td>boolean</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>origin</td>
+<td>vector3f</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>normal</td>
+<td>vector3f</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>rotation</td>
+<td>matrix3f</td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="attracttotarget">
+<h2>attractToTarget<a class="headerlink" href="#attracttotarget" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="70%" />
+<col width="30%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>density</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>smooth</td>
+<td>float</td>
+</tr>
+<tr class="row-odd"><td>offset</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>offsetWorld</td>
+<td>float</td>
+</tr>
+<tr class="row-odd"><td>normalThreshold</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>remeshType</td>
+<td>integer</td>
+</tr>
+<tr class="row-odd"><td>preserveGroups</td>
+<td>boolean</td>
+</tr>
+<tr class="row-even"><td>preserveBoundary</td>
+<td>boolean</td>
+</tr>
+<tr class="row-odd"><td>findSharpEdges</td>
+<td>boolean</td>
+</tr>
+<tr class="row-even"><td>adaptive</td>
+<td>boolean</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="flipnormals">
+<h2>flipNormals<a class="headerlink" href="#flipnormals" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="fitprimitive">
+<h2>fitPrimitive<a class="headerlink" href="#fitprimitive" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="70%" />
+<col width="30%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>primitiveType</td>
+<td>integer</td>
+</tr>
+<tr class="row-even"><td>singlePrimitive</td>
+<td>boolean</td>
+</tr>
+<tr class="row-odd"><td>createNewObjects</td>
+<td>boolean</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="makepart">
+<h2>makePart<a class="headerlink" href="#makepart" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="makesolidpart">
+<h2>makeSolidPart<a class="headerlink" href="#makesolidpart" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="makepolygon">
+<h2>makePolygon<a class="headerlink" href="#makepolygon" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="smooth">
+<h2>smooth<a class="headerlink" href="#smooth" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="59%" />
+<col width="41%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>smooth</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>scale</td>
+<td>float</td>
+</tr>
+<tr class="row-odd"><td>reduceType</td>
+<td>integer</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="facetransform">
+<h2>faceTransform<a class="headerlink" href="#facetransform" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="64%" />
+<col width="36%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>harden</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>pivotFrameMode</td>
+<td>integer</td>
+</tr>
+<tr class="row-odd"><td>sharedFrame</td>
+<td>boolean</td>
+</tr>
+<tr class="row-even"><td>origin</td>
+<td>vector3f</td>
+</tr>
+<tr class="row-odd"><td>translation</td>
+<td>vector3f</td>
+</tr>
+<tr class="row-even"><td>scale</td>
+<td>vector3f</td>
+</tr>
+<tr class="row-odd"><td>rotation</td>
+<td>matrix3f</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="softtransform">
+<h2>softTransform<a class="headerlink" href="#softtransform" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="71%" />
+<col width="29%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>falloffDistance</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>falloffDistanceWorld</td>
+<td>float</td>
+</tr>
+<tr class="row-odd"><td>pivotFrameMode</td>
+<td>integer</td>
+</tr>
+<tr class="row-even"><td>boundaryContinuity</td>
+<td>integer</td>
+</tr>
+<tr class="row-odd"><td>transitionType</td>
+<td>integer</td>
+</tr>
+<tr class="row-even"><td>sharedFrame</td>
+<td>boolean</td>
+</tr>
+<tr class="row-odd"><td>refineMesh</td>
+<td>boolean</td>
+</tr>
+<tr class="row-even"><td>holdBoundary</td>
+<td>boolean</td>
+</tr>
+<tr class="row-odd"><td>falloffFixed</td>
+<td>boolean</td>
+</tr>
+<tr class="row-even"><td>origin</td>
+<td>vector3f</td>
+</tr>
+<tr class="row-odd"><td>translation</td>
+<td>vector3f</td>
+</tr>
+<tr class="row-even"><td>scale</td>
+<td>vector3f</td>
+</tr>
+<tr class="row-odd"><td>rotation</td>
+<td>matrix3f</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="warp">
+<h2>warp<a class="headerlink" href="#warp" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="createfacegroup">
+<h2>createFaceGroup<a class="headerlink" href="#createfacegroup" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="clearfacegroup">
+<h2>clearFaceGroup<a class="headerlink" href="#clearfacegroup" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="smoothboundary">
+<h2>smoothBoundary<a class="headerlink" href="#smoothboundary" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="70%" />
+<col width="30%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>smoothness</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>preserveShape</td>
+<td>float</td>
+</tr>
+<tr class="row-odd"><td>iterations</td>
+<td>integer</td>
+</tr>
+<tr class="row-even"><td>expandLoops</td>
+<td>integer</td>
+</tr>
+<tr class="row-odd"><td>preserveBoundary</td>
+<td>boolean</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="mirror">
+<h2>mirror<a class="headerlink" href="#mirror" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>origin</td>
+<td>vector3f</td>
+</tr>
+<tr class="row-even"><td>normal</td>
+<td>vector3f</td>
+</tr>
+<tr class="row-odd"><td>rotation</td>
+<td>matrix3f</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="duplicate">
+<h2>duplicate<a class="headerlink" href="#duplicate" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="transform">
+<h2>transform<a class="headerlink" href="#transform" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="64%" />
+<col width="36%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>pivotFrameMode</td>
+<td>integer</td>
+</tr>
+<tr class="row-even"><td>origin</td>
+<td>vector3f</td>
+</tr>
+<tr class="row-odd"><td>translation</td>
+<td>vector3f</td>
+</tr>
+<tr class="row-even"><td>scale</td>
+<td>vector3f</td>
+</tr>
+<tr class="row-odd"><td>rotation</td>
+<td>matrix3f</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="align">
+<h2>align<a class="headerlink" href="#align" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="closecracks">
+<h2>closeCracks<a class="headerlink" href="#closecracks" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="generatefacegroups">
+<h2>generateFaceGroups<a class="headerlink" href="#generatefacegroups" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="74%" />
+<col width="26%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>angleThreshold</td>
+<td>float</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="makesolid">
+<h2>makeSolid<a class="headerlink" href="#makesolid" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="73%" />
+<col width="27%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>offsetDistance</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>offsetDistanceWorld</td>
+<td>float</td>
+</tr>
+<tr class="row-odd"><td>minThickness</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>minThicknessWorld</td>
+<td>float</td>
+</tr>
+<tr class="row-odd"><td>edgeCollapseThresh</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>solidType</td>
+<td>integer</td>
+</tr>
+<tr class="row-odd"><td>solidResolution</td>
+<td>integer</td>
+</tr>
+<tr class="row-even"><td>meshResolution</td>
+<td>integer</td>
+</tr>
+<tr class="row-odd"><td>closeHoles</td>
+<td>boolean</td>
+</tr>
+<tr class="row-even"><td>transferFaceGroups</td>
+<td>boolean</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="hollow">
+<h2>hollow<a class="headerlink" href="#hollow" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="73%" />
+<col width="27%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>offsetDistance</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>offsetDistanceWorld</td>
+<td>float</td>
+</tr>
+<tr class="row-odd"><td>holeRadiusWorld</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>holeTaperWorld</td>
+<td>float</td>
+</tr>
+<tr class="row-odd"><td>hollowType</td>
+<td>integer</td>
+</tr>
+<tr class="row-even"><td>solidResolution</td>
+<td>integer</td>
+</tr>
+<tr class="row-odd"><td>meshResolution</td>
+<td>integer</td>
+</tr>
+<tr class="row-even"><td>holesPerComponent</td>
+<td>integer</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="makepattern">
+<h2>makePattern<a class="headerlink" href="#makepattern" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="70%" />
+<col width="30%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>gridResolutionScale</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>meshResolutionScale</td>
+<td>float</td>
+</tr>
+<tr class="row-odd"><td>dimension1</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>spacing1</td>
+<td>float</td>
+</tr>
+<tr class="row-odd"><td>offsetDistance</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>offsetDistanceWorld</td>
+<td>float</td>
+</tr>
+<tr class="row-odd"><td>edgeCollapseThresh</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>gradientValue0</td>
+<td>float</td>
+</tr>
+<tr class="row-odd"><td>gradientValue1</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>pattern</td>
+<td>integer</td>
+</tr>
+<tr class="row-odd"><td>tiling</td>
+<td>integer</td>
+</tr>
+<tr class="row-even"><td>compositionMode</td>
+<td>integer</td>
+</tr>
+<tr class="row-odd"><td>smoothingIters</td>
+<td>integer</td>
+</tr>
+<tr class="row-even"><td>dimensionGradient</td>
+<td>integer</td>
+</tr>
+<tr class="row-odd"><td>clipToSurface</td>
+<td>boolean</td>
+</tr>
+<tr class="row-even"><td>gradientPosition0</td>
+<td>vector3f</td>
+</tr>
+<tr class="row-odd"><td>gradientPosition1</td>
+<td>vector3f</td>
+</tr>
+<tr class="row-even"><td>origin</td>
+<td>vector3f</td>
+</tr>
+<tr class="row-odd"><td>translation</td>
+<td>vector3f</td>
+</tr>
+<tr class="row-even"><td>rotation</td>
+<td>matrix3f</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="makeslices">
+<h2>makeSlices<a class="headerlink" href="#makeslices" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="separateshells">
+<h2>separateShells<a class="headerlink" href="#separateshells" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="addtube">
+<h2>addTube<a class="headerlink" href="#addtube" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="74%" />
+<col width="26%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>startRadius</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>startRadiusWorld</td>
+<td>float</td>
+</tr>
+<tr class="row-odd"><td>endRadius</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>endRadiusWorld</td>
+<td>float</td>
+</tr>
+<tr class="row-odd"><td>startTanLenFactor</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>lengthScale</td>
+<td>float</td>
+</tr>
+<tr class="row-odd"><td>collisionRadius</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>collisionRadiusWorld</td>
+<td>float</td>
+</tr>
+<tr class="row-odd"><td>curveType</td>
+<td>integer</td>
+</tr>
+<tr class="row-even"><td>operationType</td>
+<td>integer</td>
+</tr>
+<tr class="row-odd"><td>directionConstraint</td>
+<td>integer</td>
+</tr>
+<tr class="row-even"><td>solveIterations</td>
+<td>integer</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="combine">
+<h2>combine<a class="headerlink" href="#combine" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="union">
+<h2>union<a class="headerlink" href="#union" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="difference">
+<h2>difference<a class="headerlink" href="#difference" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="intersection">
+<h2>intersection<a class="headerlink" href="#intersection" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="inspector">
+<h2>inspector<a class="headerlink" href="#inspector" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="77%" />
+<col width="23%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>smallComponentThreshold</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>replaceType</td>
+<td>integer</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="units">
+<h2>units<a class="headerlink" href="#units" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="55%" />
+<col width="45%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>worldX</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>worldY</td>
+<td>float</td>
+</tr>
+<tr class="row-odd"><td>worldZ</td>
+<td>float</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="measure">
+<h2>measure<a class="headerlink" href="#measure" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="stability">
+<h2>stability<a class="headerlink" href="#stability" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="76%" />
+<col width="24%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>contactTolerance</td>
+<td>float</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="strength">
+<h2>strength<a class="headerlink" href="#strength" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="63%" />
+<col width="37%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>showSections</td>
+<td>boolean</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="overhangs">
+<h2>overhangs<a class="headerlink" href="#overhangs" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="76%" />
+<col width="24%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>overhangPreset</td>
+<td>integer</td>
+</tr>
+<tr class="row-even"><td>overhangAngleTolerance</td>
+<td>float</td>
+</tr>
+<tr class="row-odd"><td>contactTolerance</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>verticalOffset</td>
+<td>float</td>
+</tr>
+<tr class="row-odd"><td>maxDraftAngle</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>density</td>
+<td>float</td>
+</tr>
+<tr class="row-odd"><td>layerHeight</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>postBaseSize</td>
+<td>float</td>
+</tr>
+<tr class="row-odd"><td>postTopSize</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>postTipSize</td>
+<td>float</td>
+</tr>
+<tr class="row-odd"><td>postTipLayers</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>postDiscSize</td>
+<td>float</td>
+</tr>
+<tr class="row-odd"><td>postDiscLayers</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>strutDensity</td>
+<td>float</td>
+</tr>
+<tr class="row-odd"><td>solidMinOffset</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>postResolution</td>
+<td>integer</td>
+</tr>
+<tr class="row-odd"><td>optimizeRounds</td>
+<td>integer</td>
+</tr>
+<tr class="row-even"><td>allowTopSupport</td>
+<td>boolean</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="slicing">
+<h2>slicing<a class="headerlink" href="#slicing" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="74%" />
+<col width="26%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>sliceHeight</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>minFeatureSize</td>
+<td>float</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="thickness">
+<h2>thickness<a class="headerlink" href="#thickness" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="77%" />
+<col width="23%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>minThickness</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>minThicknessWorld</td>
+<td>float</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="orientation">
+<h2>orientation<a class="headerlink" href="#orientation" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="75%" />
+<col width="25%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>overhangAngleDeg</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>strengthWeight</td>
+<td>float</td>
+</tr>
+<tr class="row-odd"><td>supportVolumeWeight</td>
+<td>float</td>
+</tr>
+<tr class="row-even"><td>supportSurfaceAreaWeight</td>
+<td>float</td>
+</tr>
+<tr class="row-odd"><td>selectedOrientation</td>
+<td>integer</td>
+</tr>
+<tr class="row-even"><td>origin</td>
+<td>vector3f</td>
+</tr>
+<tr class="row-odd"><td>translation</td>
+<td>vector3f</td>
+</tr>
+<tr class="row-even"><td>rotation</td>
+<td>matrix3f</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="layout">
+<h2>layout<a class="headerlink" href="#layout" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="25%" />
+<col width="10%" />
+<col width="66%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>borderWidth</td>
+<td>float</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>transformationType</td>
+<td>integer</td>
+<td>Translate2D=0, Translate2D_Rotate2D=1</td>
+</tr>
+<tr class="row-odd"><td>packingQuality</td>
+<td>integer</td>
+<td>Fastest = 0, Medium_Quality = 1, Max_Quality = 2</td>
+</tr>
+<tr class="row-even"><td>bedOrigin</td>
+<td>integer</td>
+<td>RearLeftCorner = 0, Centered = 1</td>
+</tr>
+<tr class="row-odd"><td>packMetric</td>
+<td>integer</td>
+<td>Circular=0, Square=2, Left-to-Right=3</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="deviation">
+<h2>deviation<a class="headerlink" href="#deviation" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="77%" />
+<col width="23%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>maxDeviationWorld</td>
+<td>float</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Tool Parameters</a><ul>
+<li><a class="reference internal" href="#select">select</a></li>
+<li><a class="reference internal" href="#volumebrush">volumeBrush</a></li>
+<li><a class="reference internal" href="#surfacebrush">surfaceBrush</a></li>
+<li><a class="reference internal" href="#stamp">stamp</a></li>
+<li><a class="reference internal" href="#erase">erase</a></li>
+<li><a class="reference internal" href="#discard">discard</a></li>
+<li><a class="reference internal" href="#reduce">reduce</a></li>
+<li><a class="reference internal" href="#remesh">remesh</a></li>
+<li><a class="reference internal" href="#extrude">extrude</a></li>
+<li><a class="reference internal" href="#extract">extract</a></li>
+<li><a class="reference internal" href="#offset">offset</a></li>
+<li><a class="reference internal" href="#handle">handle</a></li>
+<li><a class="reference internal" href="#bridge">bridge</a></li>
+<li><a class="reference internal" href="#join">join</a></li>
+<li><a class="reference internal" href="#weldboundaries">weldBoundaries</a></li>
+<li><a class="reference internal" href="#separate">separate</a></li>
+<li><a class="reference internal" href="#planecut">planeCut</a></li>
+<li><a class="reference internal" href="#attracttotarget">attractToTarget</a></li>
+<li><a class="reference internal" href="#flipnormals">flipNormals</a></li>
+<li><a class="reference internal" href="#fitprimitive">fitPrimitive</a></li>
+<li><a class="reference internal" href="#makepart">makePart</a></li>
+<li><a class="reference internal" href="#makesolidpart">makeSolidPart</a></li>
+<li><a class="reference internal" href="#makepolygon">makePolygon</a></li>
+<li><a class="reference internal" href="#smooth">smooth</a></li>
+<li><a class="reference internal" href="#facetransform">faceTransform</a></li>
+<li><a class="reference internal" href="#softtransform">softTransform</a></li>
+<li><a class="reference internal" href="#warp">warp</a></li>
+<li><a class="reference internal" href="#createfacegroup">createFaceGroup</a></li>
+<li><a class="reference internal" href="#clearfacegroup">clearFaceGroup</a></li>
+<li><a class="reference internal" href="#smoothboundary">smoothBoundary</a></li>
+<li><a class="reference internal" href="#mirror">mirror</a></li>
+<li><a class="reference internal" href="#duplicate">duplicate</a></li>
+<li><a class="reference internal" href="#transform">transform</a></li>
+<li><a class="reference internal" href="#align">align</a></li>
+<li><a class="reference internal" href="#closecracks">closeCracks</a></li>
+<li><a class="reference internal" href="#generatefacegroups">generateFaceGroups</a></li>
+<li><a class="reference internal" href="#makesolid">makeSolid</a></li>
+<li><a class="reference internal" href="#hollow">hollow</a></li>
+<li><a class="reference internal" href="#makepattern">makePattern</a></li>
+<li><a class="reference internal" href="#makeslices">makeSlices</a></li>
+<li><a class="reference internal" href="#separateshells">separateShells</a></li>
+<li><a class="reference internal" href="#addtube">addTube</a></li>
+<li><a class="reference internal" href="#combine">combine</a></li>
+<li><a class="reference internal" href="#union">union</a></li>
+<li><a class="reference internal" href="#difference">difference</a></li>
+<li><a class="reference internal" href="#intersection">intersection</a></li>
+<li><a class="reference internal" href="#inspector">inspector</a></li>
+<li><a class="reference internal" href="#units">units</a></li>
+<li><a class="reference internal" href="#measure">measure</a></li>
+<li><a class="reference internal" href="#stability">stability</a></li>
+<li><a class="reference internal" href="#strength">strength</a></li>
+<li><a class="reference internal" href="#overhangs">overhangs</a></li>
+<li><a class="reference internal" href="#slicing">slicing</a></li>
+<li><a class="reference internal" href="#thickness">thickness</a></li>
+<li><a class="reference internal" href="#orientation">orientation</a></li>
+<li><a class="reference internal" href="#layout">layout</a></li>
+<li><a class="reference internal" href="#deviation">deviation</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/tool_params.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="index.html">mm-python 0.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2014, Autodesk.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3b2.
+    </div>
+  </body>
+</html>

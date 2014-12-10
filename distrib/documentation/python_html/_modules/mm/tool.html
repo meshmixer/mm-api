@@ -1,0 +1,170 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>mm.tool &mdash; mm-python 0.2 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="mm-python 0.2 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">mm-python 0.2 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for mm.tool</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">mmapi</span><span class="p">;</span>
+<span class="kn">from</span> <span class="nn">convert</span> <span class="kn">import</span> <span class="o">*</span><span class="p">;</span>
+
+
+<div class="viewcode-block" id="begin_tool"><a class="viewcode-back" href="../../index.html#mm.tool.begin_tool">[docs]</a><span class="k">def</span> <span class="nf">begin_tool</span><span class="p">(</span><span class="n">remote</span><span class="p">,</span> <span class="n">tool_name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Begin execution of the Tool called tool_name&quot;&quot;&quot;</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="n">mmapi</span><span class="o">.</span><span class="n">StoredCommands</span><span class="p">()</span>
+    <span class="n">cmd</span><span class="o">.</span><span class="n">AppendBeginToolCommand</span><span class="p">(</span><span class="n">tool_name</span><span class="p">)</span>
+    <span class="n">remote</span><span class="o">.</span><span class="n">runCommand</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="accept_tool"><a class="viewcode-back" href="../../index.html#mm.tool.accept_tool">[docs]</a><span class="k">def</span> <span class="nf">accept_tool</span><span class="p">(</span><span class="n">remote</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Accept the current tool&quot;&quot;&quot;</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="n">mmapi</span><span class="o">.</span><span class="n">StoredCommands</span><span class="p">()</span>
+    <span class="n">cmd</span><span class="o">.</span><span class="n">AppendCompleteToolCommand</span><span class="p">(</span><span class="s">&quot;accept&quot;</span><span class="p">)</span>
+    <span class="n">remote</span><span class="o">.</span><span class="n">runCommand</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span></div>
+<div class="viewcode-block" id="cancel_tool"><a class="viewcode-back" href="../../index.html#mm.tool.cancel_tool">[docs]</a><span class="k">def</span> <span class="nf">cancel_tool</span><span class="p">(</span><span class="n">remote</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Cancel the current tool&quot;&quot;&quot;</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="n">mmapi</span><span class="o">.</span><span class="n">StoredCommands</span><span class="p">()</span>
+    <span class="n">cmd</span><span class="o">.</span><span class="n">AppendCompleteToolCommand</span><span class="p">(</span><span class="s">&quot;cancel&quot;</span><span class="p">)</span>
+    <span class="n">remote</span><span class="o">.</span><span class="n">runCommand</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="set_toolparam"><a class="viewcode-back" href="../../index.html#mm.tool.set_toolparam">[docs]</a><span class="k">def</span> <span class="nf">set_toolparam</span><span class="p">(</span><span class="n">remote</span><span class="p">,</span> <span class="n">param_name</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Set the parameter param_name of the current tool. This function handles int,float,boolean,vector3,and matrix9 inputs&quot;&quot;&quot;</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="n">mmapi</span><span class="o">.</span><span class="n">StoredCommands</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">AppendToolParameterCommand</span><span class="p">(</span><span class="n">param_name</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">AppendToolParameterCommand</span><span class="p">(</span><span class="n">param_name</span><span class="p">,</span> <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">==</span> <span class="mi">9</span><span class="p">:</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">AppendToolParameterCommand</span><span class="p">(</span><span class="n">param_name</span><span class="p">,</span> <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="n">f</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span><span class="n">f</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span><span class="n">f</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span><span class="n">f</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span><span class="n">f</span><span class="p">[</span><span class="mi">8</span><span class="p">])</span>
+    <span class="n">remote</span><span class="o">.</span><span class="n">runCommand</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">key</span>
+
+
+</div>
+<div class="viewcode-block" id="get_toolparam"><a class="viewcode-back" href="../../index.html#mm.tool.get_toolparam">[docs]</a><span class="k">def</span> <span class="nf">get_toolparam</span><span class="p">(</span><span class="n">remote</span><span class="p">,</span> <span class="n">param_name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns the current value of the given Tool parameter, or empty list if the parameter is not found.&quot;&quot;&quot;</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="n">mmapi</span><span class="o">.</span><span class="n">StoredCommands</span><span class="p">()</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">AppendGetToolParameterCommand</span><span class="p">(</span><span class="n">param_name</span><span class="p">)</span>
+    <span class="n">remote</span><span class="o">.</span><span class="n">runCommand</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+    <span class="n">result_val</span> <span class="o">=</span> <span class="n">mmapi</span><span class="o">.</span><span class="n">any_result</span><span class="p">()</span>
+    <span class="n">bFound</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">GetToolParameterCommandResult</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">result_val</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">bFound</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">result_val</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">result_val</span><span class="o">.</span><span class="n">f</span>
+        <span class="k">elif</span> <span class="n">result_val</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">result_val</span><span class="o">.</span><span class="n">i</span>
+        <span class="k">elif</span> <span class="n">result_val</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">result_val</span><span class="o">.</span><span class="n">b</span>
+        <span class="k">elif</span> <span class="n">result_val</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">result_val</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">result_val</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">result_val</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">result_val</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">result_val</span><span class="o">.</span><span class="n">m</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">()</span>
+
+
+</div>
+<div class="viewcode-block" id="tool_utility_command"><a class="viewcode-back" href="../../index.html#mm.tool.tool_utility_command">[docs]</a><span class="k">def</span> <span class="nf">tool_utility_command</span><span class="p">(</span><span class="n">remote</span><span class="p">,</span> <span class="n">command_name</span><span class="p">,</span> <span class="n">arg</span> <span class="o">=</span> <span class="o">-</span><span class="mi">99</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Run a Tool utility command, with optional argument (see ::AppendToolUtilityCommand in StoredCommands.h)&quot;&quot;&quot;</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="n">mmapi</span><span class="o">.</span><span class="n">StoredCommands</span><span class="p">()</span>
+    <span class="k">if</span> <span class="p">(</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">arg</span> <span class="o">==</span> <span class="o">-</span><span class="mi">99</span> <span class="p">):</span>
+        <span class="n">cmd</span><span class="o">.</span><span class="n">AppendToolUtilityCommand</span><span class="p">(</span> <span class="n">command_name</span> <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cmd</span><span class="o">.</span><span class="n">AppendToolUtilityCommand</span><span class="p">(</span> <span class="n">command_name</span><span class="p">,</span> <span class="n">arg</span> <span class="p">)</span>
+    <span class="n">remote</span><span class="o">.</span><span class="n">runCommand</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="toolquery_new_groups"><a class="viewcode-back" href="../../index.html#mm.tool.toolquery_new_groups">[docs]</a><span class="k">def</span> <span class="nf">toolquery_new_groups</span><span class="p">(</span><span class="n">remote</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get a list of new groups created by last tool (NOTE: many Tools do not support this yet!)&quot;&quot;&quot;</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="n">mmapi</span><span class="o">.</span><span class="n">StoredCommands</span><span class="p">()</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">AppendToolQuery_NewGroups</span><span class="p">()</span>
+    <span class="n">remote</span><span class="o">.</span><span class="n">runCommand</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+    <span class="n">new_groups</span> <span class="o">=</span> <span class="n">mmapi</span><span class="o">.</span><span class="n">vectori</span><span class="p">()</span>
+    <span class="n">bOK</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">GetToolQueryResult_NewGroups</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">new_groups</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">vectori_to_list</span><span class="p">(</span><span class="n">new_groups</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">mm-python 0.2 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2014, Autodesk.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3b2.
+    </div>
+  </body>
+</html>

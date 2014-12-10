@@ -1,0 +1,596 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>mm python module documentation &mdash; mm-python 0.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="mm-python 0.2 documentation" href="#" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="#">mm-python 0.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="mm-python-module-documentation">
+<h1>mm python module documentation<a class="headerlink" href="#mm-python-module-documentation" title="Permalink to this headline">¶</a></h1>
+<p>The mm python module is a wrapper for the SWIG-generated mmapi python module.
+The purpose of this module is to provide shorter, more convenient
+function names, that respect python conventions.</p>
+<p>The mm module is organized into various top-level modules:</p>
+<p>core meshmixer manipulation modules:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#module-mm.scene" title="mm.scene"><code class="xref py py-mod docutils literal"><span class="pre">mm.scene</span></code></a>: Scene manipulation</li>
+<li><a class="reference internal" href="#module-mm.selection" title="mm.selection"><code class="xref py py-mod docutils literal"><span class="pre">mm.selection</span></code></a>: create/manipulate Selections</li>
+<li><a class="reference internal" href="#module-mm.tool" title="mm.tool"><code class="xref py py-mod docutils literal"><span class="pre">mm.tool</span></code></a>: run Tools, set parameters</li>
+</ul>
+<p>meshmixer query modules:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#module-mm.convert" title="mm.convert"><code class="xref py py-mod docutils literal"><span class="pre">mm.convert</span></code></a>: conversion utility functions</li>
+<li><a class="reference internal" href="#module-mm.util" title="mm.util"><code class="xref py py-mod docutils literal"><span class="pre">mm.util</span></code></a>: spatial queries</li>
+</ul>
+<p>utility modules:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#module-mm.frame" title="mm.frame"><code class="xref py py-mod docutils literal"><span class="pre">mm.frame</span></code></a>: mmFrame class</li>
+<li><a class="reference internal" href="#module-mm.mm_math" title="mm.mm_math"><code class="xref py py-mod docutils literal"><span class="pre">mm.mm_math</span></code></a>: linear algebra, math utilities</li>
+</ul>
+</div>
+<div class="section" id="important-notes">
+<h1>Important Notes<a class="headerlink" href="#important-notes" title="Permalink to this headline">¶</a></h1>
+<p>This documentation was generated on December 10, 2014, the current version of meshmixer at this time is 2.7. You can get the most recent version of the mm-api package, including the mm module and this documentation, at <a class="reference external" href="https://github.com/meshmixer/mm-api">https://github.com/meshmixer/mm-api</a></p>
+<p>Please also see the github mainpage readme (ie follow the link above) for more details on the mm-api package, including setup instructions. This package is under active development and will change frequently. In particular, you must have a version compatible with the meshmixer installation you are running.</p>
+</div>
+<div class="section" id="usage-tips">
+<h1>Usage Tips<a class="headerlink" href="#usage-tips" title="Permalink to this headline">¶</a></h1>
+<p>These modules all depend on the <code class="docutils literal"><span class="pre">mmapi</span></code> module, which is part of the mm-api package, found in the <code class="docutils literal"><span class="pre">/distrib/python</span></code> folder.</p>
+<p>You can <code class="docutils literal"><span class="pre">import</span> <span class="pre">mm</span></code> and then access most top-level functions as <code class="docutils literal"><span class="pre">mm.&lt;function_name&gt;</span></code>, rather than importing each sub-module. However, specifically for the math manipulation functions, you may find you can write cleaner code by also adding <code class="docutils literal"><span class="pre">import</span> <span class="pre">mm.mm_math</span></code>.</p>
+<p>The Meshmixer desktop application uses a normalized coordinate system internally. These coordinates are referred to as <strong>Scene</strong> coordinates, versus <strong>World</strong> coordinates, which are in the current physical dimensions of the scene. Currently many API functions expect and return points/dimensions in this space. See the <a class="reference internal" href="#module-mm.convert" title="mm.convert"><code class="xref py py-mod docutils literal"><span class="pre">mm.convert</span></code></a> module for details on converting between Scene and World coordinates.</p>
+</div>
+<div class="section" id="meshmixer-manipulation-modules">
+<h1>Meshmixer Manipulation Modules<a class="headerlink" href="#meshmixer-manipulation-modules" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-mm.scene">
+<span id="mm-scene-module"></span><h2>mm.scene module<a class="headerlink" href="#module-mm.scene" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mm.scene.append_objects_from_file">
+<code class="descclassname">mm.scene.</code><code class="descname">append_objects_from_file</code><span class="sig-paren">(</span><em>remote</em>, <em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/scene.html#append_objects_from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.scene.append_objects_from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read objects from a mesh file, append them to the scene, and return a list of new object IDs</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.scene.clear_target">
+<code class="descclassname">mm.scene.</code><code class="descname">clear_target</code><span class="sig-paren">(</span><em>remote</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/scene.html#clear_target"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.scene.clear_target" title="Permalink to this definition">¶</a></dt>
+<dd><p>clear the current Target object setting</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.scene.delete_objects">
+<code class="descclassname">mm.scene.</code><code class="descname">delete_objects</code><span class="sig-paren">(</span><em>remote</em>, <em>objects_list</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/scene.html#delete_objects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.scene.delete_objects" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete the scene objects corresponding to the IDs in objects_list</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.scene.find_object_by_name">
+<code class="descclassname">mm.scene.</code><code class="descname">find_object_by_name</code><span class="sig-paren">(</span><em>remote</em>, <em>obj_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/scene.html#find_object_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.scene.find_object_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the ID of the scene object with the given string name. Returns a 2-tuple (boolFound, object_id)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.scene.get_object_name">
+<code class="descclassname">mm.scene.</code><code class="descname">get_object_name</code><span class="sig-paren">(</span><em>remote</em>, <em>object_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/scene.html#get_object_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.scene.get_object_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the string name of the scene object with the given ID</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.scene.list_objects">
+<code class="descclassname">mm.scene.</code><code class="descname">list_objects</code><span class="sig-paren">(</span><em>remote</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/scene.html#list_objects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.scene.list_objects" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of object IDs for the current scene</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.scene.list_selected_groups">
+<code class="descclassname">mm.scene.</code><code class="descname">list_selected_groups</code><span class="sig-paren">(</span><em>remote</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/scene.html#list_selected_groups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.scene.list_selected_groups" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of unique facegroup IDs for the current face selection (requires an active selection)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.scene.list_selected_objects">
+<code class="descclassname">mm.scene.</code><code class="descname">list_selected_objects</code><span class="sig-paren">(</span><em>remote</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/scene.html#list_selected_objects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.scene.list_selected_objects" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of object IDs for the current set of selected scene objects</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.scene.open_mix">
+<code class="descclassname">mm.scene.</code><code class="descname">open_mix</code><span class="sig-paren">(</span><em>remote</em>, <em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/scene.html#open_mix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.scene.open_mix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open a .mix file at the given location</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.scene.save_mix">
+<code class="descclassname">mm.scene.</code><code class="descname">save_mix</code><span class="sig-paren">(</span><em>remote</em>, <em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/scene.html#save_mix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.scene.save_mix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the current scene as a .mix file at the given location</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.scene.select_objects">
+<code class="descclassname">mm.scene.</code><code class="descname">select_objects</code><span class="sig-paren">(</span><em>remote</em>, <em>objects_list</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/scene.html#select_objects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.scene.select_objects" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the current objects selection to be the set of scene objects corresponding to the IDs in objects_list</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.scene.set_as_target">
+<code class="descclassname">mm.scene.</code><code class="descname">set_as_target</code><span class="sig-paren">(</span><em>remote</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/scene.html#set_as_target"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.scene.set_as_target" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the current scene object as the Target object</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.scene.set_object_name">
+<code class="descclassname">mm.scene.</code><code class="descname">set_object_name</code><span class="sig-paren">(</span><em>remote</em>, <em>object_id</em>, <em>new_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/scene.html#set_object_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.scene.set_object_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modify the string name of the scene object with the given ID</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-mm.selection">
+<span id="mm-selection-module"></span><h2>mm.selection module<a class="headerlink" href="#module-mm.selection" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mm.selection.clear_face_selection">
+<code class="descclassname">mm.selection.</code><code class="descname">clear_face_selection</code><span class="sig-paren">(</span><em>remote</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/selection.html#clear_face_selection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.selection.clear_face_selection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clear the current face selection (if there is one) and exit the Selection Tool</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.selection.select_all">
+<code class="descclassname">mm.selection.</code><code class="descname">select_all</code><span class="sig-paren">(</span><em>remote</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/selection.html#select_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.selection.select_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select all faces of the active object (will initialize a Selection Tool if necessary)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.selection.select_facegroups">
+<code class="descclassname">mm.selection.</code><code class="descname">select_facegroups</code><span class="sig-paren">(</span><em>remote</em>, <em>groups_list</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/selection.html#select_facegroups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.selection.select_facegroups" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select the faces which have a facegroup ID in groups_list</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.selection.select_inside_sphere">
+<code class="descclassname">mm.selection.</code><code class="descname">select_inside_sphere</code><span class="sig-paren">(</span><em>remote</em>, <em>sphere_center</em>, <em>sphere_radius</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/selection.html#select_inside_sphere"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.selection.select_inside_sphere" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select the faces inside the sphere with given center/radius. Requires active Selection Tool.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.selection.selection_utility_command">
+<code class="descclassname">mm.selection.</code><code class="descname">selection_utility_command</code><span class="sig-paren">(</span><em>remote</em>, <em>command_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/selection.html#selection_utility_command"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.selection.selection_utility_command" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a selection utility command (see ::AppendSelectUtilityCommand in StoredCommands.h)</p>
+</dd></dl>
+
+</div>
+<div class="section" id="mm-tool-module">
+<h2>mm.tool module<a class="headerlink" href="#mm-tool-module" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Tool string names: <a class="reference internal" href="tools.html#tool-names-label"><em>Tool Strings</em></a></li>
+<li>Tool parameters: <a class="reference internal" href="tool_params.html#tool-params-label"><em>Tool Parameters</em></a></li>
+</ul>
+<span class="target" id="module-mm.tool"></span><dl class="function">
+<dt id="mm.tool.accept_tool">
+<code class="descclassname">mm.tool.</code><code class="descname">accept_tool</code><span class="sig-paren">(</span><em>remote</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/tool.html#accept_tool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.tool.accept_tool" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accept the current tool</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.tool.begin_tool">
+<code class="descclassname">mm.tool.</code><code class="descname">begin_tool</code><span class="sig-paren">(</span><em>remote</em>, <em>tool_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/tool.html#begin_tool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.tool.begin_tool" title="Permalink to this definition">¶</a></dt>
+<dd><p>Begin execution of the Tool called tool_name</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.tool.cancel_tool">
+<code class="descclassname">mm.tool.</code><code class="descname">cancel_tool</code><span class="sig-paren">(</span><em>remote</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/tool.html#cancel_tool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.tool.cancel_tool" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cancel the current tool</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.tool.get_toolparam">
+<code class="descclassname">mm.tool.</code><code class="descname">get_toolparam</code><span class="sig-paren">(</span><em>remote</em>, <em>param_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/tool.html#get_toolparam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.tool.get_toolparam" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the current value of the given Tool parameter, or empty list if the parameter is not found.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.tool.set_toolparam">
+<code class="descclassname">mm.tool.</code><code class="descname">set_toolparam</code><span class="sig-paren">(</span><em>remote</em>, <em>param_name</em>, <em>f</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/tool.html#set_toolparam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.tool.set_toolparam" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the parameter param_name of the current tool. This function handles int,float,boolean,vector3,and matrix9 inputs</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.tool.tool_utility_command">
+<code class="descclassname">mm.tool.</code><code class="descname">tool_utility_command</code><span class="sig-paren">(</span><em>remote</em>, <em>command_name</em>, <em>arg=-99</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/tool.html#tool_utility_command"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.tool.tool_utility_command" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a Tool utility command, with optional argument (see ::AppendToolUtilityCommand in StoredCommands.h)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.tool.toolquery_new_groups">
+<code class="descclassname">mm.tool.</code><code class="descname">toolquery_new_groups</code><span class="sig-paren">(</span><em>remote</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/tool.html#toolquery_new_groups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.tool.toolquery_new_groups" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of new groups created by last tool (NOTE: many Tools do not support this yet!)</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="meshmixer-query-modules">
+<h1>Meshmixer Query Modules<a class="headerlink" href="#meshmixer-query-modules" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="mm-convert-module">
+<h2>mm.convert module<a class="headerlink" href="#mm-convert-module" title="Permalink to this headline">¶</a></h2>
+<p>This module contains functions for converting to/from Meshmixer API values, including:</p>
+<ol class="arabic simple">
+<li>Conversion between SWIG-generated API helper structs/classes and python lists/tuples</li>
+<li>Conversion between Meshmixer’s internal World and Scene coordinates</li>
+</ol>
+<p>World/Scene coordinate conversion is one complication of Meshmixer that is not exposed in the desktop application, but must (currently) be managed by API clients.</p>
+<p>Meshmixer internally re-scales imported meshes to a normalized coordinate space, ie a 2x2x2 unit box centered at the origin. API functions for spatial queries, bounding boxes, etc, currently expect points and dimensions in this normalized space, and return normalized results as well.</p>
+<p>You can use the functions in this module to convert between Scene and World coordinates, where World coordinates are in the current units selected in the Units/Dimension Tool. By default, new scenes (i.e. after an import) have units in millimetres.</p>
+<span class="target" id="module-mm.convert"></span><dl class="function">
+<dt id="mm.convert.toS">
+<code class="descclassname">mm.convert.</code><code class="descname">toS</code><span class="sig-paren">(</span><em>remote</em>, <em>v</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/convert.html#toS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.convert.toS" title="Permalink to this definition">¶</a></dt>
+<dd><p>same as to_scene(), but shorter</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.convert.toW">
+<code class="descclassname">mm.convert.</code><code class="descname">toW</code><span class="sig-paren">(</span><em>remote</em>, <em>v</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/convert.html#toW"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.convert.toW" title="Permalink to this definition">¶</a></dt>
+<dd><p>same as to_world(), but shorter</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.convert.to_scene">
+<code class="descclassname">mm.convert.</code><code class="descname">to_scene</code><span class="sig-paren">(</span><em>remote</em>, <em>v</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/convert.html#to_scene"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.convert.to_scene" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert input from World space to Scene space (dimension or 3D point)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.convert.to_scene_f">
+<code class="descclassname">mm.convert.</code><code class="descname">to_scene_f</code><span class="sig-paren">(</span><em>remote</em>, <em>f</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/convert.html#to_scene_f"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.convert.to_scene_f" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert a scalar dimension from World space to Scene space</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.convert.to_scene_xyz">
+<code class="descclassname">mm.convert.</code><code class="descname">to_scene_xyz</code><span class="sig-paren">(</span><em>remote</em>, <em>x</em>, <em>y</em>, <em>z</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/convert.html#to_scene_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.convert.to_scene_xyz" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert a 3D point from World space to Scene space</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.convert.to_world">
+<code class="descclassname">mm.convert.</code><code class="descname">to_world</code><span class="sig-paren">(</span><em>remote</em>, <em>v</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/convert.html#to_world"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.convert.to_world" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert input from Scene space to World space (dimension or 3D point)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.convert.to_world_f">
+<code class="descclassname">mm.convert.</code><code class="descname">to_world_f</code><span class="sig-paren">(</span><em>remote</em>, <em>f</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/convert.html#to_world_f"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.convert.to_world_f" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert a scalar dimension from Scene space to World space</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.convert.to_world_xyz">
+<code class="descclassname">mm.convert.</code><code class="descname">to_world_xyz</code><span class="sig-paren">(</span><em>remote</em>, <em>x</em>, <em>y</em>, <em>z</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/convert.html#to_world_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.convert.to_world_xyz" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert a 3D point from Scene space to World space</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.convert.vectori_to_list">
+<code class="descclassname">mm.convert.</code><code class="descname">vectori_to_list</code><span class="sig-paren">(</span><em>vi</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/convert.html#vectori_to_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.convert.vectori_to_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert a SWIG vectori object to a Python list</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.convert.vectorub_to_string">
+<code class="descclassname">mm.convert.</code><code class="descname">vectorub_to_string</code><span class="sig-paren">(</span><em>vub</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/convert.html#vectorub_to_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.convert.vectorub_to_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert a SWIG vectorub object to a Python string</p>
+</dd></dl>
+
+</div>
+<div class="section" id="mm-util-module">
+<h2>mm.util module<a class="headerlink" href="#mm-util-module" title="Permalink to this headline">¶</a></h2>
+<p>This module contains spatial query functions, i.e. functions which return bounding-boxes, find nearest-point-on-surface, ray-cast, etc.</p>
+<p><strong>This module is likely to be renamed in the near future</strong></p>
+<span class="target" id="module-mm.util"></span><dl class="function">
+<dt id="mm.util.find_nearest">
+<code class="descclassname">mm.util.</code><code class="descname">find_nearest</code><span class="sig-paren">(</span><em>remote</em>, <em>position</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/util.html#find_nearest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.util.find_nearest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the nearest point on the 3D surface to the input 3-tuple. Returns a tuple (bOK, hitFrame), where bOK is a boolean indicating if a nereast point was found, and hitFrame is an mmFrame at the hit point, with Z axis oriented to the surface normal</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.util.find_ray_hit">
+<code class="descclassname">mm.util.</code><code class="descname">find_ray_hit</code><span class="sig-paren">(</span><em>remote</em>, <em>ray_origin</em>, <em>ray_direction</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/util.html#find_ray_hit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.util.find_ray_hit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the intersection of a ray (specified by 3-tuples for origin and direction) and the 3D surface. Returns a tuple (bOK, hitFrame), where bOK is a boolean indicating if a hit was found, and hitFrame is an mmFrame at the hit point, with Z axis oriented to the surface normal</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.util.get_face_selection_bounding_box">
+<code class="descclassname">mm.util.</code><code class="descname">get_face_selection_bounding_box</code><span class="sig-paren">(</span><em>remote</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/util.html#get_face_selection_bounding_box"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.util.get_face_selection_bounding_box" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the axis-aligned bounding box of the selected faces as two 3-tuples (min, max). Requires active face selection.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.util.get_face_selection_centroid">
+<code class="descclassname">mm.util.</code><code class="descname">get_face_selection_centroid</code><span class="sig-paren">(</span><em>remote</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/util.html#get_face_selection_centroid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.util.get_face_selection_centroid" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the geometric centroid of the selected faces as a 3-tuple. Requires active face selection.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.util.get_selected_bounding_box">
+<code class="descclassname">mm.util.</code><code class="descname">get_selected_bounding_box</code><span class="sig-paren">(</span><em>remote</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/util.html#get_selected_bounding_box"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.util.get_selected_bounding_box" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the axis-aligned bounding box of the selected objects as two 3-tuples (min, max)</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="utility-modules">
+<h1>Utility Modules<a class="headerlink" href="#utility-modules" title="Permalink to this headline">¶</a></h1>
+<p>These modules do not actually make meshmixer API calls, they are included to make it easier to use the python API, and/or to write sample code.</p>
+<div class="section" id="module-mm.frame">
+<span id="mm-frame-module"></span><h2>mm.frame module<a class="headerlink" href="#module-mm.frame" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="mm.frame.mmFrame">
+<em class="property">class </em><code class="descclassname">mm.frame.</code><code class="descname">mmFrame</code><a class="reference internal" href="_modules/mm/frame.html#mmFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.frame.mmFrame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>This class represents a 3D frame with an origin (.origin)
+and .x/.y/.z ortho-normal axes.</p>
+<dl class="method">
+<dt id="mm.frame.mmFrame.get_matrix">
+<code class="descname">get_matrix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/frame.html#mmFrame.get_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.frame.mmFrame.get_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>return orientation as 9-element tuple</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mm.frame.mmFrame.set">
+<code class="descname">set</code><span class="sig-paren">(</span><em>o</em>, <em>x</em>, <em>y</em>, <em>z</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/frame.html#mmFrame.set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.frame.mmFrame.set" title="Permalink to this definition">¶</a></dt>
+<dd><p>initialize with origin and X/Y/Z axes</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mm.frame.mmFrame.setFromMM">
+<code class="descname">setFromMM</code><span class="sig-paren">(</span><em>f</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/frame.html#mmFrame.setFromMM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.frame.mmFrame.setFromMM" title="Permalink to this definition">¶</a></dt>
+<dd><p>initialize with wrapped C++ frame3f object, see StoredCommands.h</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-mm.mm_math">
+<span id="mm-mm-math-module"></span><h2>mm.mm_math module<a class="headerlink" href="#module-mm.mm_math" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mm.mm_math.addv3">
+<code class="descclassname">mm.mm_math.</code><code class="descname">addv3</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/mm_math.html#addv3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.mm_math.addv3" title="Permalink to this definition">¶</a></dt>
+<dd><p>add 3-vector b to a</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.mm_math.addv3s">
+<code class="descclassname">mm.mm_math.</code><code class="descname">addv3s</code><span class="sig-paren">(</span><em>vec</em>, <em>scalar</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/mm_math.html#addv3s"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.mm_math.addv3s" title="Permalink to this definition">¶</a></dt>
+<dd><p>add scalar to elements of 3-vector</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.mm_math.addvs">
+<code class="descclassname">mm.mm_math.</code><code class="descname">addvs</code><span class="sig-paren">(</span><em>vec</em>, <em>s</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/mm_math.html#addvs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.mm_math.addvs" title="Permalink to this definition">¶</a></dt>
+<dd><p>add scalar to elements of vector</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.mm_math.deg_to_rad">
+<code class="descclassname">mm.mm_math.</code><code class="descname">deg_to_rad</code><span class="sig-paren">(</span><em>angle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/mm_math.html#deg_to_rad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.mm_math.deg_to_rad" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert angle from degrees to radians</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.mm_math.divv3s">
+<code class="descclassname">mm.mm_math.</code><code class="descname">divv3s</code><span class="sig-paren">(</span><em>vec</em>, <em>scalar</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/mm_math.html#divv3s"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.mm_math.divv3s" title="Permalink to this definition">¶</a></dt>
+<dd><p>divide elements of 3-vector by scalar</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.mm_math.divvs">
+<code class="descclassname">mm.mm_math.</code><code class="descname">divvs</code><span class="sig-paren">(</span><em>vec</em>, <em>s</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/mm_math.html#divvs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.mm_math.divvs" title="Permalink to this definition">¶</a></dt>
+<dd><p>divide elements of vector by scalar</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.mm_math.dotv3">
+<code class="descclassname">mm.mm_math.</code><code class="descname">dotv3</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/mm_math.html#dotv3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.mm_math.dotv3" title="Permalink to this definition">¶</a></dt>
+<dd><p>dot product of 3-vectors a and b</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.mm_math.lerpv3">
+<code class="descclassname">mm.mm_math.</code><code class="descname">lerpv3</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>t</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/mm_math.html#lerpv3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.mm_math.lerpv3" title="Permalink to this definition">¶</a></dt>
+<dd><p>linear interplation (1-t)*a + (t)*b</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.mm_math.make_matrix_from_axes">
+<code class="descclassname">mm.mm_math.</code><code class="descname">make_matrix_from_axes</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>z</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/mm_math.html#make_matrix_from_axes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.mm_math.make_matrix_from_axes" title="Permalink to this definition">¶</a></dt>
+<dd><p>construct orientation matrix from basis vectors</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.mm_math.make_rotX_matrix">
+<code class="descclassname">mm.mm_math.</code><code class="descname">make_rotX_matrix</code><span class="sig-paren">(</span><em>angle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/mm_math.html#make_rotX_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.mm_math.make_rotX_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>construct matrix that rotates around X axis by angle (in radians)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.mm_math.make_rotY_matrix">
+<code class="descclassname">mm.mm_math.</code><code class="descname">make_rotY_matrix</code><span class="sig-paren">(</span><em>angle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/mm_math.html#make_rotY_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.mm_math.make_rotY_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>construct matrix that rotates around Y axis by angle (in radians)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.mm_math.make_rotZ_matrix">
+<code class="descclassname">mm.mm_math.</code><code class="descname">make_rotZ_matrix</code><span class="sig-paren">(</span><em>angle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/mm_math.html#make_rotZ_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.mm_math.make_rotZ_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>construct matrix that rotates around Z axis by angle (in radians)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.mm_math.mulv3s">
+<code class="descclassname">mm.mm_math.</code><code class="descname">mulv3s</code><span class="sig-paren">(</span><em>vec</em>, <em>scalar</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/mm_math.html#mulv3s"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.mm_math.mulv3s" title="Permalink to this definition">¶</a></dt>
+<dd><p>multiply elements of 3-vector by scalar</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.mm_math.mulvs">
+<code class="descclassname">mm.mm_math.</code><code class="descname">mulvs</code><span class="sig-paren">(</span><em>vec</em>, <em>s</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/mm_math.html#mulvs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.mm_math.mulvs" title="Permalink to this definition">¶</a></dt>
+<dd><p>multiply elements of vector by scalar</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.mm_math.negv3">
+<code class="descclassname">mm.mm_math.</code><code class="descname">negv3</code><span class="sig-paren">(</span><em>a</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/mm_math.html#negv3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.mm_math.negv3" title="Permalink to this definition">¶</a></dt>
+<dd><p>negate 3-vector</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.mm_math.rad_to_deg">
+<code class="descclassname">mm.mm_math.</code><code class="descname">rad_to_deg</code><span class="sig-paren">(</span><em>angle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/mm_math.html#rad_to_deg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.mm_math.rad_to_deg" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert angle from radians to degrees</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.mm_math.subv3">
+<code class="descclassname">mm.mm_math.</code><code class="descname">subv3</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/mm_math.html#subv3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.mm_math.subv3" title="Permalink to this definition">¶</a></dt>
+<dd><p>subtract 3-vector b from a</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.mm_math.subv3s">
+<code class="descclassname">mm.mm_math.</code><code class="descname">subv3s</code><span class="sig-paren">(</span><em>vec</em>, <em>scalar</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/mm_math.html#subv3s"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.mm_math.subv3s" title="Permalink to this definition">¶</a></dt>
+<dd><p>subtract scalar from elements of 3-vector</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.mm_math.subvs">
+<code class="descclassname">mm.mm_math.</code><code class="descname">subvs</code><span class="sig-paren">(</span><em>vec</em>, <em>s</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/mm_math.html#subvs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.mm_math.subvs" title="Permalink to this definition">¶</a></dt>
+<dd><p>subtract scalar from elements of vector</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mm.mm_math.transpose">
+<code class="descclassname">mm.mm_math.</code><code class="descname">transpose</code><span class="sig-paren">(</span><em>matrix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mm/mm_math.html#transpose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mm.mm_math.transpose" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the transpose of a matrix stored as a 9-element tuple</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-mm">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-mm" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><em>Index</em></a></li>
+<li><a class="reference internal" href="py-modindex.html"><em>Module Index</em></a></li>
+<li><a class="reference internal" href="search.html"><em>Search Page</em></a></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">mm python module documentation</a></li>
+<li><a class="reference internal" href="#important-notes">Important Notes</a></li>
+<li><a class="reference internal" href="#usage-tips">Usage Tips</a></li>
+<li><a class="reference internal" href="#meshmixer-manipulation-modules">Meshmixer Manipulation Modules</a><ul>
+<li><a class="reference internal" href="#module-mm.scene">mm.scene module</a></li>
+<li><a class="reference internal" href="#module-mm.selection">mm.selection module</a></li>
+<li><a class="reference internal" href="#mm-tool-module">mm.tool module</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#meshmixer-query-modules">Meshmixer Query Modules</a><ul>
+<li><a class="reference internal" href="#mm-convert-module">mm.convert module</a></li>
+<li><a class="reference internal" href="#mm-util-module">mm.util module</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#utility-modules">Utility Modules</a><ul>
+<li><a class="reference internal" href="#module-mm.frame">mm.frame module</a></li>
+<li><a class="reference internal" href="#module-mm.mm_math">mm.mm_math module</a></li>
+<li><a class="reference internal" href="#module-mm">Module contents</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="#">mm-python 0.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2014, Autodesk.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3b2.
+    </div>
+  </body>
+</html>
