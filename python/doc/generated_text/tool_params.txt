@@ -1,0 +1,280 @@
+
+		[select]			- start face selection tool
+			"size" : float 
+			"brushType" : integer 
+			"symmetry" : boolean 
+		[volumeBrush]		- start volume brush tool
+			"strength" : float  range [0,1]
+			"size" : float 
+			"depth" : float          range [-1,1]
+			"lazyness" : float       range [0,1]
+			"refine" : float         range [0,1]
+			"reduce" : float         range [0,1]
+			"refineSmooth" : float   range [0,1]
+			"attractStrength" : float 
+			"volumetric" : boolean 
+			"symmetric" : boolean 
+			"surfSnap" : boolean 
+			"continuous" : boolean 
+			"enableRefinement" : boolean 
+			"restrictToGroup" : boolean 
+			"holdBoundary" : boolean 
+			"preserveGroups" : boolean 
+			"brushOnTarget" : boolean 
+			"adaptiveRefinement" : boolean 
+		[surfaceBrush]		- start surface brush tool
+			"restrictToGroup" : boolean 
+			"holdBoundary" : boolean 
+			"preserveGroups" : boolean 
+		[stamp]				- start stamp tool
+			"snapDimension" : boolean 
+
+		[erase]				- Erase/Fill tool
+			"density" : float 
+			"smooth" : float 
+			"scale" : float 
+			"boundaryRotate" : float 
+			"replaceType" : integer   values:  MinimalFill = 0, FlatRefinedMesh = 1, MVCPlanarDeformation = 2
+		[discard]			- Discard tool
+		[reduce]			- Reduce tool
+			"percentage" : float 
+			"maxDeviation" : float 
+			"maxDeviationWorld" : float 
+			"smooth" : float 
+			"normalThreshold" : float 
+			"goalType" : integer			Percentage = 0, TriangleBudget = 1,	MaxDeviation = 2
+			"triangleCount" : integer 
+			"reduceMetric" : integer		Uniform = 0, QuadricError = 1
+			"preserveGroups" : boolean 
+			"preserveBoundary" : boolean 
+			"adaptive" : boolean 
+		[remesh]			- Remesh tool
+			"density" : float 
+			"smooth" : float 
+			"normalThreshold" : float 
+			"boundaryMode" : integer 
+			"remeshType" : integer  values: Uniform = 0,	 Adaptive_Normal = 1
+			"preserveGroups" : boolean 
+			"adaptive" : boolean 
+		[extrude]			- Extrude tool
+			"offset" : float   range [-inf, inf]
+			"harden" : float   range [0,1]
+			"density" : float  range [0,1]
+			"endType" : integer   values: Offset = 0, Flat = 1
+			"directionType" : integer  values: Normal = 0, Constant = 1, XAxis = 2, YAxis = 3,	ZAxis = 4
+		[extract]			- Extract tool
+			"offset" : float 
+			"endType" : integer  values: OffsetDistance = 0,	 PlanarFlat = 1
+			"directionType" : integer  values: NormalDirection = 0,	 ConstantDirection = 1,	 UnitXDirection = 2,	 UnitYDirection = 3,	 UnitZDirection = 4
+		[offset]			- Offset tool
+			"offset" : float 
+			"offsetWorld" : float 
+			"soften" : float 
+			"softenWorld" : float 
+			"connected" : boolean 
+			"fixedBoundary" : boolean 
+		[handle]			- Handle tool
+			"smooth" : float 
+			"refine" : float 
+			"flip" : boolean 
+		[bridge]			- Bridge tool
+			"refine" : float 
+		[join]				- Join tool
+		[weldBoundaries]	- Weld Boundaries tool
+		[separate]			- Separate tool
+		[planeCut]			- Plane Cut tool (with or without selection)
+			"cutType" : integer  values: 	PreciseGeometricCut = 0, PreciseGeometricSlice = 1,	NearestPointAttach = 2,	RefinedICPAttach = 3   (default=0)
+			"fillType" : integer  values: 	NoFill = 0,	CentroidRefinedFill = 1, DelaunayFill = 2,	DelaunayRefinedFill = 3  (default=3)
+			"hardEdge" : boolean 
+			"origin" : vector3f 
+			"normal" : vector3f 
+			"rotation" : matrix3f 
+		[attractToTarget]	- Attract tool
+			"density" : float 
+			"smooth" : float 
+			"offset" : float 
+			"offsetWorld" : float 
+			"normalThreshold" : float 
+			"remeshType" : integer 
+			"preserveGroups" : boolean 
+			"preserveBoundary" : boolean 
+			"findSharpEdges" : boolean 
+			"adaptive" : boolean 
+		[flipNormals]		- Flip Normals tool
+		[fitPrimitive]		- Fit Primitive tool
+			"primitiveType" : integer 
+			"singlePrimitive" : boolean 
+			"createNewObjects" : boolean 
+
+		[makePart]			- Convert (selection) To Open Part
+		[makeSolidPart]		- Convert (selection) To Solid Part
+		[makePolygon]		- Convert (selection) to Stamp polygon
+
+		[smooth]			- Smooth tool
+			"smooth" : float 
+			"scale" : float 
+			"reduceType" : integer 
+		[faceTransform]		- Transform tool
+			"harden" : float 
+			"pivotFrameMode" : integer 
+			"sharedFrame" : boolean 
+			"origin" : vector3f 
+			"translation" : vector3f 
+			"scale" : vector3f 
+			"rotation" : matrix3f 
+		[softTransform]		- Soft Transform tool
+			"falloffDistance" : float 
+			"falloffDistanceWorld" : float 
+			"pivotFrameMode" : integer 
+			"boundaryContinuity" : integer 
+			"transitionType" : integer 
+			"sharedFrame" : boolean 
+			"refineMesh" : boolean 
+			"holdBoundary" : boolean 
+			"falloffFixed" : boolean 
+			"origin" : vector3f 
+			"translation" : vector3f 
+			"scale" : vector3f 
+			"rotation" : matrix3f  
+		[warp]				- Warp tool
+
+		[createFaceGroup]	- Create new FaceGroup for selection
+		[clearFaceGroup]	- Clear FaceGroup for selection
+		[smoothBoundary]	- Smooth Boundary tool
+			"smoothness" : float 
+			"preserveShape" : float 
+			"iterations" : integer 
+			"expandLoops" : integer 
+			"preserveBoundary" : boolean 
+		[mirror]				- Mirror tool
+			"origin" : vector3f 
+			"normal" : vector3f 
+			"rotation" : matrix3f 
+		[duplicate]				- Duplicate tool
+		[transform]				- Transform tool
+			"pivotFrameMode" : integer 
+			"origin" : vector3f 
+			"translation" : vector3f 
+			"scale" : vector3f 
+			"rotation" : matrix3f 
+		[align]					- Align tool
+		[closeCracks]			- Close Cracks tool
+		[generateFaceGroups]	- Generate Face Groups tool
+			"angleThreshold" : float 
+		[makeSolid]				- Make Solid tool
+			"offsetDistance" : float 
+			"offsetDistanceWorld" : float 
+			"minThickness" : float 
+			"minThicknessWorld" : float 
+			"edgeCollapseThresh" : float 
+			"solidType" : integer 
+			"solidResolution" : integer 
+			"meshResolution" : integer 
+			"closeHoles" : boolean 
+			"transferFaceGroups" : boolean
+		[hollow]				- Hollow tool
+			"offsetDistance" : float 
+			"offsetDistanceWorld" : float 
+			"holeRadiusWorld" : float 
+			"holeTaperWorld" : float 
+			"hollowType" : integer 
+			"solidResolution" : integer 
+			"meshResolution" : integer 
+			"holesPerComponent" : integer 
+		[makePattern]			- Make pattern tool
+			"gridResolutionScale" : float 
+			"meshResolutionScale" : float 
+			"dimension1" : float 
+			"spacing1" : float 
+			"offsetDistance" : float 
+			"offsetDistanceWorld" : float 
+			"edgeCollapseThresh" : float 
+			"gradientValue0" : float 
+			"gradientValue1" : float 
+			"pattern" : integer 
+			"tiling" : integer 
+			"compositionMode" : integer 
+			"smoothingIters" : integer 
+			"dimensionGradient" : integer 
+			"clipToSurface" : boolean 
+			"gradientPosition0" : vector3f 
+			"gradientPosition1" : vector3f 
+			"origin" : vector3f 
+			"translation" : vector3f 
+			"rotation" : matrix3f
+		[makeSlices]			- Make Slices tool
+		[separateShells]		- Separate Shells tool
+		[addTube]				- Add Tube tool
+			"startRadius" : float 
+			"startRadiusWorld" : float 
+			"endRadius" : float 
+			"endRadiusWorld" : float 
+			"startTanLenFactor" : float 
+			"lengthScale" : float 
+			"collisionRadius" : float 
+			"collisionRadiusWorld" : float 
+			"curveType" : integer 
+			"operationType" : integer 
+			"directionConstraint" : integer 
+			"solveIterations" : integer 
+		[combine]				- Combine tool (multiple selected objects)
+		[union]					- Boolean Union 
+		[difference]			- Boolean Difference
+		[intersection]			- Boolean Intersection
+
+		[inspector]				- Inspector tool
+			"smallComponentThreshold" : float 
+			"replaceType" : integer 
+		[units]					- Units/Dimensions tool
+			"worldX" : float 
+			"worldY" : float 
+			"worldZ" : float 
+		[measure]				- Measure tool
+		[stability]				- Stability analysis tool
+			"contactTolerance" : float 
+		[strength]				- Strength analysis tool
+			"showSections" : boolean 
+		[overhangs]				- Overhangs/Support-Generation tool
+			"overhangPreset" : integer 
+			"overhangAngleTolerance" : float 
+			"contactTolerance" : float 
+			"verticalOffset" : float 
+			"maxDraftAngle" : float 
+			"density" : float 
+			"layerHeight" : float 
+			"postBaseSize" : float 
+			"postTopSize" : float 
+			"postTipSize" : float 
+			"postTipLayers" : float 
+			"postDiscSize" : float 
+			"postDiscLayers" : float 
+			"strutDensity" : float 
+			"solidMinOffset" : float 
+			"postResolution" : integer 
+			"optimizeRounds" : integer
+			"allowTopSupport" : boolean 
+		[slicing]				- Slicing analysis tool
+			"sliceHeight" : float 
+			"minFeatureSize" : float 
+		[thickness]				- Thickness analysis tool
+			"minThickness" : float 
+			"minThicknessWorld" : float 
+		[orientation]			- Orientation optimization tool
+			"overhangAngleDeg" : float 
+			"strengthWeight" : float 
+			"supportVolumeWeight" : float 
+			"supportSurfaceAreaWeight" : float 
+			"selectedOrientation" : integer 
+			"origin" : vector3f 
+			"translation" : vector3f 
+			"rotation" : matrix3f 
+		[layout]				- Print Bed layout/packing tool
+			"borderWidth" : float 
+			"transformationType" : integer  Translate2D=0, Translate2D_Rotate2D=1
+			"packingQuality" : integer		Fastest = 0, Medium_Quality = 1, Max_Quality = 2
+			"bedOrigin" : integer			RearLeftCorner = 0, Centered = 1
+			"packMetric" : integer		    Circular=0, Square=2, Left-to-Right=3
+		[deviation]				- Deviation measurement between two selected meshes
+			"maxDeviationWorld" : float 
+		[clearance]				- Clearance measurement between two selected meshes
+	 */

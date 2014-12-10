@@ -74,6 +74,9 @@ mm.selection module
 mm.tool module
 --------------
 
+* Tool string names: :ref:`tool-names-label` 
+* Tool parameters: :ref:`tool-params-label` 
+
 .. automodule:: mm.tool
     :members:
     :undoc-members:

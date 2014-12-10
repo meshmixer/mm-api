@@ -1,0 +1,61 @@
+select|start face selection tool
+volumeBrush|start volume brush tool
+surfaceBrush|start surface brush tool
+stamp|start stamp tool
+replace|Replace tool
+erase|Erase/Fill tool
+discard|Discard tool
+reduce|Reduce tool
+remesh|Remesh tool
+extrude|Extrude tool
+extract|Extract tool
+offset|Offset tool
+handle|Handle tool
+bridge|Bridge tool
+join|Join tool
+weldBoundaries|Weld Boundaries tool
+separate|Separate tool
+planeCut|Plane Cut tool (with or without selection)
+attractToTarget|Attract tool
+flipNormals|Flip Normals tool
+fitPrimitive|Fit Primitive tool
+makePart|Convert (selection) To Open Part
+makeSolidPart|Convert (selection) To Solid Part
+makePolygon|Convert (selection) to Stamp polygon
+smooth|Smooth tool
+faceTransform|Transform tool
+softTransform|Soft Transform tool
+warp|Warp tool
+createFaceGroup|Create new FaceGroup for selection
+clearFaceGroup|Clear FaceGroup for selection
+smoothBoundary|Smooth Boundary tool
+mirror|Mirror tool
+duplicate|Duplicate tool
+transform|Transform tool
+align|Align tool
+closeCracks|Close Cracks tool
+generateFaceGroups|Generate Face Groups tool
+makeSolid|Make Solid tool
+hollow|Hollow tool
+makePattern|Make pattern tool
+makeSlices|Make Slices tool
+separateShells|Separate Shells tool
+addTube|Add Tube tool
+
+combine|Combine tool (multiple selected objects)
+union|Boolean Union 
+difference|Boolean Difference
+intersection|Boolean Intersection
+
+inspector|Inspector tool
+units|Units/Dimensions tool
+measure|Measure tool
+stability|Stability analysis tool
+strength|Strength analysis tool
+overhangs|Overhangs/Support-Generation tool
+slicing|Slicing analysis tool
+thickness|Thickness analysis tool
+orientation|Orientation optimization tool
+layout|Print Bed layout/packing tool
+deviation|Deviation measurement between two selected meshes
+clearance|Clearance measurement between two selected meshes
