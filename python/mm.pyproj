@@ -22,6 +22,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="convert.py" />
+    <Compile Include="external.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="frame.py" />
     <Compile Include="mm_math.py" />
     <Compile Include="scene.py" />

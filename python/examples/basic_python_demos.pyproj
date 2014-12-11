@@ -28,6 +28,9 @@
     <Compile Include="demo_06_generate_support.py" />
     <Compile Include="demo_08_transform_obj.py" />
     <Compile Include="demo_07_offset_shell.py" />
+    <Compile Include="demo_09_connector.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="demo_scratch.py" />
     <Compile Include="demo_05_selection.py" />
     <Compile Include="demo_04_scene.py" />
