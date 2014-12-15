@@ -2,7 +2,7 @@ import mmapi
 import struct
 import socket
 import array
-
+import select
 
 class mmRemote:
 	
@@ -16,7 +16,8 @@ class mmRemote:
 		self.send_sock = socket.socket( socket.AF_INET, socket.SOCK_DGRAM )
 		self.receive_sock = socket.socket( socket.AF_INET, socket.SOCK_DGRAM )
 		self.receive_sock.bind( (self.address, self.receive_port) )
-		
+		self.receive_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+		self.receive_sock.setblocking(0)
 	def shutdown(self):	
 		self.send_sock.close()
 		self.receive_sock.close()
@@ -35,7 +36,11 @@ class mmRemote:
 		self.send_sock.sendto( sendBuf, (self.address, self.send_port) )
 		if self.debug_print:
 			print "[mmRemote::runCommand] waiting for response..."
-		data, addr = self.receive_sock.recvfrom(1024*64)
+		ready = select.select([self.receive_sock],[],[],7.0)
+		if ready[0]:
+			data, addr = self.receive_sock.recvfrom(1024*64)
+		else:
+			raise Exception('cannot connect to meshMixer')
 		if self.debug_print:
 			print "[mmRemote::runCommand] received result!..."
 		
