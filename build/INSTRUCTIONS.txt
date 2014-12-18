@@ -1,6 +1,10 @@
-[python]
+[python - win]
 1) run build_python_VS2012.bat
 2) run make_package_python.bat
+
+[python - osx]
+1) run build_python_osx.sh
+2) run make_package_python.sh
 
 
 
