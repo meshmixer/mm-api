@@ -1,5 +1,5 @@
 # Autodesk Meshmixer API  (mm-api)  
-v0.2 November 2014  
+v0.2 December 2014  
 copyright (c) 2014 Autodesk Corporation    http://www.autodesk.com  
 contact:   Ryan.Schmidt@Autodesk.com       http://autodeskresearch.com/people/ryanschmidt  
 See LICENSE file for license information  
@@ -10,12 +10,12 @@ It may not work with previous or later versions.
 Do you have the latest code? Sync here: https://github.com/meshmixer/mm-api
 
 
-CAUTION! PRE-ALPHA RELEASE! CHANGES ARE COMING! 
+CAUTION! CHANGES LIKELY! 
 ===================================================
-The Meshmixer API is under active development, and it is highly
-likely that non-backwards-compatible changes will occur on a
-regular basis. In most cases this will simply result in
-additions to the API, however the following are also likely:
+The Meshmixer API is under active development, and it is
+likely that non-backwards-compatible changes will occur. 
+In most cases this will simply result in additions to the API, 
+however the following are also likely:
    - future versions of the StoredCommands C++ class will not be binary-compatible
    - existing C++ API functions may be renamed or removed
 
@@ -39,9 +39,6 @@ Since the SWIG wrappers are somewhat verbose / unpleasant to use,
 for Python we are also developing a cleaner interface on top-level
 of the SWIG wrapper. See details below.
 
-**WARNING** Currently the python setup included in the distribution is for Windows only. 
-To use OSX you will have to download SWIG yourself.
-
 
 
 Quick Start - Python
@@ -53,7 +50,7 @@ Quick Start - Python
     EnableRemoteStoredCommandServer=true
 
 [2] start meshmixer, import bunny  
-[3] run the script \distrib\python\test.py 
+[3] run the script \distrib\python\test.py (or \distrib\python_osx\test.py on Macs)
    If your bunny is cut in half, the script worked
 
    
@@ -76,10 +73,12 @@ You can find your meshmixer.ini file here:
 
 To build API packages from scratch, run the top-level build_python_distrib.bat file.
 This will require Visual Studio 2012 to be installed on your machine.
-The output API wrapper will be copied to \distrib\python
+The output API wrapper will be copied to \distrib\python.
+On OSX, run the top-level script build_python_distrib.sh, which will
+produce an output API wrapper in \distrib\python_osx
 
-If you received a .zip file, then \distrib\python may already exist. 
-In this case you do not need Visual Studio, simply a Python 2.7 interpreter.
+If you received a .zip file, then \distrib\python and \python_osx may already exist. 
+In this case you do not need Visual Studio or XCode, simply a Python 2.7 interpreter.
 
 
 C++ Details
@@ -109,22 +108,24 @@ recommend that you use the mm module whenever possible. Not only does it
 result in cleaner code, but it will insulate you from the inevitable
 future changes in the SWIG-generated API.
 
-(Have you made improvements to the mm module? Make a pull request!)
+(Have you made improvements to the mm module? Submit a pull request!)
 
 
 
 Documentation ?  
 ===============
-Currently we do not have any stand-alone documentation for the API capabilities.
-This will improve in the future. (Would you like to help? Contribute!)
 
+The C++ interface is not yet documented. 
 API functions take the form of simple commands or query/responses, so usage
 is straightforward. See the StoredCommands.h header for documentation of the
 available functions, and valid strings/arguments.
 
+For Python, preliminary documentation of the mm module is available in
+\distrib\documentation\python_html (open index.html).
+This documentation will be updated periodically.
+
 Many examples of Python API usage are available inside the functions of
-the mm Python module. Usage in other languages is very similar.
-	  
+the mm Python module. Usage in other languages will be very similar.
 	  
 
 Technical Notes
@@ -164,6 +165,9 @@ and so it is likely to be re-designed in the future.
 Changelog
 ===========
 (only significant changes that will impact usage/compatibility)
+
+#### [December 18, 2014]
+- OSX version added
 
 #### [November 27, 2014]
 - initial release, compatible with mm 2.7
