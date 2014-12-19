@@ -7,6 +7,7 @@ del /F /Q *.*
 popd
 
 copy *.py python
+copy StoredCommands.* python
 
 REM run swig to generate python 
 swigwin\swig -c++ -python -o ./python/mmapi.cpp -outdir python mmAPI.i
