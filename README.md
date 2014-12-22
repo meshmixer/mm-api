@@ -4,8 +4,8 @@ copyright (c) 2014 Autodesk Corporation    http://www.autodesk.com
 contact:   Ryan.Schmidt@Autodesk.com       http://autodeskresearch.com/people/ryanschmidt  
 See LICENSE file for license information  
 
-**WARNING** This API distribution is compatible with meshmixer 2.7.
-It may not work with previous or later versions.
+**WARNING** This API distribution is compatible with meshmixer 2.7 and 32-bit Python 2.7.
+It may not work with previous or later versions of meshmixer or Python.
 
 Do you have the latest code? Sync here: https://github.com/meshmixer/mm-api
 
@@ -43,7 +43,7 @@ of the SWIG wrapper. See details below.
 
 Quick Start - Python
 ====================
-[0] Install Python 2.7  
+[0] Install **32-bit Python 2.7**
 [1] open your meshmixer.ini file (paths below) and add the following 
    line under the [Options] section:   
 
@@ -79,6 +79,7 @@ produce an output API wrapper in \distrib\python_osx
 
 If you received a .zip file, then \distrib\python and \python_osx may already exist. 
 In this case you do not need Visual Studio or XCode, simply a Python 2.7 interpreter.
+*Currently we only include a 32-bit libary for Windows.*
 
 
 C++ Details
