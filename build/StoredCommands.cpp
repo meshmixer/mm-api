@@ -674,33 +674,36 @@ void StoredCommands::AppendMouseUpEvent( bool bLeftUp, bool bMiddleUp, bool bRig
 
 
 /*
-	* Camera manipulation
-	*/
+ * Camera manipulation
+ */
+
+#define MMAPI_INIT_CAM_COMMAND(c, cmdtype) c.init(); c.eType = CameraControlCommand; c.c.camera.eType = cmdtype; 
+
 void StoredCommands::CameraControl_Begin()
 {
-	Command c;  c.init();	c.eType = CameraControlCommand;
-	c.c.camera.eType = CamManip;
+	Command c;  
+	MMAPI_INIT_CAM_COMMAND(c, CamManip);
 	c.c.camera.bFlag = true;
 	append_command(c);
 }
 void StoredCommands::CameraControl_End()
 {
-	Command c;  c.init();	c.eType = CameraControlCommand;
-	c.c.camera.eType = CamManip;
+	Command c;  
+	MMAPI_INIT_CAM_COMMAND(c, CamManip);
 	c.c.camera.bFlag = false;
 	append_command(c);
 }
 void StoredCommands::CameraControl_EnableOrbitSnap()
 {
-	Command c;  c.init();	c.eType = CameraControlCommand;
-	c.c.camera.eType = CamToggleSnap;
+	Command c;  
+	MMAPI_INIT_CAM_COMMAND(c, CamToggleSnap);
 	c.c.camera.bFlag = true;
 	append_command(c);
 }
 void StoredCommands::CameraControl_DisableOrbitSnap()
 {
-	Command c;  c.init();	c.eType = CameraControlCommand;
-	c.c.camera.eType = CamToggleSnap;
+	Command c;  
+	MMAPI_INIT_CAM_COMMAND(c, CamToggleSnap);
 	c.c.camera.bFlag = false;
 	append_command(c);
 }
@@ -756,6 +759,20 @@ void StoredCommands::CameraControl_SetSpecificView(const vec3f & eye, const vec3
 	append_command(c);
 }
 
+void StoredCommands::CameraControl_SetOrthographicView()
+{
+	Command c;  c.init();	c.eType = CameraControlCommand;
+	c.c.camera.eType = CamOrthographic;
+	c.c.camera.bFlag = false;
+	append_command(c);
+}
+void StoredCommands::CameraControl_SetPerspectiveView()
+{
+	Command c;  c.init();	c.eType = CameraControlCommand;
+	c.c.camera.eType = CamPerspective;
+	c.c.camera.bFlag = false;
+	append_command(c);
+}
 
 // nMode  0=SmoothNormals, 1=FaceNormals, 2=GroupNormals
 void StoredCommands::ViewControl_SetSurfaceNormalMode(int nMode)
@@ -774,6 +791,66 @@ void StoredCommands::ViewControl_SetTriangleColorMode(int nMode)
 	c.c.camera.nx = nMode;
 	append_command(c);
 }
+
+
+void StoredCommands::ViewControl_SetShowWireframe(bool bShow)
+{
+	Command c;  	MMAPI_INIT_CAM_COMMAND(c, SetShowWireframe);
+	c.c.camera.bFlag = bShow;
+	append_command(c);
+}
+void StoredCommands::ViewControl_SetShowBoundaries(bool bShow)
+{
+	Command c;  	MMAPI_INIT_CAM_COMMAND(c, SetShowBoundaries);
+	c.c.camera.bFlag = bShow;
+	append_command(c);
+}
+void StoredCommands::ViewControl_SetShowGrid(bool bShow)
+{
+	Command c;  	MMAPI_INIT_CAM_COMMAND(c, SetShowGrid);
+	c.c.camera.bFlag = bShow;
+	append_command(c);
+}
+void StoredCommands::ViewControl_SetShowPrinterBed(bool bShow)
+{
+	Command c;  	MMAPI_INIT_CAM_COMMAND(c, SetShowPrinterBed);
+	c.c.camera.bFlag = bShow;
+	append_command(c);
+}
+void StoredCommands::ViewControl_SetTransparentTarget(bool bEnable)
+{
+	Command c;  	MMAPI_INIT_CAM_COMMAND(c, SetTransparentTarget);
+	c.c.camera.bFlag = bEnable;
+	append_command(c);
+}
+
+
+void StoredCommands::ViewControl_SetDefaultShader()
+{
+	Command c;  	MMAPI_INIT_CAM_COMMAND(c, SetShader_Default);
+	append_command(c);
+}
+void StoredCommands::ViewControl_SetXRayShader()
+{
+	Command c;  	MMAPI_INIT_CAM_COMMAND(c, SetShader_XRay);
+	append_command(c);
+}
+void StoredCommands::ViewControl_SetTextureShader()
+{
+	Command c;  	MMAPI_INIT_CAM_COMMAND(c, SetShader_Texture);
+	append_command(c);
+}
+void StoredCommands::ViewControl_SetUVShader()
+{
+	Command c;  	MMAPI_INIT_CAM_COMMAND(c, SetShader_UV);
+	append_command(c);
+}
+void StoredCommands::ViewControl_SetOverhangShader()
+{
+	Command c;  	MMAPI_INIT_CAM_COMMAND(c, SetShader_Overhang);
+	append_command(c);
+}
+
 
 
 
@@ -1159,6 +1236,25 @@ StoredCommands::Key StoredCommands::AppendSceneCommand_AppendMeshFile( const cha
 	return append_command(c);
 }
 bool StoredCommands::GetSceneCommandResult_AppendMeshFile( StoredCommands::Key k, std::vector<int> & vObjects )
+{
+	if ( k >= m_vCommands.size() )
+		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK == 0 )
+		return false;
+	mmsc_extract_vector(vObjects, c.r.scene.nObjectIDs);
+	return true;
+}
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_AppendMeshFileAsReference( const char * pFilename )
+{
+	Command c;  c.init();
+	c.eType = SceneCommand;
+	c.c.scene.eType = AppendMeshFileAsReference;
+	c.c.scene.str = __tomystr(pFilename);
+	return append_command(c);
+}
+bool StoredCommands::GetSceneCommandResult_AppendMeshFileAsReference( StoredCommands::Key k, std::vector<int> & vObjects )
 {
 	if ( k >= m_vCommands.size() )
 		return false;

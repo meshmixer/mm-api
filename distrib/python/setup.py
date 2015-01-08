@@ -8,7 +8,7 @@ from distutils.core import setup, Extension
 
 
 mmapi_module = Extension('_mmapi',
-                           sources=['mmapi.cpp', '..\\StoredCommands.cpp'],
+                           sources=['mmapi.cpp', 'StoredCommands.cpp'],
 						   include_dirs=['..\\'],
 						   define_macros=[('USING_MM_COMMAND_API','1')]
                            )
