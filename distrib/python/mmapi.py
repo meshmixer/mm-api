@@ -599,6 +599,8 @@ class StoredCommands(_object):
     def ViewControl_SetTextureShader(self): return _mmapi.StoredCommands_ViewControl_SetTextureShader(self)
     def ViewControl_SetUVShader(self): return _mmapi.StoredCommands_ViewControl_SetUVShader(self)
     def ViewControl_SetOverhangShader(self): return _mmapi.StoredCommands_ViewControl_SetOverhangShader(self)
+    def ViewControl_ShowObjectBrowser(self): return _mmapi.StoredCommands_ViewControl_ShowObjectBrowser(self)
+    def ViewControl_HideObjectBrowser(self): return _mmapi.StoredCommands_ViewControl_HideObjectBrowser(self)
     def AppendBeginToolCommand(self, *args): return _mmapi.StoredCommands_AppendBeginToolCommand(self, *args)
     def AppendCompleteToolCommand(self, *args): return _mmapi.StoredCommands_AppendCompleteToolCommand(self, *args)
     def AppendToolParameterCommand(self, *args): return _mmapi.StoredCommands_AppendToolParameterCommand(self, *args)

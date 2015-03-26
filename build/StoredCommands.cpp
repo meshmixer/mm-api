@@ -851,6 +851,19 @@ void StoredCommands::ViewControl_SetOverhangShader()
 	append_command(c);
 }
 
+void StoredCommands::ViewControl_ShowObjectBrowser()
+{
+	Command c;  	MMAPI_INIT_CAM_COMMAND(c, ShowObjectBrowser);
+	append_command(c);
+}
+void StoredCommands::ViewControl_HideObjectBrowser()
+{
+	Command c;  	MMAPI_INIT_CAM_COMMAND(c, HideObjectBrowser);
+	append_command(c);
+}
+
+
+
 
 
 

@@ -127,6 +127,8 @@ public:
 	void ViewControl_SetUVShader();
 	void ViewControl_SetOverhangShader();
 
+	void ViewControl_ShowObjectBrowser();
+	void ViewControl_HideObjectBrowser();
 
 	/*
 	 * INTERNAL MM TOOL API
@@ -808,7 +810,8 @@ private:
 		CamManip, CamToggleSnap, CamOrbit, CamTurntable, CamPan, CamDolly, CamRecenter, CamSet, CamQuery, CamGetRay, 
 		SetViewNormalMode, SetViewColorMode, CamOrthographic, CamPerspective, 	
 		SetShowWireframe, SetShowBoundaries, SetShowGrid, SetShowPrinterBed, SetTransparentTarget,
-		SetShader_Default, SetShader_XRay, SetShader_Texture, SetShader_UV, SetShader_Overhang
+		SetShader_Default, SetShader_XRay, SetShader_Texture, SetShader_UV, SetShader_Overhang,
+		ShowObjectBrowser, HideObjectBrowser
 	};
 	struct CameraCmd {
 		CameraCmdType eType;
