@@ -23,9 +23,14 @@
 
 # build outputs
 build/python/*.*
+build/csharp_vs
 
 # document build
 python/doc/_build
+
+# example projects
+csharp/examples_vs2012/bin
+csharp/examples_vs2012/obj
 
 # certain local files
 rms_*.bat
