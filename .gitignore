@@ -22,7 +22,9 @@
 *.suo
 
 # build outputs
+build/swigosx
 build/python/*.*
+build/python_osx/*.*
 
 # document build
 python/doc/_build
