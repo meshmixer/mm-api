@@ -7,8 +7,9 @@
 *.o
 
 # Compiled Dynamic libraries
-*.so
+#*.so
 *.dylib
+#!/distrib/python_osx/_mmapi.so
 
 # Compiled Static libraries
 *.lai
@@ -22,7 +23,9 @@
 *.suo
 
 # build outputs
+build/swigosx
 build/python/*.*
+build/python_osx/*.*
 build/csharp_vs
 
 # document build

@@ -20,7 +20,7 @@
 // [RMS] #define USING_MM_COMMAND_API to use this outside of meshmixer-desktop
 
 
-#include "BinarySerializer.h"
+#include <BinarySerializer.h>
 
 namespace mm {
 
