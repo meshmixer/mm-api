@@ -1029,6 +1029,12 @@ class StoredCommands(_object):
     def CameraControl_SetSpecificView(self, eye, target, up):
         return _mmapi.StoredCommands_CameraControl_SetSpecificView(self, eye, target, up)
 
+    def CameraControl_SetOrthographicView(self):
+        return _mmapi.StoredCommands_CameraControl_SetOrthographicView(self)
+
+    def CameraControl_SetPerspectiveView(self):
+        return _mmapi.StoredCommands_CameraControl_SetPerspectiveView(self)
+
     def CameraControl_QueryCamera(self):
         return _mmapi.StoredCommands_CameraControl_QueryCamera(self)
 
@@ -1046,6 +1052,42 @@ class StoredCommands(_object):
 
     def ViewControl_SetTriangleColorMode(self, nMode):
         return _mmapi.StoredCommands_ViewControl_SetTriangleColorMode(self, nMode)
+
+    def ViewControl_SetShowWireframe(self, bShow):
+        return _mmapi.StoredCommands_ViewControl_SetShowWireframe(self, bShow)
+
+    def ViewControl_SetShowBoundaries(self, bShow):
+        return _mmapi.StoredCommands_ViewControl_SetShowBoundaries(self, bShow)
+
+    def ViewControl_SetShowGrid(self, bShow):
+        return _mmapi.StoredCommands_ViewControl_SetShowGrid(self, bShow)
+
+    def ViewControl_SetShowPrinterBed(self, bShow):
+        return _mmapi.StoredCommands_ViewControl_SetShowPrinterBed(self, bShow)
+
+    def ViewControl_SetTransparentTarget(self, bEnable):
+        return _mmapi.StoredCommands_ViewControl_SetTransparentTarget(self, bEnable)
+
+    def ViewControl_SetDefaultShader(self):
+        return _mmapi.StoredCommands_ViewControl_SetDefaultShader(self)
+
+    def ViewControl_SetXRayShader(self):
+        return _mmapi.StoredCommands_ViewControl_SetXRayShader(self)
+
+    def ViewControl_SetTextureShader(self):
+        return _mmapi.StoredCommands_ViewControl_SetTextureShader(self)
+
+    def ViewControl_SetUVShader(self):
+        return _mmapi.StoredCommands_ViewControl_SetUVShader(self)
+
+    def ViewControl_SetOverhangShader(self):
+        return _mmapi.StoredCommands_ViewControl_SetOverhangShader(self)
+
+    def ViewControl_ShowObjectBrowser(self):
+        return _mmapi.StoredCommands_ViewControl_ShowObjectBrowser(self)
+
+    def ViewControl_HideObjectBrowser(self):
+        return _mmapi.StoredCommands_ViewControl_HideObjectBrowser(self)
 
     def AppendBeginToolCommand(self, toolName):
         return _mmapi.StoredCommands_AppendBeginToolCommand(self, toolName)
@@ -1089,8 +1131,26 @@ class StoredCommands(_object):
     def GetSceneCommandResult_AppendMeshFile(self, k, vObjects):
         return _mmapi.StoredCommands_GetSceneCommandResult_AppendMeshFile(self, k, vObjects)
 
+    def AppendSceneCommand_AppendMeshFileAsReference(self, pFilename):
+        return _mmapi.StoredCommands_AppendSceneCommand_AppendMeshFileAsReference(self, pFilename)
+
+    def GetSceneCommandResult_AppendMeshFileAsReference(self, k, vObjects):
+        return _mmapi.StoredCommands_GetSceneCommandResult_AppendMeshFileAsReference(self, k, vObjects)
+
     def AppendSceneCommand_ExportMeshFile_CurrentSelection(self, pFilename):
         return _mmapi.StoredCommands_AppendSceneCommand_ExportMeshFile_CurrentSelection(self, pFilename)
+
+    def AppendSceneCommand_CreatePivot(self, f):
+        return _mmapi.StoredCommands_AppendSceneCommand_CreatePivot(self, f)
+
+    def GetSceneCommandResult_CreatePivot(self, k, nObjectID):
+        return _mmapi.StoredCommands_GetSceneCommandResult_CreatePivot(self, k, nObjectID)
+
+    def AppendSceneCommand_LinkPivot(self, nPivotID, nLinkToID):
+        return _mmapi.StoredCommands_AppendSceneCommand_LinkPivot(self, nPivotID, nLinkToID)
+
+    def AppendSceneCommand_UnlinkPivot(self, nPivotID):
+        return _mmapi.StoredCommands_AppendSceneCommand_UnlinkPivot(self, nPivotID)
 
     def AppendSceneCommand_Clear(self):
         return _mmapi.StoredCommands_AppendSceneCommand_Clear(self)

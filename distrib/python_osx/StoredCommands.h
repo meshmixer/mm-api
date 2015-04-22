@@ -99,6 +99,9 @@ public:
 	void CameraControl_RecenterViewAtCursor();
 	void CameraControl_SetSpecificView(const vec3f & eye, const vec3f & target, const vec3f & up);
 
+	void CameraControl_SetOrthographicView();
+	void CameraControl_SetPerspectiveView();
+
 	//! returned frame is eye=origin, direction=z, left=tan1, up=tan2
 	Key CameraControl_QueryCamera();
 	bool CameraControl_QueryCameraResult(Key k, frame3f & f, vec3f & target, camera_info & cam_info );
@@ -109,12 +112,23 @@ public:
 	// nMode  0=SmoothNormals, 1=FaceNormals, 2=GroupNormals
 	void ViewControl_SetSurfaceNormalMode(int nMode);
 
-	// nMode  0=VertexColors, 1=GroupColors
+	// nMode  0=VertexColors, 1=GroupColors, 2=ConstantColor
 	void ViewControl_SetTriangleColorMode(int nMode);
 
-	// [TODO] wireframe
+	void ViewControl_SetShowWireframe(bool bShow);
+	void ViewControl_SetShowBoundaries(bool bShow);
+	void ViewControl_SetShowGrid(bool bShow);
+	void ViewControl_SetShowPrinterBed(bool bShow);
+	void ViewControl_SetTransparentTarget(bool bEnable);
 
+	void ViewControl_SetDefaultShader();
+	void ViewControl_SetXRayShader();
+	void ViewControl_SetTextureShader();
+	void ViewControl_SetUVShader();
+	void ViewControl_SetOverhangShader();
 
+	void ViewControl_ShowObjectBrowser();
+	void ViewControl_HideObjectBrowser();
 
 	/*
 	 * INTERNAL MM TOOL API
@@ -456,9 +470,9 @@ public:
 			"postBaseSize" : float 
 			"postTopSize" : float 
 			"postTipSize" : float 
-			"postTipLayers" : float 
+			"postTipHeight" : float 
 			"postDiscSize" : float 
-			"postDiscLayers" : float 
+			"postDiscHeight" : float 
 			"strutDensity" : float 
 			"solidMinOffset" : float 
 			"postResolution" : integer 
@@ -559,8 +573,20 @@ public:
 	Key AppendSceneCommand_AppendMeshFile( const char * pFilename );
 		bool GetSceneCommandResult_AppendMeshFile( Key k, std::vector<int> & vObjects );
 
+	// append objects in mesh file to current scene as reference objects
+	Key AppendSceneCommand_AppendMeshFileAsReference( const char * pFilename );
+		bool GetSceneCommandResult_AppendMeshFileAsReference( Key k, std::vector<int> & vObjects );
+
 	Key AppendSceneCommand_ExportMeshFile_CurrentSelection( const char * pFilename );
 
+    // create pivot in scene
+    Key AppendSceneCommand_CreatePivot( frame3f f );
+        bool GetSceneCommandResult_CreatePivot( Key k, int & nObjectID );
+    
+    // link pivot to object. If object ID is invalid, pivot is unlinked
+    Key AppendSceneCommand_LinkPivot( int nPivotID, int nLinkToID );
+    Key AppendSceneCommand_UnlinkPivot( int nPivotID );
+    
 	// remove all objects from current scene
 	void AppendSceneCommand_Clear();
 
@@ -790,7 +816,10 @@ private:
 
 	enum CameraCmdType {
 		CamManip, CamToggleSnap, CamOrbit, CamTurntable, CamPan, CamDolly, CamRecenter, CamSet, CamQuery, CamGetRay, 
-		SetViewNormalMode, SetViewColorMode
+		SetViewNormalMode, SetViewColorMode, CamOrthographic, CamPerspective, 	
+		SetShowWireframe, SetShowBoundaries, SetShowGrid, SetShowPrinterBed, SetTransparentTarget,
+		SetShader_Default, SetShader_XRay, SetShader_Texture, SetShader_UV, SetShader_Overhang,
+		ShowObjectBrowser, HideObjectBrowser
 	};
 	struct CameraCmd {
 		CameraCmdType eType;
@@ -879,12 +908,16 @@ private:
 		SetVisible,
 		SetHidden,
 		ShowAll,
+		AppendMeshFileAsReference,
+        CreatePivot,
+        LinkPivot
 	};
 	struct SceneCmd {
 		SceneCmdType eType;
 		fstring str;
 		vector_int nObjectIDs;
-	};
+        frame3f f;
+    };
 	struct SceneCmdResult {
 		int OK;
 		fstring str;

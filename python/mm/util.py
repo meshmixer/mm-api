@@ -50,7 +50,7 @@ def find_nearest(remote, position):
     frame = mmapi.frame3f()
     bOK = cmd.GetQueryResult_FindNearestPoint(key, frame)
     hitFrame = mmFrame()
-    hitFrame.setFromMM(frame)
+    hitFrame.set_frame3f(frame)
     return (bOK, hitFrame)
 
 
@@ -66,6 +66,6 @@ def find_ray_hit(remote, ray_origin, ray_direction):
     frame = mmapi.frame3f()
     bOK = cmd.GetQueryResult_FindRayIntersection(key, frame)
     hitFrame = mmFrame()
-    hitFrame.setFromMM(frame)
+    hitFrame.set_frame3f(frame)
     return (bOK, hitFrame)
 

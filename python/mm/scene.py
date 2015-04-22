@@ -96,6 +96,32 @@ def find_object_by_name(remote, obj_name):
     return (bFound, result_val.i)
 
 
+def create_pivot(remote, frame):
+    """create a pivot at a given mmFrame (not frame3f)"""
+    cmd = mmapi.StoredCommands()
+    cmd_key = cmd.AppendSceneCommand_CreatePivot( frame.get_frame3f() )
+    remote.runCommand(cmd)
+    new_objs_vec = mmapi.vectori()
+    cmd.GetSceneCommandResult_AppendMeshFile(cmd_key, new_objs_vec)
+    return new_objs_vec[0]
+
+def link_pivot(remote, pivot_id, obj_id):
+    """link pivot to a given object"""
+    cmd = mmapi.StoredCommands()
+    cmd_key = cmd.AppendSceneCommand_LinkPivot(pivot_id, obj_id)
+    remote.runCommand(cmd)
+    ok = cmd.GetSceneCommandResult_IsOK(cmd_key)
+    return (ok != 0)
+
+def unlink_pivot(remote, pivot_id):
+    """unlink a pivot (no-op if pivot is not linked)"""
+    cmd = mmapi.StoredCommands()
+    cmd_key = cmd.AppendSceneCommand_UnlinkPivot(pivot_id)
+    remote.runCommand(cmd)
+
+
+
+
 def set_as_target(remote):
     """Set the current scene object as the Target object"""
     cmd = mmapi.StoredCommands()

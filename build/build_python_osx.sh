@@ -7,7 +7,7 @@ rm -rf $PYDIR
 mkdir $PYDIR
 
 # run swig to generate python 
-swigosx/bin/swig -c++ -python -o ./$PYDIR/mmapi.cpp -outdir $PYDIR mmAPI.i
+swigosx/swig -c++ -python -o ./$PYDIR/mmapi.cpp -outdir $PYDIR mmAPI.i
 
 # copy other files
 cp *.h $PYDIR

@@ -188,6 +188,7 @@ void StoredCommands::Store(BinarySerializer & s)
 				s.append( c.c.scene.nObjectIDs.nElements );
 				if ( c.c.scene.nObjectIDs.nElements > 0 )
 					s.append( c.c.scene.nObjectIDs.data, c.c.scene.nObjectIDs.nElements );
+                append_frame3f(s, c.c.scene.f);
 				break;
 
 			case SelectCommand:
@@ -327,7 +328,7 @@ void StoredCommands::Restore(BinarySerializer & s)
 				s.restore( c.c.scene.nObjectIDs.nElements );
 				if ( c.c.scene.nObjectIDs.nElements > 0 )
 					s.restore( c.c.scene.nObjectIDs.data, c.c.scene.nObjectIDs.nElements );
-
+                restore_frame3f(s, c.c.scene.f);
 				break;
 
 			case SelectCommand:
@@ -1287,6 +1288,45 @@ StoredCommands::Key StoredCommands::AppendSceneCommand_ExportMeshFile_CurrentSel
 	return append_command(c);
 }
 
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_CreatePivot( frame3f f )
+{
+    Command c;  c.init();
+    c.eType = SceneCommand;
+    c.c.scene.eType = CreatePivot;
+    c.c.scene.f = f;
+    return append_command(c);
+}
+bool StoredCommands::GetSceneCommandResult_CreatePivot( Key k, int & nObjectID )
+{
+    if ( k >= m_vCommands.size() )
+        return false;
+    Command & c = m_vCommands[k];
+    if ( c.r.scene.OK == 0 )
+        return false;
+    nObjectID = c.r.scene.nObjectIDs.data[0];
+    return true;
+}
+
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_LinkPivot( int nPivotID, int nLinkToID )
+{
+    Command c;  c.init();
+    c.eType = SceneCommand;
+    c.c.scene.eType = LinkPivot;
+    c.c.scene.nObjectIDs.append(nPivotID);
+    c.c.scene.nObjectIDs.append(nLinkToID);
+    return append_command(c);
+}
+StoredCommands::Key StoredCommands::AppendSceneCommand_UnlinkPivot( int nPivotID )
+{
+    Command c;  c.init();
+    c.eType = SceneCommand;
+    c.c.scene.eType = LinkPivot;
+    c.c.scene.nObjectIDs.append(nPivotID);
+    c.c.scene.nObjectIDs.append(-1);
+    return append_command(c);
+}
 
 
 
