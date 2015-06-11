@@ -240,6 +240,9 @@ void StoredCommands::Store(BinarySerializer & s)
 				if ( c.c.generic_query.str.nSize > 0 )
 					s.append( c.c.generic_query.str.data, c.c.generic_query.str.nSize );
 				break;
+                
+            case ToolParameterChangeCommand:
+                break;
 		}
 	}
 }
@@ -382,6 +385,9 @@ void StoredCommands::Restore(BinarySerializer & s)
 				if ( c.c.generic_query.str.nSize > 0 )
 					s.restore( c.c.generic_query.str.data, c.c.generic_query.str.nSize );
 				break;
+                
+            case ToolParameterChangeCommand:
+                break;
 
 		}
 
@@ -487,6 +493,10 @@ void StoredCommands::Store_Results(rms::BinarySerializer & s)
 				if ( c.r.generic_query.vList.nElements > 0 )
 					s.append( c.r.generic_query.vList.data, c.r.generic_query.vList.nElements );
 				break;
+                
+            case ToolParameterChangeCommand:
+            case BrushCommand:
+                break;
 		}
 	}
 
@@ -599,6 +609,9 @@ void StoredCommands::Restore_Results(BinarySerializer & s)
 					s.restore( c.r.generic_query.vList.data, c.r.generic_query.vList.nElements );
 				break;
 
+            case ToolParameterChangeCommand:
+            case BrushCommand:
+                break;
 		}
 
 	}
@@ -1591,6 +1604,52 @@ bool StoredCommands::GetQueryResult_GetBoundingBox( Key k, float fMin[3], float 
 
 
 
+StoredCommands::Key StoredCommands::AppendQueryCommand_GetObjectBoundingBox( int nObjectID )
+{
+	Command c;  c.init();
+	c.eType = SpatialQueryCommand;
+	c.c.spatial.eType = ObjectBoundingBoxQuery;
+	c.c.spatial.p.x = nObjectID;
+	return append_command(c);
+}
+bool StoredCommands::GetQueryResult_GetObjectBoundingBox( Key k, float fMin[3], float fMax[3] )
+{
+	if ( k >= m_vCommands.size() )
+		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.spatial.OK == 0 )
+		return false;
+	fMin[0] = c.r.spatial.v.data[0];	fMin[1] = c.r.spatial.v.data[1];	fMin[2] = c.r.spatial.v.data[2];
+	fMax[0] = c.r.spatial.v.data[3];	fMax[1] = c.r.spatial.v.data[4];	fMax[2] = c.r.spatial.v.data[5];
+	return true;
+}
+StoredCommands::Key StoredCommands::AppendQueryCommand_GetObjectLocalFrame( int nObjectID )
+{
+	Command c;  c.init();
+	c.eType = SpatialQueryCommand;
+	c.c.spatial.eType = ObjectLocalFrameQuery;
+	c.c.spatial.p.x = nObjectID;
+	return append_command(c);
+}
+bool StoredCommands::GetQueryResult_GetObjectLocalFrame( Key k, frame3f * pFrame )
+{
+	if ( k >= m_vCommands.size() )
+		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.spatial.OK == 0 )
+		return false;
+	float * pData[] = { & pFrame->origin_x, &pFrame->origin_y, &pFrame->origin_z, 
+						&pFrame->tan1_x, &pFrame->tan1_y, &pFrame->tan1_z, 
+						&pFrame->tan2_x, &pFrame->tan2_y, &pFrame->tan2_z,
+						&pFrame->normal_x, &pFrame->normal_y, &pFrame->normal_z };
+	for ( int k = 0; k < 12; ++k )
+		*pData[k] = c.r.spatial.v.data[k];
+	return true;
+}
+
+
+
+
 StoredCommands::Key StoredCommands::AppendQueryCommand_GetSelectedFacesBoundingBox(  )
 {
 	Command c;  c.init();
@@ -1930,9 +1989,9 @@ void StoredCommands::Execute(mm::MainWindow * pMainWin)
 		switch ( c.eType ) {
 
 			case MouseEventCommand:
-			case CameraControlCommand:
-				{
+			case CameraControlCommand: {
 					bool bOK = Execute_IO(pMainWin, k);
+                    lgDevAssert(bOK);
 				} break;
 
 
@@ -1940,14 +1999,17 @@ void StoredCommands::Execute(mm::MainWindow * pMainWin)
 			case CompleteToolCommand:
 			case ToolParameterCommand: {
 					bool bOK = Execute_Tool(pMainWin, k);
+                    lgDevAssert(bOK);
 				} break;
 
 			case SceneCommand: {
 					bool bOK = Execute_Scene(pMainWin, k);
+                    lgDevAssert(bOK);
 				} break;
 
 			case SelectCommand: {
 					bool bOK = Execute_Select(pMainWin, k);
+                    lgDevAssert(bOK);
 				} break;
 
 			case BrushCommand:
@@ -1955,11 +2017,13 @@ void StoredCommands::Execute(mm::MainWindow * pMainWin)
 			case StampCommand:
 				{
 					bool bOK = Execute_Tool(pMainWin, k);
+                    lgDevAssert(bOK);
 				} break;
 
 			case GenericQueryCommand:
 			case SpatialQueryCommand: {
 					bool bOK = Execute_Query(pMainWin, k);
+                    lgDevAssert(bOK);
 				} break;
 
 
