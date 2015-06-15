@@ -1,5 +1,5 @@
 
-REM cleanup python output directory
+REM cleanup output directory
 rmdir /S /Q csharp_vs
 mkdir csharp_vs
 pushd .
@@ -7,7 +7,7 @@ cd csharp_vs
 mkdir mmapi
 popd
 
-REM run swig to generate python 
+REM run swig to generate api 
 swigwin\swig -c++ -csharp -o ./csharp_vs/mmapi.cpp -outdir csharp_vs/mmapi -dllimport mmapi mmAPI.i
 
 REM copy necessary files for VS project
