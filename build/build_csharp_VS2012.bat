@@ -21,7 +21,7 @@ copy csharp_vsproj_files\*.* csharp_vs
 pushd .
 cd csharp_vs
 
-call %VS110COMNTOOLS%\vsvars32.bat
+call "%VS110COMNTOOLS%\vsvars32.bat"
 msbuild mmapi_csharp.sln /t:rebuild /p:Configuration=Debug
 msbuild mmapi_csharp.sln /t:rebuild /p:Configuration=Release
 
