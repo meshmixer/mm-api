@@ -46,9 +46,16 @@ remote.connect()
 #remote.runCommand(cmd2)
 
 #[RMS] this is how to save a screenshot (will write to python\examples\screenshot.png)
-cmd2 = mmapi.StoredCommands()
-cmd2.AppendSceneCommand_SaveScreenShot(os.path.join( os.getcwd(), "screenshot.png" ))
-remote.runCommand(cmd2)
+#cmd2 = mmapi.StoredCommands()
+#cmd2.AppendSceneCommand_SaveScreenShot(os.path.join( os.getcwd(), "screenshot.png" ))
+#remote.runCommand(cmd2)
+
+#[RMS] this is how to create a pivot and link it to an object in the scene
+objects = mm.list_objects(remote)
+f = mm.mmFrame()
+f.origin = (1,0,0)
+pivot_id = mm.create_pivot(remote, f)
+link_ok = mm.link_pivot(remote, pivot_id, objects[0])
 
 #done!
 remote.shutdown();

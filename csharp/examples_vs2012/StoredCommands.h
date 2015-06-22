@@ -470,9 +470,9 @@ public:
 			"postBaseSize" : float 
 			"postTopSize" : float 
 			"postTipSize" : float 
-			"postTipHeight" : float 
+			"postTipLayers" : float 
 			"postDiscSize" : float 
-			"postDiscHeight" : float 
+			"postDiscLayers" : float 
 			"strutDensity" : float 
 			"solidMinOffset" : float 
 			"postResolution" : integer 
@@ -579,14 +579,6 @@ public:
 
 	Key AppendSceneCommand_ExportMeshFile_CurrentSelection( const char * pFilename );
 
-    // create pivot in scene
-    Key AppendSceneCommand_CreatePivot( frame3f f );
-        bool GetSceneCommandResult_CreatePivot( Key k, int & nObjectID );
-    
-    // link pivot to object. If object ID is invalid, pivot is unlinked
-    Key AppendSceneCommand_LinkPivot( int nPivotID, int nLinkToID );
-    Key AppendSceneCommand_UnlinkPivot( int nPivotID );
-    
 	// remove all objects from current scene
 	void AppendSceneCommand_Clear();
 
@@ -908,16 +900,13 @@ private:
 		SetVisible,
 		SetHidden,
 		ShowAll,
-		AppendMeshFileAsReference,
-        CreatePivot,
-        LinkPivot
+		AppendMeshFileAsReference
 	};
 	struct SceneCmd {
 		SceneCmdType eType;
 		fstring str;
 		vector_int nObjectIDs;
-        frame3f f;
-    };
+	};
 	struct SceneCmdResult {
 		int OK;
 		fstring str;

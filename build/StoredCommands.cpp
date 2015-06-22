@@ -188,6 +188,7 @@ void StoredCommands::Store(BinarySerializer & s)
 				s.append( c.c.scene.nObjectIDs.nElements );
 				if ( c.c.scene.nObjectIDs.nElements > 0 )
 					s.append( c.c.scene.nObjectIDs.data, c.c.scene.nObjectIDs.nElements );
+                append_frame3f(s, c.c.scene.f);
 				break;
 
 			case SelectCommand:
@@ -239,6 +240,9 @@ void StoredCommands::Store(BinarySerializer & s)
 				if ( c.c.generic_query.str.nSize > 0 )
 					s.append( c.c.generic_query.str.data, c.c.generic_query.str.nSize );
 				break;
+                
+            case ToolParameterChangeCommand:
+                break;
 		}
 	}
 }
@@ -327,7 +331,7 @@ void StoredCommands::Restore(BinarySerializer & s)
 				s.restore( c.c.scene.nObjectIDs.nElements );
 				if ( c.c.scene.nObjectIDs.nElements > 0 )
 					s.restore( c.c.scene.nObjectIDs.data, c.c.scene.nObjectIDs.nElements );
-
+                restore_frame3f(s, c.c.scene.f);
 				break;
 
 			case SelectCommand:
@@ -381,6 +385,9 @@ void StoredCommands::Restore(BinarySerializer & s)
 				if ( c.c.generic_query.str.nSize > 0 )
 					s.restore( c.c.generic_query.str.data, c.c.generic_query.str.nSize );
 				break;
+                
+            case ToolParameterChangeCommand:
+                break;
 
 		}
 
@@ -486,6 +493,10 @@ void StoredCommands::Store_Results(rms::BinarySerializer & s)
 				if ( c.r.generic_query.vList.nElements > 0 )
 					s.append( c.r.generic_query.vList.data, c.r.generic_query.vList.nElements );
 				break;
+                
+            case ToolParameterChangeCommand:
+            case BrushCommand:
+                break;
 		}
 	}
 
@@ -598,6 +609,9 @@ void StoredCommands::Restore_Results(BinarySerializer & s)
 					s.restore( c.r.generic_query.vList.data, c.r.generic_query.vList.nElements );
 				break;
 
+            case ToolParameterChangeCommand:
+            case BrushCommand:
+                break;
 		}
 
 	}
@@ -674,33 +688,36 @@ void StoredCommands::AppendMouseUpEvent( bool bLeftUp, bool bMiddleUp, bool bRig
 
 
 /*
-	* Camera manipulation
-	*/
+ * Camera manipulation
+ */
+
+#define MMAPI_INIT_CAM_COMMAND(c, cmdtype) c.init(); c.eType = CameraControlCommand; c.c.camera.eType = cmdtype; 
+
 void StoredCommands::CameraControl_Begin()
 {
-	Command c;  c.init();	c.eType = CameraControlCommand;
-	c.c.camera.eType = CamManip;
+	Command c;  
+	MMAPI_INIT_CAM_COMMAND(c, CamManip);
 	c.c.camera.bFlag = true;
 	append_command(c);
 }
 void StoredCommands::CameraControl_End()
 {
-	Command c;  c.init();	c.eType = CameraControlCommand;
-	c.c.camera.eType = CamManip;
+	Command c;  
+	MMAPI_INIT_CAM_COMMAND(c, CamManip);
 	c.c.camera.bFlag = false;
 	append_command(c);
 }
 void StoredCommands::CameraControl_EnableOrbitSnap()
 {
-	Command c;  c.init();	c.eType = CameraControlCommand;
-	c.c.camera.eType = CamToggleSnap;
+	Command c;  
+	MMAPI_INIT_CAM_COMMAND(c, CamToggleSnap);
 	c.c.camera.bFlag = true;
 	append_command(c);
 }
 void StoredCommands::CameraControl_DisableOrbitSnap()
 {
-	Command c;  c.init();	c.eType = CameraControlCommand;
-	c.c.camera.eType = CamToggleSnap;
+	Command c;  
+	MMAPI_INIT_CAM_COMMAND(c, CamToggleSnap);
 	c.c.camera.bFlag = false;
 	append_command(c);
 }
@@ -756,6 +773,20 @@ void StoredCommands::CameraControl_SetSpecificView(const vec3f & eye, const vec3
 	append_command(c);
 }
 
+void StoredCommands::CameraControl_SetOrthographicView()
+{
+	Command c;  c.init();	c.eType = CameraControlCommand;
+	c.c.camera.eType = CamOrthographic;
+	c.c.camera.bFlag = false;
+	append_command(c);
+}
+void StoredCommands::CameraControl_SetPerspectiveView()
+{
+	Command c;  c.init();	c.eType = CameraControlCommand;
+	c.c.camera.eType = CamPerspective;
+	c.c.camera.bFlag = false;
+	append_command(c);
+}
 
 // nMode  0=SmoothNormals, 1=FaceNormals, 2=GroupNormals
 void StoredCommands::ViewControl_SetSurfaceNormalMode(int nMode)
@@ -774,6 +805,79 @@ void StoredCommands::ViewControl_SetTriangleColorMode(int nMode)
 	c.c.camera.nx = nMode;
 	append_command(c);
 }
+
+
+void StoredCommands::ViewControl_SetShowWireframe(bool bShow)
+{
+	Command c;  	MMAPI_INIT_CAM_COMMAND(c, SetShowWireframe);
+	c.c.camera.bFlag = bShow;
+	append_command(c);
+}
+void StoredCommands::ViewControl_SetShowBoundaries(bool bShow)
+{
+	Command c;  	MMAPI_INIT_CAM_COMMAND(c, SetShowBoundaries);
+	c.c.camera.bFlag = bShow;
+	append_command(c);
+}
+void StoredCommands::ViewControl_SetShowGrid(bool bShow)
+{
+	Command c;  	MMAPI_INIT_CAM_COMMAND(c, SetShowGrid);
+	c.c.camera.bFlag = bShow;
+	append_command(c);
+}
+void StoredCommands::ViewControl_SetShowPrinterBed(bool bShow)
+{
+	Command c;  	MMAPI_INIT_CAM_COMMAND(c, SetShowPrinterBed);
+	c.c.camera.bFlag = bShow;
+	append_command(c);
+}
+void StoredCommands::ViewControl_SetTransparentTarget(bool bEnable)
+{
+	Command c;  	MMAPI_INIT_CAM_COMMAND(c, SetTransparentTarget);
+	c.c.camera.bFlag = bEnable;
+	append_command(c);
+}
+
+
+void StoredCommands::ViewControl_SetDefaultShader()
+{
+	Command c;  	MMAPI_INIT_CAM_COMMAND(c, SetShader_Default);
+	append_command(c);
+}
+void StoredCommands::ViewControl_SetXRayShader()
+{
+	Command c;  	MMAPI_INIT_CAM_COMMAND(c, SetShader_XRay);
+	append_command(c);
+}
+void StoredCommands::ViewControl_SetTextureShader()
+{
+	Command c;  	MMAPI_INIT_CAM_COMMAND(c, SetShader_Texture);
+	append_command(c);
+}
+void StoredCommands::ViewControl_SetUVShader()
+{
+	Command c;  	MMAPI_INIT_CAM_COMMAND(c, SetShader_UV);
+	append_command(c);
+}
+void StoredCommands::ViewControl_SetOverhangShader()
+{
+	Command c;  	MMAPI_INIT_CAM_COMMAND(c, SetShader_Overhang);
+	append_command(c);
+}
+
+void StoredCommands::ViewControl_ShowObjectBrowser()
+{
+	Command c;  	MMAPI_INIT_CAM_COMMAND(c, ShowObjectBrowser);
+	append_command(c);
+}
+void StoredCommands::ViewControl_HideObjectBrowser()
+{
+	Command c;  	MMAPI_INIT_CAM_COMMAND(c, HideObjectBrowser);
+	append_command(c);
+}
+
+
+
 
 
 
@@ -1169,6 +1273,25 @@ bool StoredCommands::GetSceneCommandResult_AppendMeshFile( StoredCommands::Key k
 	return true;
 }
 
+StoredCommands::Key StoredCommands::AppendSceneCommand_AppendMeshFileAsReference( const char * pFilename )
+{
+	Command c;  c.init();
+	c.eType = SceneCommand;
+	c.c.scene.eType = AppendMeshFileAsReference;
+	c.c.scene.str = __tomystr(pFilename);
+	return append_command(c);
+}
+bool StoredCommands::GetSceneCommandResult_AppendMeshFileAsReference( StoredCommands::Key k, std::vector<int> & vObjects )
+{
+	if ( k >= m_vCommands.size() )
+		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK == 0 )
+		return false;
+	mmsc_extract_vector(vObjects, c.r.scene.nObjectIDs);
+	return true;
+}
+
 
 StoredCommands::Key StoredCommands::AppendSceneCommand_ExportMeshFile_CurrentSelection( const char * pFilename )
 {
@@ -1178,6 +1301,45 @@ StoredCommands::Key StoredCommands::AppendSceneCommand_ExportMeshFile_CurrentSel
 	return append_command(c);
 }
 
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_CreatePivot( frame3f f )
+{
+    Command c;  c.init();
+    c.eType = SceneCommand;
+    c.c.scene.eType = CreatePivot;
+    c.c.scene.f = f;
+    return append_command(c);
+}
+bool StoredCommands::GetSceneCommandResult_CreatePivot( Key k, int & nObjectID )
+{
+    if ( k >= m_vCommands.size() )
+        return false;
+    Command & c = m_vCommands[k];
+    if ( c.r.scene.OK == 0 )
+        return false;
+    nObjectID = c.r.scene.nObjectIDs.data[0];
+    return true;
+}
+
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_LinkPivot( int nPivotID, int nLinkToID )
+{
+    Command c;  c.init();
+    c.eType = SceneCommand;
+    c.c.scene.eType = LinkPivot;
+    c.c.scene.nObjectIDs.append(nPivotID);
+    c.c.scene.nObjectIDs.append(nLinkToID);
+    return append_command(c);
+}
+StoredCommands::Key StoredCommands::AppendSceneCommand_UnlinkPivot( int nPivotID )
+{
+    Command c;  c.init();
+    c.eType = SceneCommand;
+    c.c.scene.eType = LinkPivot;
+    c.c.scene.nObjectIDs.append(nPivotID);
+    c.c.scene.nObjectIDs.append(-1);
+    return append_command(c);
+}
 
 
 
@@ -1439,6 +1601,52 @@ bool StoredCommands::GetQueryResult_GetBoundingBox( Key k, float fMin[3], float 
 	fMax[0] = c.r.spatial.v.data[3];	fMax[1] = c.r.spatial.v.data[4];	fMax[2] = c.r.spatial.v.data[5];
 	return true;
 }
+
+
+
+StoredCommands::Key StoredCommands::AppendQueryCommand_GetObjectBoundingBox( int nObjectID )
+{
+	Command c;  c.init();
+	c.eType = SpatialQueryCommand;
+	c.c.spatial.eType = ObjectBoundingBoxQuery;
+	c.c.spatial.p.x = nObjectID;
+	return append_command(c);
+}
+bool StoredCommands::GetQueryResult_GetObjectBoundingBox( Key k, float fMin[3], float fMax[3] )
+{
+	if ( k >= m_vCommands.size() )
+		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.spatial.OK == 0 )
+		return false;
+	fMin[0] = c.r.spatial.v.data[0];	fMin[1] = c.r.spatial.v.data[1];	fMin[2] = c.r.spatial.v.data[2];
+	fMax[0] = c.r.spatial.v.data[3];	fMax[1] = c.r.spatial.v.data[4];	fMax[2] = c.r.spatial.v.data[5];
+	return true;
+}
+StoredCommands::Key StoredCommands::AppendQueryCommand_GetObjectLocalFrame( int nObjectID )
+{
+	Command c;  c.init();
+	c.eType = SpatialQueryCommand;
+	c.c.spatial.eType = ObjectLocalFrameQuery;
+	c.c.spatial.p.x = nObjectID;
+	return append_command(c);
+}
+bool StoredCommands::GetQueryResult_GetObjectLocalFrame( Key k, frame3f * pFrame )
+{
+	if ( k >= m_vCommands.size() )
+		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.spatial.OK == 0 )
+		return false;
+	float * pData[] = { & pFrame->origin_x, &pFrame->origin_y, &pFrame->origin_z, 
+						&pFrame->tan1_x, &pFrame->tan1_y, &pFrame->tan1_z, 
+						&pFrame->tan2_x, &pFrame->tan2_y, &pFrame->tan2_z,
+						&pFrame->normal_x, &pFrame->normal_y, &pFrame->normal_z };
+	for ( int k = 0; k < 12; ++k )
+		*pData[k] = c.r.spatial.v.data[k];
+	return true;
+}
+
 
 
 
@@ -1781,9 +1989,9 @@ void StoredCommands::Execute(mm::MainWindow * pMainWin)
 		switch ( c.eType ) {
 
 			case MouseEventCommand:
-			case CameraControlCommand:
-				{
+			case CameraControlCommand: {
 					bool bOK = Execute_IO(pMainWin, k);
+                    lgDevAssert(bOK);
 				} break;
 
 
@@ -1791,14 +1999,17 @@ void StoredCommands::Execute(mm::MainWindow * pMainWin)
 			case CompleteToolCommand:
 			case ToolParameterCommand: {
 					bool bOK = Execute_Tool(pMainWin, k);
+                    lgDevAssert(bOK);
 				} break;
 
 			case SceneCommand: {
 					bool bOK = Execute_Scene(pMainWin, k);
+                    lgDevAssert(bOK);
 				} break;
 
 			case SelectCommand: {
 					bool bOK = Execute_Select(pMainWin, k);
+                    lgDevAssert(bOK);
 				} break;
 
 			case BrushCommand:
@@ -1806,11 +2017,13 @@ void StoredCommands::Execute(mm::MainWindow * pMainWin)
 			case StampCommand:
 				{
 					bool bOK = Execute_Tool(pMainWin, k);
+                    lgDevAssert(bOK);
 				} break;
 
 			case GenericQueryCommand:
 			case SpatialQueryCommand: {
 					bool bOK = Execute_Query(pMainWin, k);
+                    lgDevAssert(bOK);
 				} break;
 
 

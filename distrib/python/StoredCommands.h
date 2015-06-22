@@ -99,6 +99,9 @@ public:
 	void CameraControl_RecenterViewAtCursor();
 	void CameraControl_SetSpecificView(const vec3f & eye, const vec3f & target, const vec3f & up);
 
+	void CameraControl_SetOrthographicView();
+	void CameraControl_SetPerspectiveView();
+
 	//! returned frame is eye=origin, direction=z, left=tan1, up=tan2
 	Key CameraControl_QueryCamera();
 	bool CameraControl_QueryCameraResult(Key k, frame3f & f, vec3f & target, camera_info & cam_info );
@@ -109,12 +112,23 @@ public:
 	// nMode  0=SmoothNormals, 1=FaceNormals, 2=GroupNormals
 	void ViewControl_SetSurfaceNormalMode(int nMode);
 
-	// nMode  0=VertexColors, 1=GroupColors
+	// nMode  0=VertexColors, 1=GroupColors, 2=ConstantColor
 	void ViewControl_SetTriangleColorMode(int nMode);
 
-	// [TODO] wireframe
+	void ViewControl_SetShowWireframe(bool bShow);
+	void ViewControl_SetShowBoundaries(bool bShow);
+	void ViewControl_SetShowGrid(bool bShow);
+	void ViewControl_SetShowPrinterBed(bool bShow);
+	void ViewControl_SetTransparentTarget(bool bEnable);
 
+	void ViewControl_SetDefaultShader();
+	void ViewControl_SetXRayShader();
+	void ViewControl_SetTextureShader();
+	void ViewControl_SetUVShader();
+	void ViewControl_SetOverhangShader();
 
+	void ViewControl_ShowObjectBrowser();
+	void ViewControl_HideObjectBrowser();
 
 	/*
 	 * INTERNAL MM TOOL API
@@ -177,6 +191,7 @@ public:
 		"makeSlices"			- Make Slices tool
 		"separateShells"		- Separate Shells tool
 		"addTube"				- Add Tube tool
+        "createPivot"           - Create Pivot tool
 
 		"combine"				- Combine tool (multiple selected objects)
 		"union"					- Boolean Union 
@@ -222,6 +237,7 @@ public:
 			"refine" : float         range [0,1]
 			"reduce" : float         range [0,1]
 			"refineSmooth" : float   range [0,1]
+            "refineAdaptive" : float range [0,1]
 			"attractStrength" : float 
 			"volumetric" : boolean 
 			"symmetric" : boolean 
@@ -231,8 +247,7 @@ public:
 			"restrictToGroup" : boolean 
 			"holdBoundary" : boolean 
 			"preserveGroups" : boolean 
-			"brushOnTarget" : boolean 
-			"adaptiveRefinement" : boolean 
+			"brushOnTarget" : boolean  
 		[surfaceBrush]		- start surface brush tool
 			"restrictToGroup" : boolean 
 			"holdBoundary" : boolean 
@@ -260,13 +275,20 @@ public:
 			"preserveBoundary" : boolean 
 			"adaptive" : boolean 
 		[remesh]			- Remesh tool
-			"density" : float 
-			"smooth" : float 
-			"normalThreshold" : float 
-			"boundaryMode" : integer 
-			"remeshType" : integer  values: Uniform = 0,	 Adaptive_Normal = 1
-			"preserveGroups" : boolean 
-			"adaptive" : boolean 
+             "density" : float
+             "edgeLength" : float
+             "edgeLengthWorld" : float
+             "smooth" : float
+             "transitionWidth" : float
+             "transitionWidthWorld" : float
+             "normalThreshold" : float
+             "goalType" : integer
+                    RelativeDensity = 0, AdaptiveDensity = 1, TargetEdgeLength = 2, LinearSubdivision = 3
+             "iterations" : integer
+             "boundaryMode" : integer
+                    FreeBoundary = 0, FixedBoundary = 1, RefinedFixedBoundary = 2
+             "preserveGroups" : boolean
+
 		[extrude]			- Extrude tool
 			"offset" : float   range [-inf, inf]
 			"harden" : float   range [0,1]
@@ -301,20 +323,21 @@ public:
 			"normal" : vector3f 
 			"rotation" : matrix3f 
 		[attractToTarget]	- Attract tool
-			"density" : float 
-			"smooth" : float 
-			"offset" : float 
-			"offsetWorld" : float 
-			"normalThreshold" : float 
-			"remeshType" : integer 
-			"preserveGroups" : boolean 
-			"preserveBoundary" : boolean 
-			"findSharpEdges" : boolean 
-			"adaptive" : boolean 
+             "density" : float
+             "smooth" : float
+             "offset" : float
+             "offsetWorld" : float
+             "normalThreshold" : float
+             "enableRefinement" : boolean
+             "preserveGroups" : boolean
+             "preserveBoundary" : boolean
+             "findSharpEdges" : boolean
 		[flipNormals]		- Flip Normals tool
 		[fitPrimitive]		- Fit Primitive tool
-			"primitiveType" : integer 
-			"singlePrimitive" : boolean 
+			"primitiveType" : integer
+                    Plane_Square = 0, Plane_Rectangle = 1, Cylinder = 2, Sphere_Centroid = 3, Sphere_LeastSquares = 4,
+                    Disc_Centroid = 5, Linear_Sweep = 6, Convex_Hull = 7
+			"singlePrimitive" : boolean
 			"createNewObjects" : boolean 
 
 		[makePart]			- Convert (selection) To Open Part
@@ -363,12 +386,30 @@ public:
 			"rotation" : matrix3f 
 		[duplicate]				- Duplicate tool
 		[transform]				- Transform tool
-			"pivotFrameMode" : integer 
-			"origin" : vector3f 
-			"translation" : vector3f 
+			"pivotFrameMode" : integer
+                WorldFrame = 0, LocalFrame = 1
+			"origin" : vector3f
+            "originWorld" : vector3f
+			"translation" : vector3f
+            "translationWorld" : vector3f
 			"scale" : vector3f 
 			"rotation" : matrix3f 
+            "initialFrameOrigin" : vector3f
+            "initialFrameOrientation" : matrix3f
 		[align]					- Align tool
+             "sourceType" : integer
+                    Source_ObjectBaseCenter = 1, Source_BoundingBoxCenter = 0, Source_SingleSurfacePoint = 10, 
+                    Source_SurfaceSamples = 11, Source_SurfaceDisc = 12, Source_Pivot = 13, Source_LastToolFrame = 20
+             "targetType" : integer
+                    Target_WorldOrigin_Yup = 0, Target_WorldOrigin_Zup = 1, Target_WorldOrigin_Xup = 2, Target_GroundPlanePoint = 9,
+                    Target_SingleSurfacePoint = 10, Target_SurfaceSamples = 11, Target_SurfaceDisc = 12, Target_Pivot = 13
+             "transformMode" : integer
+                    Translate = 0, TranslateAndRotate = 1
+             "flip" : boolean
+             "origin" : vector3f
+             "rotation" : matrix3f
+             "sourceFrame" : frame3f
+             "targetFrame" : frame3f
 		[closeCracks]			- Close Cracks tool
 		[generateFaceGroups]	- Generate Face Groups tool
 			"angleThreshold" : float 
@@ -428,6 +469,19 @@ public:
 			"operationType" : integer 
 			"directionConstraint" : integer 
 			"solveIterations" : integer 
+        [createPivot]           - Create Pivot tool
+             "offset" : float
+             "offsetWorld" : float
+             "positionMode" : integer  
+                    SurfaceHitPoint = 0, NearestVertex = 1, NearestEdgePoint = 2, NearestEdgeMidPoint = 3, 
+                    NearestFaceCenter = 4, FacegroupBorder = 5, FacegroupCenter = 6, FacegroupBorderCenter = 7, 
+                    BoundaryLoopCenter = 8, FirstRayMidpoint = 10, FirstNormalMidpoint = 11, 
+                    WorldBoundingBoxPoint = 20, LocalBoundingBoxPoint = 21, FromLastToolFrame = 30
+             "frameMode" : integer
+                     WorldFrame = 0, FromGeometry = 1, AlongEyeRay = 2
+             "symmetric" : boolean
+             "linkToTarget" : boolean
+     
 		[combine]				- Combine tool (multiple selected objects)
 		[union]					- Boolean Union 
 		[difference]			- Boolean Difference
@@ -456,9 +510,9 @@ public:
 			"postBaseSize" : float 
 			"postTopSize" : float 
 			"postTipSize" : float 
-			"postTipLayers" : float 
+			"postTipHeight" : float 
 			"postDiscSize" : float 
-			"postDiscLayers" : float 
+			"postDiscHeight" : float 
 			"strutDensity" : float 
 			"solidMinOffset" : float 
 			"postResolution" : integer 
@@ -559,8 +613,20 @@ public:
 	Key AppendSceneCommand_AppendMeshFile( const char * pFilename );
 		bool GetSceneCommandResult_AppendMeshFile( Key k, std::vector<int> & vObjects );
 
+	// append objects in mesh file to current scene as reference objects
+	Key AppendSceneCommand_AppendMeshFileAsReference( const char * pFilename );
+		bool GetSceneCommandResult_AppendMeshFileAsReference( Key k, std::vector<int> & vObjects );
+
 	Key AppendSceneCommand_ExportMeshFile_CurrentSelection( const char * pFilename );
 
+    // create pivot in scene
+    Key AppendSceneCommand_CreatePivot( frame3f f );
+        bool GetSceneCommandResult_CreatePivot( Key k, int & nObjectID );
+    
+    // link pivot to object. If object ID is invalid, pivot is unlinked
+    Key AppendSceneCommand_LinkPivot( int nPivotID, int nLinkToID );
+    Key AppendSceneCommand_UnlinkPivot( int nPivotID );
+    
 	// remove all objects from current scene
 	void AppendSceneCommand_Clear();
 
@@ -611,20 +677,28 @@ public:
 	Key AppendQueryCommand_ConvertPointToScene(float fPoint[3]);
 		bool GetQueryResult_ConvertPointToScene(Key k, float * pResult);
 
-	// get bounding box
+	// get bounding box of selected objects
 	Key AppendQueryCommand_GetBoundingBox();
 		bool GetQueryResult_GetBoundingBox( Key k, float fMin[3], float fMax[3] );
 
+	// get bounding box of a specific object
+	Key AppendQueryCommand_GetObjectBoundingBox( int nObjectID );
+		bool GetQueryResult_GetObjectBoundingBox( Key k, float fMin[3], float fMax[3] );
+
+	// get local frame of a specific object
+	Key AppendQueryCommand_GetObjectLocalFrame( int nObjectID );
+		bool GetQueryResult_GetObjectLocalFrame( Key k, frame3f * pFrame );
+
+	// get bounding box and centroid of currently-selected faces (only works when in FaceSelection tool)
 	Key AppendQueryCommand_GetSelectedFacesBoundingBox();
 		bool GetQueryResult_GetSelectedFacesBoundingBox( Key k, float fMin[3], float fMax[3] );
 	Key AppendQueryCommand_GetSelectedFacesCentroid();
 		bool GetQueryResult_GetSelectedFacesCentroid( Key k, float fCentroid[3] );
 
-	// find nearest point on selected object
+	// find first ray-intersection point with selected object
 	Key AppendQueryCommand_FindRayIntersection( float ox, float oy, float oz, float dx, float dy, float dz );
 	Key AppendQueryCommand_FindRayIntersection( const vec3f & o, const vec3f & d );
 		bool GetQueryResult_FindRayIntersection( Key k, frame3f * pFrame );
-
 
 	// find nearest point on selected object
 	Key AppendQueryCommand_FindNearestPoint( float x, float y, float z );
@@ -790,7 +864,10 @@ private:
 
 	enum CameraCmdType {
 		CamManip, CamToggleSnap, CamOrbit, CamTurntable, CamPan, CamDolly, CamRecenter, CamSet, CamQuery, CamGetRay, 
-		SetViewNormalMode, SetViewColorMode
+		SetViewNormalMode, SetViewColorMode, CamOrthographic, CamPerspective, 	
+		SetShowWireframe, SetShowBoundaries, SetShowGrid, SetShowPrinterBed, SetTransparentTarget,
+		SetShader_Default, SetShader_XRay, SetShader_Texture, SetShader_UV, SetShader_Overhang,
+		ShowObjectBrowser, HideObjectBrowser
 	};
 	struct CameraCmd {
 		CameraCmdType eType;
@@ -879,12 +956,16 @@ private:
 		SetVisible,
 		SetHidden,
 		ShowAll,
+		AppendMeshFileAsReference,
+        CreatePivot,
+        LinkPivot
 	};
 	struct SceneCmd {
 		SceneCmdType eType;
 		fstring str;
 		vector_int nObjectIDs;
-	};
+        frame3f f;
+    };
 	struct SceneCmdResult {
 		int OK;
 		fstring str;
@@ -967,11 +1048,13 @@ private:
 
 
 	enum SpatialQueryType {
-		SelectedObjectsBoundingBoxQuery,
-		NearestPointSpatialQuery,
-		RayIntersectionSpatialQuery,
-		SelectedFacesBoundingBoxQuery,
-		SelectedFacesCentroidQuery
+		SelectedObjectsBoundingBoxQuery = 0,
+		NearestPointSpatialQuery = 1,
+		RayIntersectionSpatialQuery = 2,
+		SelectedFacesBoundingBoxQuery = 3,
+		SelectedFacesCentroidQuery = 4,
+		ObjectBoundingBoxQuery = 5,
+		ObjectLocalFrameQuery = 6
 	};
 	struct SpatialQueryCmd {
 		SpatialQueryType eType;

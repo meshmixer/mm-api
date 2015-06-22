@@ -247,7 +247,7 @@ public:
 	}
 
 
-	BINSER_INLINE const unsigned char * peekBlock(unsigned int & nBlockSize) {
+	BINSER_INLINE const unsigned char * peekBlock(unsigned int & /*nBlockSize*/) {
 		//peek(nBlockSize);
 		const unsigned char * pCur = &m_vBuffer[m_nCursor+sizeof(unsigned int)];
 		return pCur;
@@ -270,7 +270,10 @@ protected:
 template<typename T>
 BINSER_INLINE void BSerializer_append(BinarySerializer * pSerializer, const std::vector<T> & vec) {
 	unsigned int nSize = (unsigned int)vec.size();
-	pSerializer->append( &vec[0], nSize);
+	if (nSize == 0)
+        pSerializer->append( 0 ); //[TWB] A size 0 array is just "0". avoid calling vec[0] with a size 0 vector as bounds checking complains.
+    else
+        pSerializer->append( &vec[0], nSize);
 }
 
 #ifdef LG_BUILDING_WITH_VS2008
