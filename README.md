@@ -1,10 +1,10 @@
 # Autodesk Meshmixer API  (mm-api)  
-v0.2 December 2014  
-copyright (c) 2014 Autodesk Corporation    http://www.autodesk.com  
+v0.3 December 2015  
+copyright (c) 2014-2015 Autodesk Corporation    http://www.autodesk.com  
 contact:   Ryan.Schmidt@Autodesk.com       http://autodeskresearch.com/people/ryanschmidt  
 See LICENSE file for license information  
 
-**WARNING** This API distribution is compatible with meshmixer 2.7 and 32-bit Python 2.7.
+**WARNING** This API distribution is compatible with meshmixer 2.9 and 32-bit Python 2.7.
 It may not work with previous or later versions of meshmixer or Python.
 
 Do you have the latest code? Sync here: https://github.com/meshmixer/mm-api
@@ -44,13 +44,8 @@ of the SWIG wrapper. See details below.
 Quick Start - Python
 ====================
 [0] Install **32-bit Python 2.7**
-[1] open your meshmixer.ini file (paths below) and add the following 
-   line under the [Options] section:   
-
-    EnableRemoteStoredCommandServer=true
-
-[2] start meshmixer, import bunny  
-[3] run the script \distrib\python\test.py (or \distrib\python_osx\test.py on Macs)
+[1] start meshmixer, import bunny  
+[2] run the script \distrib\python\test.py (or \distrib\python_osx\test.py on Macs)
    If your bunny is cut in half, the script worked
 
    
@@ -58,18 +53,6 @@ Quick Start - Python
 
 Setup
 ========
-
-To enable remote control of meshmixer, you must insert the following line
-in your meshmixer.ini file, under the [Options] section:
-   
-    EnableRemoteStoredCommandServer=true
-   
-Now on startup meshmixer will listen for remote commands (see details below).
-
-You can find your meshmixer.ini file here:
-
-    (Windows) C:\Users\<username>\AppData\Roaming\Autodesk\meshmixer.ini  
-    (OSX)     /Users/<username>/.config/Autodesk/meshmixer.ini
 
 To build API packages from scratch, run the top-level build_python_distrib.bat file.
 This will require Visual Studio 2012 to be installed on your machine.
@@ -167,6 +150,9 @@ Changelog
 ===========
 (only significant changes that will impact usage/compatibility)
 
+#### [June 19, 2015]
+- meshmixer 2.9, C# version
+
 #### [December 18, 2014]
 - OSX version added
 
@@ -174,8 +160,4 @@ Changelog
 - initial release, compatible with mm 2.7
  
 
-API TODO
-=========
-- import reference object
-- ortho/perspective toggle
 
