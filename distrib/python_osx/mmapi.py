@@ -709,8 +709,8 @@ class BinarySerializer(_object):
     def restoreBlock(self, nBlockSize):
         return _mmapi.BinarySerializer_restoreBlock(self, nBlockSize)
 
-    def peekBlock(self, nBlockSize):
-        return _mmapi.BinarySerializer_peekBlock(self, nBlockSize)
+    def peekBlock(self, arg2):
+        return _mmapi.BinarySerializer_peekBlock(self, arg2)
 
     def buffer(self, *args):
         return _mmapi.BinarySerializer_buffer(self, *args)
@@ -1235,6 +1235,18 @@ class StoredCommands(_object):
 
     def GetQueryResult_GetBoundingBox(self, k, fMin, fMax):
         return _mmapi.StoredCommands_GetQueryResult_GetBoundingBox(self, k, fMin, fMax)
+
+    def AppendQueryCommand_GetObjectBoundingBox(self, nObjectID):
+        return _mmapi.StoredCommands_AppendQueryCommand_GetObjectBoundingBox(self, nObjectID)
+
+    def GetQueryResult_GetObjectBoundingBox(self, k, fMin, fMax):
+        return _mmapi.StoredCommands_GetQueryResult_GetObjectBoundingBox(self, k, fMin, fMax)
+
+    def AppendQueryCommand_GetObjectLocalFrame(self, nObjectID):
+        return _mmapi.StoredCommands_AppendQueryCommand_GetObjectLocalFrame(self, nObjectID)
+
+    def GetQueryResult_GetObjectLocalFrame(self, k, pFrame):
+        return _mmapi.StoredCommands_GetQueryResult_GetObjectLocalFrame(self, k, pFrame)
 
     def AppendQueryCommand_GetSelectedFacesBoundingBox(self):
         return _mmapi.StoredCommands_AppendQueryCommand_GetSelectedFacesBoundingBox(self)
