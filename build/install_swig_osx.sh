@@ -16,11 +16,12 @@ pushd .
 cd swigosx
 
 # download and extract PCRE
-curl --remote-name ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.35.tar.gz
-tar -xvzf pcre-8.35.tar.gz
+curl -L -o pcre-8.36.tar.gz --remote-name https://www.dropbox.com/s/5575veapx0uqmrq/pcre-8.36.tar.gz?dl=1
+#curl --remote-name ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.36.tar.gz
+tar -xvzf pcre-8.36.tar.gz
 
 # build PCRE
-cd pcre-8.35
+cd pcre-8.36
 ./configure --prefix=$PWD
 make
 make install
