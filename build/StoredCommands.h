@@ -476,7 +476,7 @@ public:
                     SurfaceHitPoint = 0, NearestVertex = 1, NearestEdgePoint = 2, NearestEdgeMidPoint = 3, 
                     NearestFaceCenter = 4, FacegroupBorder = 5, FacegroupCenter = 6, FacegroupBorderCenter = 7, 
                     BoundaryLoopCenter = 8, FirstRayMidpoint = 10, FirstNormalMidpoint = 11, 
-                    WorldBoundingBoxPoint = 20, LocalBoundingBoxPoint = 21, FromLastToolFrame = 30
+                    WorldBoundingBoxPoint = 20, LocalBoundingBoxPoint = 21, ExistingPivot = 25, FromLastToolFrame = 30
              "frameMode" : integer
                      WorldFrame = 0, FromGeometry = 1, AlongEyeRay = 2
              "symmetric" : boolean
@@ -602,7 +602,7 @@ public:
 	bool GetSceneCommandResult_IsOK(Key k);
 
 	// write out screenshot at pFilename
-	void AppendSceneCommand_SaveScreenShot(const char * pFilename);
+	StoredCommands::Key AppendSceneCommand_SaveScreenShot(const char * pFilename);
 
 	// open a .mix file (replaces existing file)
 	Key AppendSceneCommand_OpenMixFile( const char * pFilename );
@@ -613,11 +613,18 @@ public:
 	Key AppendSceneCommand_AppendMeshFile( const char * pFilename );
 		bool GetSceneCommandResult_AppendMeshFile( Key k, std::vector<int> & vObjects );
 
+	// append binary packed mesh to current scene
+	Key AppendSceneCommand_AppendPackedMeshFile( const char * pFilename );
+		bool GetSceneCommandResult_AppendPackedMeshFile( Key k, int & nObjectID );
+		bool GetSceneCommandResult_AppendPackedMeshFile( Key k, any_result & nObjectID );
+
 	// append objects in mesh file to current scene as reference objects
 	Key AppendSceneCommand_AppendMeshFileAsReference( const char * pFilename );
 		bool GetSceneCommandResult_AppendMeshFileAsReference( Key k, std::vector<int> & vObjects );
 
 	Key AppendSceneCommand_ExportMeshFile_CurrentSelection( const char * pFilename );
+
+	Key AppendSceneCommand_ExportAsPackedMeshFile( const char * pFilename, int nObjectID );
 
     // create pivot in scene
     Key AppendSceneCommand_CreatePivot( frame3f f );
@@ -663,6 +670,16 @@ public:
 	Key AppendSceneCommand_SetHidden( int nObjectID );
 	Key AppendSceneCommand_ShowAll();
 
+	// live mesh
+	Key AppendSceneCommand_CreateLiveMeshObject( const char * pFilename );
+		bool GetSceneCommandResult_CreateLiveMeshObject( Key k, std::string & portName, int & nObjectID );
+		bool GetSceneCommandResult_CreateLiveMeshObject( Key k, std::vector<unsigned char> & portName, any_result & nObjectID );  // for SWIG
+
+	// note: currently lock request will freeze main thread in app until lock is achieved...
+	Key AppendSceneCommand_RequestLiveMeshLock( const char * pPortName );
+	Key AppendSceneCommand_ReleaseLiveMeshLock( const char * pPortName );
+	Key AppendSceneCommand_NotifyLiveMeshUpdate( const char * pPortName );
+
 
 	/*
 	 * SPATIAL QUERY COMMANDS
@@ -705,6 +722,37 @@ public:
 	Key AppendQueryCommand_FindNearestPoint( const vec3f & p );
 		bool GetQueryResult_FindNearestPoint( Key k, frame3f * pFrame );
 
+	// test if point is inside selected object
+	Key AppendQueryCommand_IsInsideObject( const vec3f & p );
+		bool GetQueryResult_IsInsideObject( Key k );
+
+	// nFilter is a bitmap that controls which 'types' of objects the queries below will return.
+	// If no filter is set, or after clear, all object types are returned
+	// bit 0 = meshes, bit 1 = pivots
+	Key AppendQueryCommand_SetObjectTypeFilter( int nFilter );
+	Key AppendQueryCommand_ClearObjectTypeFilter();
+
+	// find all objects hit by ray. Results are returned sorted by ray-hit parameter.
+	Key AppendQueryCommand_FindObjectsHitByRay( const vec3f & o, const vec3f & d );
+		bool GetQueryResult_FindObjectsHitByRay( Key k, std::vector<int> & vObjects );
+
+	// find closest object to point
+	Key AppendQueryCommand_FindNearestObject( const vec3f & p );
+		bool GetQueryResult_FindNearestObject( Key k, int & nObjectID );
+		bool GetQueryResult_FindNearestObject( Key k, any_result & nObjectID );
+
+	// find objects within distance of point.
+	Key AppendQueryCommand_FindObjectsWithinDistance( const vec3f & p, float fDistance );
+		bool GetQueryResult_FindObjectsWithinDistance( Key k, std::vector<int> & vObjects );
+
+	// test if two objects intersect (requires that objects be meshes)
+	Key AppendQueryCommand_TestIntersection( int nObjectID, int nTestWithObjectID );
+		bool GetQueryResult_TestIntersection( Key k );
+	
+	// Find all objects intersecting first object
+	Key AppendQueryCommand_FindIntersectingObjects( int nObjectID );
+		bool GetQueryResult_FindIntersectingObjects( Key k, std::vector<int> & vObjects );
+	
 
 	/*
 	 *  SELECTION COMMANDS
@@ -958,7 +1006,14 @@ private:
 		ShowAll,
 		AppendMeshFileAsReference,
         CreatePivot,
-        LinkPivot
+        LinkPivot,
+		AppendPackedMeshFile,
+		ExportAsPackedMeshByID,
+
+		CreateLiveMeshObject,
+		RequestLiveMeshLock,
+		ReleaseLiveMeshLock,
+		NotifyLiveMeshUpdated,
 	};
 	struct SceneCmd {
 		SceneCmdType eType;
@@ -1054,7 +1109,15 @@ private:
 		SelectedFacesBoundingBoxQuery = 3,
 		SelectedFacesCentroidQuery = 4,
 		ObjectBoundingBoxQuery = 5,
-		ObjectLocalFrameQuery = 6
+		ObjectLocalFrameQuery = 6,
+		RayHitObjectsQuery = 7,
+		NearestObjectQuery = 8,
+		ObjectsWithinRadiusQuery = 9,
+		IsInsideObjectQuery = 10,
+		ObjectIntersectionQuery = 11,
+		FindIntersectingObjects = 12,
+		SetObjectTypeFilter = 13,
+		ClearObjectTypeFilter = 14
 	};
 	struct SpatialQueryCmd {
 		SpatialQueryType eType;

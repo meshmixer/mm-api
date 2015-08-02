@@ -28,7 +28,7 @@ using namespace rms;
 
 
 
-inline static fstring __tomystr(const char * pString)
+inline static fstring __tofstr(const char * pString)
 {
 	fstring s;
 	s.nSize = (unsigned int)strlen(pString);
@@ -48,6 +48,12 @@ inline static void mmsc_extract_vector( std::vector<int> & vTarget, const Stored
 	vTarget.resize(vSource.nElements);
 	for ( unsigned int k = 0; k < vSource.nElements; ++k )
 		vTarget[k] = vSource.data[k];
+}
+inline static void mmsc_extract_vector( std::vector<int> & vTarget, const StoredCommands::vector_float & vSource )
+{
+	vTarget.resize(vSource.nElements);
+	for ( unsigned int k = 0; k < vSource.nElements; ++k )
+		vTarget[k] = (int)vSource.data[k];
 }
 inline static void mmsc_extract_string_from_vector( std::string & str, const StoredCommands::vector_int & vSource )
 {
@@ -1195,7 +1201,7 @@ void StoredCommands::AppendToolUtilityCommand( std::string commandName, std::str
 	c.eType = ToolParameterCommand;
 	sprintf_s(c.c.toolparam.name, sizeof(c.c.toolparam.name), "%s", commandName.c_str());
 	c.c.toolparam.eType = ToolParam_Utility_String;
-	c.c.toolparam.v.str = __tomystr(sValue.c_str());
+	c.c.toolparam.v.str = __tofstr(sValue.c_str());
 	append_command(c);
 }
 
@@ -1207,6 +1213,10 @@ void StoredCommands::AppendToolUtilityCommand( std::string commandName, std::str
 
 #define MMAPI_INIT_SCENE_COMMAND(c, cmdtype) c.init(); c.eType = SceneCommand; c.c.scene.eType = cmdtype; 
 
+#define MMAPI_SCENE_COMMAND(cmdtype) Command c; c.init(); c.eType = SceneCommand; c.c.scene.eType = cmdtype; append_command(c);
+#define MMAPI_SCENE_COMMAND_STR(cmdtype, pString) Command c; c.init(); c.eType = SceneCommand; c.c.scene.eType = cmdtype; c.c.scene.str = __tofstr(pString); return append_command(c);
+
+
 
 bool StoredCommands::GetSceneCommandResult_IsOK( Key k )
 {
@@ -1217,50 +1227,29 @@ bool StoredCommands::GetSceneCommandResult_IsOK( Key k )
 }
 
 
-void StoredCommands::AppendSceneCommand_SaveScreenShot(const char * pFilename)
+StoredCommands::Key StoredCommands::AppendSceneCommand_SaveScreenShot(const char * pFilename)
 {
-	Command c;  c.init();
-	c.eType = SceneCommand;
-	c.c.scene.eType = SaveScreenShot;
-	c.c.scene.str = __tomystr(pFilename);
-	append_command(c);
+	MMAPI_SCENE_COMMAND_STR(SaveScreenShot, pFilename);
 }
 
 StoredCommands::Key StoredCommands::AppendSceneCommand_OpenMixFile( const char * pFilename )
 {
-	Command c;  c.init();
-	c.eType = SceneCommand;
-	c.c.scene.eType = OpenMixFile;
-	c.c.scene.str = __tomystr(pFilename);
-	return append_command(c);
+	MMAPI_SCENE_COMMAND_STR(OpenMixFile, pFilename);
 }
-
 
 StoredCommands::Key StoredCommands::AppendSceneCommand_ExportMixFile( const char * pFilename )
 {
-	Command c;  c.init();
-	c.eType = SceneCommand;
-	c.c.scene.eType = ExportMixFile;
-	c.c.scene.str = __tomystr(pFilename);
-	return append_command(c);
+	MMAPI_SCENE_COMMAND_STR(ExportMixFile, pFilename);
 }
-
 
 void StoredCommands::AppendSceneCommand_Clear()
 {
-	Command c;  c.init();
-	c.eType = SceneCommand;
-	c.c.scene.eType = ClearScene;
-	append_command(c);
+	MMAPI_SCENE_COMMAND(ClearScene);
 }
 
 StoredCommands::Key StoredCommands::AppendSceneCommand_AppendMeshFile( const char * pFilename )
 {
-	Command c;  c.init();
-	c.eType = SceneCommand;
-	c.c.scene.eType = AppendMeshFile;
-	c.c.scene.str = __tomystr(pFilename);
-	return append_command(c);
+	MMAPI_SCENE_COMMAND_STR(AppendMeshFile, pFilename);
 }
 bool StoredCommands::GetSceneCommandResult_AppendMeshFile( StoredCommands::Key k, std::vector<int> & vObjects )
 {
@@ -1273,13 +1262,32 @@ bool StoredCommands::GetSceneCommandResult_AppendMeshFile( StoredCommands::Key k
 	return true;
 }
 
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_AppendPackedMeshFile( const char * pFilename )
+{
+	MMAPI_SCENE_COMMAND_STR(AppendPackedMeshFile, pFilename);
+}
+bool StoredCommands::GetSceneCommandResult_AppendPackedMeshFile( Key k, int & nObjectID )
+{
+	if ( k >= m_vCommands.size() )
+		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK == 0 )
+		return false;
+	nObjectID = c.r.scene.nObjectIDs.data[0];
+	return true;
+}
+bool StoredCommands::GetSceneCommandResult_AppendPackedMeshFile( Key k, any_result & nObjectID )
+{
+	bool bOK = GetSceneCommandResult_AppendPackedMeshFile(k, nObjectID.i);
+	return bOK;
+}
+
+
+
 StoredCommands::Key StoredCommands::AppendSceneCommand_AppendMeshFileAsReference( const char * pFilename )
 {
-	Command c;  c.init();
-	c.eType = SceneCommand;
-	c.c.scene.eType = AppendMeshFileAsReference;
-	c.c.scene.str = __tomystr(pFilename);
-	return append_command(c);
+	MMAPI_SCENE_COMMAND_STR(AppendMeshFileAsReference, pFilename);
 }
 bool StoredCommands::GetSceneCommandResult_AppendMeshFileAsReference( StoredCommands::Key k, std::vector<int> & vObjects )
 {
@@ -1295,18 +1303,21 @@ bool StoredCommands::GetSceneCommandResult_AppendMeshFileAsReference( StoredComm
 
 StoredCommands::Key StoredCommands::AppendSceneCommand_ExportMeshFile_CurrentSelection( const char * pFilename )
 {
-	Command c;  
-	MMAPI_INIT_SCENE_COMMAND(c, ExportMeshFile_SelectedObjects);
-	c.c.scene.str = __tomystr(pFilename);
+	MMAPI_SCENE_COMMAND_STR(ExportMeshFile_SelectedObjects, pFilename);
+}
+StoredCommands::Key StoredCommands::AppendSceneCommand_ExportAsPackedMeshFile( const char * pFilename, int nObjectID )
+{
+	Command c; MMAPI_INIT_SCENE_COMMAND(c, ExportAsPackedMeshByID);
+	c.c.scene.str = __tofstr(pFilename);
+	c.c.scene.nObjectIDs.append(nObjectID);
 	return append_command(c);
 }
 
 
+
 StoredCommands::Key StoredCommands::AppendSceneCommand_CreatePivot( frame3f f )
 {
-    Command c;  c.init();
-    c.eType = SceneCommand;
-    c.c.scene.eType = CreatePivot;
+    Command c;  MMAPI_INIT_SCENE_COMMAND(c, CreatePivot);
     c.c.scene.f = f;
     return append_command(c);
 }
@@ -1324,21 +1335,62 @@ bool StoredCommands::GetSceneCommandResult_CreatePivot( Key k, int & nObjectID )
 
 StoredCommands::Key StoredCommands::AppendSceneCommand_LinkPivot( int nPivotID, int nLinkToID )
 {
-    Command c;  c.init();
-    c.eType = SceneCommand;
-    c.c.scene.eType = LinkPivot;
+    Command c;  MMAPI_INIT_SCENE_COMMAND(c, LinkPivot);
     c.c.scene.nObjectIDs.append(nPivotID);
     c.c.scene.nObjectIDs.append(nLinkToID);
     return append_command(c);
 }
 StoredCommands::Key StoredCommands::AppendSceneCommand_UnlinkPivot( int nPivotID )
 {
-    Command c;  c.init();
-    c.eType = SceneCommand;
-    c.c.scene.eType = LinkPivot;
+    Command c;  MMAPI_INIT_SCENE_COMMAND(c, LinkPivot);
     c.c.scene.nObjectIDs.append(nPivotID);
     c.c.scene.nObjectIDs.append(-1);
     return append_command(c);
+}
+
+
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_CreateLiveMeshObject( const char * pFilename )
+{
+	MMAPI_SCENE_COMMAND_STR(CreateLiveMeshObject, pFilename);
+}
+bool StoredCommands::GetSceneCommandResult_CreateLiveMeshObject( Key k, std::string & portName, int & nObjectID )
+{
+	if ( k >= m_vCommands.size() )
+		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK == 0 )
+		return false;
+	portName = std::string(c.r.scene.str.data);
+	nObjectID = c.r.scene.nObjectIDs.data[0];
+	return true;
+}
+bool StoredCommands::GetSceneCommandResult_CreateLiveMeshObject( Key k, std::vector<unsigned char> & portName, any_result & nObjectID )
+{
+	std::string port; int nid;
+	if ( GetSceneCommandResult_CreateLiveMeshObject(k, port, nid) ) {
+		for ( unsigned int k = 0; k < port.length(); ++k )
+			portName.push_back(port[k]);
+		portName.push_back('\0');
+		nObjectID.type = 1;
+		nObjectID.i = nid;
+		return true;
+	}
+	return false;
+}
+
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_RequestLiveMeshLock( const char * pPortName )
+{
+	MMAPI_SCENE_COMMAND_STR(RequestLiveMeshLock, pPortName);
+}
+StoredCommands::Key StoredCommands::AppendSceneCommand_ReleaseLiveMeshLock( const char * pPortName )
+{
+	MMAPI_SCENE_COMMAND_STR(ReleaseLiveMeshLock, pPortName);
+}
+StoredCommands::Key StoredCommands::AppendSceneCommand_NotifyLiveMeshUpdate( const char * pPortName )
+{
+	MMAPI_SCENE_COMMAND_STR(NotifyLiveMeshUpdated, pPortName);
 }
 
 
@@ -1462,7 +1514,7 @@ StoredCommands::Key StoredCommands::AppendSceneCommand_SetObjectName(int nObject
 	c.eType = SceneCommand;
 	c.c.scene.eType = SetObjectName;
 	c.c.scene.nObjectIDs.append(nObjectID);
-	c.c.scene.str = __tomystr(objectName.c_str());
+	c.c.scene.str = __tofstr(objectName.c_str());
 	return append_command(c);
 }
 
@@ -1471,7 +1523,7 @@ StoredCommands::Key StoredCommands::AppendSceneCommand_FindObjectByName(const st
 	Command c;  c.init();
 	c.eType = SceneCommand;
 	c.c.scene.eType = FindObjectByName;
-	c.c.scene.str = __tomystr(objectName.c_str());
+	c.c.scene.str = __tofstr(objectName.c_str());
 	return append_command(c);
 }
 bool StoredCommands::GetSceneCommandResult_FindObjectByName( Key k, int & nObjectID )
@@ -1521,14 +1573,16 @@ StoredCommands::Key StoredCommands::AppendSceneCommand_ShowAll()
 
 
 
+/*
+ * Spatial Query Commands
+ */
+#define MMAPI_INIT_SQUERY_COMMAND(c, cmdtype) c.init(); c.eType = SpatialQueryCommand; c.c.spatial.eType = cmdtype;
+
+
 StoredCommands::Key StoredCommands::AppendQueryCommand_FindNearestPoint( float x, float y, float z )
 {
-	Command c;  c.init();
-	c.eType = SpatialQueryCommand;
-	c.c.spatial.eType = NearestPointSpatialQuery;
-	c.c.spatial.p.x = x;
-	c.c.spatial.p.y = y;
-	c.c.spatial.p.z = z;
+	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, NearestPointSpatialQuery);
+	c.c.spatial.p.x = x;	c.c.spatial.p.y = y;	c.c.spatial.p.z = z;
 	return append_command(c);
 }
 StoredCommands::Key StoredCommands::AppendQueryCommand_FindNearestPoint( const vec3f & p )
@@ -1537,11 +1591,9 @@ StoredCommands::Key StoredCommands::AppendQueryCommand_FindNearestPoint( const v
 }
 bool StoredCommands::GetQueryResult_FindNearestPoint( Key k, frame3f * pFrame )
 {
-	if ( k >= m_vCommands.size() )
-		return false;
+	if ( k >= m_vCommands.size() )		return false;
 	Command & c = m_vCommands[k];
-	if ( c.r.spatial.OK == 0 )
-		return false;
+	if ( c.r.spatial.OK == 0 )			return false;
 	pFrame->origin_x = c.r.spatial.v.data[0];	pFrame->origin_y = c.r.spatial.v.data[1];	pFrame->origin_z = c.r.spatial.v.data[2];
 	pFrame->normal_x = c.r.spatial.v.data[3];	pFrame->normal_y = c.r.spatial.v.data[4];	pFrame->normal_z = c.r.spatial.v.data[5];
 	pFrame->tan1_x = c.r.spatial.v.data[6];		pFrame->tan1_y = c.r.spatial.v.data[7];		pFrame->tan1_z = c.r.spatial.v.data[8];
@@ -1553,9 +1605,7 @@ bool StoredCommands::GetQueryResult_FindNearestPoint( Key k, frame3f * pFrame )
 
 StoredCommands::Key StoredCommands::AppendQueryCommand_FindRayIntersection( float ox, float oy, float oz, float dx, float dy, float dz )
 {
-	Command c;  c.init();
-	c.eType = SpatialQueryCommand;
-	c.c.spatial.eType = RayIntersectionSpatialQuery;
+	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, RayIntersectionSpatialQuery);
 	c.c.spatial.p = make_vec3f(ox,oy,oz);
 	c.c.spatial.d = make_vec3f(dx,dy,dz);
 	return append_command(c);
@@ -1566,11 +1616,9 @@ StoredCommands::Key StoredCommands::AppendQueryCommand_FindRayIntersection( cons
 }
 bool StoredCommands::GetQueryResult_FindRayIntersection( StoredCommands::Key k, frame3f * pFrame )
 {
-	if ( k >= m_vCommands.size() )
-		return false;
+	if ( k >= m_vCommands.size() )		return false;
 	Command & c = m_vCommands[k];
-	if ( c.r.spatial.OK == 0 )
-		return false;
+	if ( c.r.spatial.OK == 0 )			return false;
 	pFrame->origin_x = c.r.spatial.v.data[0];	pFrame->origin_y = c.r.spatial.v.data[1];	pFrame->origin_z = c.r.spatial.v.data[2];
 	pFrame->normal_x = c.r.spatial.v.data[3];	pFrame->normal_y = c.r.spatial.v.data[4];	pFrame->normal_z = c.r.spatial.v.data[5];
 	pFrame->tan1_x = c.r.spatial.v.data[6];		pFrame->tan1_y = c.r.spatial.v.data[7];		pFrame->tan1_z = c.r.spatial.v.data[8];
@@ -1585,18 +1633,14 @@ bool StoredCommands::GetQueryResult_FindRayIntersection( StoredCommands::Key k, 
 
 StoredCommands::Key StoredCommands::AppendQueryCommand_GetBoundingBox(  )
 {
-	Command c;  c.init();
-	c.eType = SpatialQueryCommand;
-	c.c.spatial.eType = SelectedObjectsBoundingBoxQuery;
+	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, SelectedObjectsBoundingBoxQuery);
 	return append_command(c);
 }
 bool StoredCommands::GetQueryResult_GetBoundingBox( Key k, float fMin[3], float fMax[3] )
 {
-	if ( k >= m_vCommands.size() )
-		return false;
+	if ( k >= m_vCommands.size() )		return false;
 	Command & c = m_vCommands[k];
-	if ( c.r.spatial.OK == 0 )
-		return false;
+	if ( c.r.spatial.OK == 0 )			return false;
 	fMin[0] = c.r.spatial.v.data[0];	fMin[1] = c.r.spatial.v.data[1];	fMin[2] = c.r.spatial.v.data[2];
 	fMax[0] = c.r.spatial.v.data[3];	fMax[1] = c.r.spatial.v.data[4];	fMax[2] = c.r.spatial.v.data[5];
 	return true;
@@ -1606,38 +1650,30 @@ bool StoredCommands::GetQueryResult_GetBoundingBox( Key k, float fMin[3], float 
 
 StoredCommands::Key StoredCommands::AppendQueryCommand_GetObjectBoundingBox( int nObjectID )
 {
-	Command c;  c.init();
-	c.eType = SpatialQueryCommand;
-	c.c.spatial.eType = ObjectBoundingBoxQuery;
+	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, ObjectBoundingBoxQuery);
 	c.c.spatial.p.x = nObjectID;
 	return append_command(c);
 }
 bool StoredCommands::GetQueryResult_GetObjectBoundingBox( Key k, float fMin[3], float fMax[3] )
 {
-	if ( k >= m_vCommands.size() )
-		return false;
+	if ( k >= m_vCommands.size() )		return false;
 	Command & c = m_vCommands[k];
-	if ( c.r.spatial.OK == 0 )
-		return false;
+	if ( c.r.spatial.OK == 0 )			return false;
 	fMin[0] = c.r.spatial.v.data[0];	fMin[1] = c.r.spatial.v.data[1];	fMin[2] = c.r.spatial.v.data[2];
 	fMax[0] = c.r.spatial.v.data[3];	fMax[1] = c.r.spatial.v.data[4];	fMax[2] = c.r.spatial.v.data[5];
 	return true;
 }
 StoredCommands::Key StoredCommands::AppendQueryCommand_GetObjectLocalFrame( int nObjectID )
 {
-	Command c;  c.init();
-	c.eType = SpatialQueryCommand;
-	c.c.spatial.eType = ObjectLocalFrameQuery;
+	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, ObjectLocalFrameQuery);
 	c.c.spatial.p.x = nObjectID;
 	return append_command(c);
 }
 bool StoredCommands::GetQueryResult_GetObjectLocalFrame( Key k, frame3f * pFrame )
 {
-	if ( k >= m_vCommands.size() )
-		return false;
+	if ( k >= m_vCommands.size() )		return false;
 	Command & c = m_vCommands[k];
-	if ( c.r.spatial.OK == 0 )
-		return false;
+	if ( c.r.spatial.OK == 0 )			return false;
 	float * pData[] = { & pFrame->origin_x, &pFrame->origin_y, &pFrame->origin_z, 
 						&pFrame->tan1_x, &pFrame->tan1_y, &pFrame->tan1_z, 
 						&pFrame->tan2_x, &pFrame->tan2_y, &pFrame->tan2_z,
@@ -1652,18 +1688,14 @@ bool StoredCommands::GetQueryResult_GetObjectLocalFrame( Key k, frame3f * pFrame
 
 StoredCommands::Key StoredCommands::AppendQueryCommand_GetSelectedFacesBoundingBox(  )
 {
-	Command c;  c.init();
-	c.eType = SpatialQueryCommand;
-	c.c.spatial.eType = SelectedFacesBoundingBoxQuery;
+	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, SelectedFacesBoundingBoxQuery);
 	return append_command(c);
 }
 bool StoredCommands::GetQueryResult_GetSelectedFacesBoundingBox( Key k, float fMin[3], float fMax[3] )
 {
-	if ( k >= m_vCommands.size() )
-		return false;
+	if ( k >= m_vCommands.size() )		return false;
 	Command & c = m_vCommands[k];
-	if ( c.r.spatial.OK == 0 )
-		return false;
+	if ( c.r.spatial.OK == 0 )			return false;
 	fMin[0] = c.r.spatial.v.data[0];	fMin[1] = c.r.spatial.v.data[1];	fMin[2] = c.r.spatial.v.data[2];
 	fMax[0] = c.r.spatial.v.data[3];	fMax[1] = c.r.spatial.v.data[4];	fMax[2] = c.r.spatial.v.data[5];
 	return true;
@@ -1672,21 +1704,139 @@ bool StoredCommands::GetQueryResult_GetSelectedFacesBoundingBox( Key k, float fM
 
 StoredCommands::Key StoredCommands::AppendQueryCommand_GetSelectedFacesCentroid(  )
 {
-	Command c;  c.init();
-	c.eType = SpatialQueryCommand;
-	c.c.spatial.eType = SelectedFacesCentroidQuery;
+	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, SelectedFacesCentroidQuery);
 	return append_command(c);
 }
 bool StoredCommands::GetQueryResult_GetSelectedFacesCentroid( Key k, float fCentroid[3] )
 {
-	if ( k >= m_vCommands.size() )
-		return false;
+	if ( k >= m_vCommands.size() )		return false;
 	Command & c = m_vCommands[k];
-	if ( c.r.spatial.OK == 0 )
-		return false;
+	if ( c.r.spatial.OK == 0 )			return false;
 	fCentroid[0] = c.r.spatial.v.data[0];	fCentroid[1] = c.r.spatial.v.data[1];	fCentroid[2] = c.r.spatial.v.data[2];
 	return true;
 }
+
+
+
+
+// test if point is inside selected object
+StoredCommands::Key StoredCommands::AppendQueryCommand_IsInsideObject( const vec3f & p )
+{
+	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, IsInsideObjectQuery);
+	c.c.spatial.p = p;
+	return append_command(c);
+}
+bool StoredCommands::GetQueryResult_IsInsideObject( Key k )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	return ( c.r.spatial.OK != 0 );
+}
+
+
+StoredCommands::Key StoredCommands::AppendQueryCommand_SetObjectTypeFilter( int nFilter )
+{
+	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, SetObjectTypeFilter);
+	c.c.spatial.p.x = nFilter;
+	return append_command(c);
+}
+StoredCommands::Key StoredCommands::AppendQueryCommand_ClearObjectTypeFilter()
+{
+	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, ClearObjectTypeFilter);
+	return append_command(c);
+}
+
+
+// find all objects hit by ray. Results are returned sorted by ray-hit parameter.
+StoredCommands::Key StoredCommands::AppendQueryCommand_FindObjectsHitByRay( const vec3f & o, const vec3f & d )
+{
+	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, RayHitObjectsQuery);
+	c.c.spatial.p = o; c.c.spatial.d = d;
+	return append_command(c);
+}
+bool StoredCommands::GetQueryResult_FindObjectsHitByRay( Key k, std::vector<int> & vObjects )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.spatial.OK == 0 )			return false;
+	mmsc_extract_vector(vObjects, c.r.spatial.v);
+	return true;
+}
+
+// find closest object to point
+StoredCommands::Key StoredCommands::AppendQueryCommand_FindNearestObject( const vec3f & p )
+{
+	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, NearestObjectQuery);
+	c.c.spatial.p = p;
+	return append_command(c);
+}
+bool StoredCommands::GetQueryResult_FindNearestObject( Key k, int & nObjectID )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.spatial.OK == 0 )			return false;
+	nObjectID = (int)c.r.spatial.v.data[0];
+	return true;
+}
+bool StoredCommands::GetQueryResult_FindNearestObject( Key k, any_result & nObjectID )
+{
+	return GetQueryResult_FindNearestObject(k, nObjectID.i);
+}
+
+// find objects within distance of point.
+StoredCommands::Key StoredCommands::AppendQueryCommand_FindObjectsWithinDistance( const vec3f & p, float fDistance )
+{
+	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, ObjectsWithinRadiusQuery);
+	c.c.spatial.p = p;  c.c.spatial.d.x = fDistance; 
+	return append_command(c);
+}
+bool StoredCommands::GetQueryResult_FindObjectsWithinDistance( Key k, std::vector<int> & vObjects )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.spatial.OK == 0 )			return false;
+	mmsc_extract_vector(vObjects, c.r.spatial.v);
+	return true;
+}
+
+// test if two objects intersect (requires that objects be meshes)
+StoredCommands::Key StoredCommands::AppendQueryCommand_TestIntersection( int nObjectID, int nTestWithObjectID )
+{
+	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, ObjectIntersectionQuery);
+	c.c.spatial.p.x = nObjectID; c.c.spatial.p.y = nTestWithObjectID;
+	return append_command(c);
+}
+bool StoredCommands::GetQueryResult_TestIntersection( Key k )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	return ( c.r.spatial.OK != 0 );
+}
+	
+// Find all objects intersecting first object
+StoredCommands::Key StoredCommands::AppendQueryCommand_FindIntersectingObjects( int nObjectID )
+{
+	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, FindIntersectingObjects);
+	c.c.spatial.p.x = nObjectID;
+	return append_command(c);
+}
+bool StoredCommands::GetQueryResult_FindIntersectingObjects( Key k, std::vector<int> & vObjects )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.spatial.OK == 0 )			return false;
+	mmsc_extract_vector(vObjects, c.r.spatial.v);
+	return true;
+}
+
+
+
+
+
+
+
+
+
 
 
 /*
@@ -1860,7 +2010,7 @@ StoredCommands::Key StoredCommands::AppendActionCommand_DropPartAtPoint( const c
 	Command c; c.init();
 	c.eType = PartCommand;
 	c.c.part.eType = DropPart;
-	c.c.part.filename = __tomystr(pPartPath);
+	c.c.part.filename = __tofstr(pPartPath);
 	c.c.part.f = f;
 	c.c.part.r = fRadius;
 	c.c.part.bFlag = bInteractive;

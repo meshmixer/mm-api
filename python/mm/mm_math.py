@@ -1,5 +1,8 @@
 import math
 
+# TODO: these should all return tuples, but it seems like the map(...) fns return lists.
+# maybe need to call tuple() around them?
+
 def addvs(vec,s):
     """add scalar to elements of vector"""
     return map(lambda x: x+s, vec)
