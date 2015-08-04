@@ -46,7 +46,8 @@ csharp/examples_vs2012/mm/bin
 csharp/examples_vs2012/mm/obj
 csharp/LinkedMeshDemo/bin
 csharp/LinkedMeshDemo/obj
-csharp/*/*.user
+csharp/**/*.user
+csharp/**/*.pdb
 
 # certain local files
 rms_*.bat
