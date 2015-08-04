@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using SharpGL;
+using System.Timers;
 
 namespace LinkedMeshDemo
 {
@@ -15,9 +16,12 @@ namespace LinkedMeshDemo
     /// </summary>
     public partial class SharpGLForm : Form
     {
+        mm.RemoteControl mmRemote;
 
         public mm.PackedMesh mesh;
         public mm.MeshChangedListener signal;
+
+        public System.Timers.Timer brush_timer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SharpGLForm"/> class.
@@ -34,6 +38,9 @@ namespace LinkedMeshDemo
 
             signal.Start();
             signal.OnMeshChanged += new mm.MeshChangedHandler(OnMeshUpdated);
+
+            mmRemote = new mm.RemoteControl();
+            mmRemote.Initialize();
         }
 
         private void OnMeshUpdated(object sender)
@@ -51,6 +58,8 @@ namespace LinkedMeshDemo
         private void SharpGLForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             this.signal.Stop();
+
+            mmRemote.Shutdown();
         }
 
 
@@ -121,6 +130,10 @@ namespace LinkedMeshDemo
 
             //  Set the clear color.
             gl.ClearColor(0.5f, 0.5f, 0.5f, 0);
+
+            gl.Enable(OpenGL.GL_LIGHTING);
+            gl.Enable(OpenGL.GL_LIGHT0);
+            gl.Enable(OpenGL.GL_COLOR_MATERIAL, OpenGL.GL_FRONT_AND_BACK);
         }
 
         /// <summary>
@@ -156,6 +169,53 @@ namespace LinkedMeshDemo
         /// </summary>
         private float rotation = 0.0f;
 
+
+
+
+        float fAccumTime = 0;
+        float fBrushTime = 0.1f;
+        private void brushStrokeButton_Click(object sender, EventArgs e)
+        {
+            if (brush_timer == null)
+            {
+                brush_timer = new System.Timers.Timer();
+                brush_timer.Elapsed += brush_timer_elapsed;
+                brush_timer.Interval = 100.0f;
+                brush_timer.Start();
+
+                StoredCommands sc = new StoredCommands();
+                sc.AppendBeginToolCommand("volumeBrush");
+                mmRemote.ExecuteCommands(sc);
+            }
+            else
+            {
+                brush_timer.Stop();
+                brush_timer = null;
+
+                StoredCommands sc = new StoredCommands();
+                sc.AppendCompleteToolCommand("accept");
+                mmRemote.ExecuteCommands(sc);
+            }
+        }
+
+        private void brush_timer_elapsed(object sender, ElapsedEventArgs e)
+        {
+            float height = 0.1f;
+
+            fAccumTime += fBrushTime;
+            float r0 = 0.1f + fAccumTime * 0.02f;
+            float r1 = 0.1f + (fAccumTime + fBrushTime) * 0.02f;
+            float t0 = fAccumTime * 2.0f;
+            float t1 = (fAccumTime + fBrushTime) * 2.0f;
+            float x0 = r0 * (float)Math.Cos(t0); float y0 = r0 * (float)Math.Sin(t0);
+            float x1 = r1 * (float)Math.Cos(t1); float y1 = r1 * (float)Math.Sin(t1);
+
+            StoredCommands sc = new StoredCommands();
+            vec3f v0 = new vec3f(); v0.x = x0; v0.y = height; v0.z = y0;
+            vec3f v1 = new vec3f(); v1.x = x1; v1.y = height; v1.z = y1;
+            sc.AppendActionCommand_LinearBrushStroke3D(v0, v1, 16);
+            mmRemote.ExecuteCommands(sc);
+        }
 
 
     }

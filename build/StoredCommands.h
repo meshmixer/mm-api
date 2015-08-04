@@ -670,7 +670,7 @@ public:
 	Key AppendSceneCommand_SetHidden( int nObjectID );
 	Key AppendSceneCommand_ShowAll();
 
-	// live mesh
+	// input live mesh
 	Key AppendSceneCommand_CreateLiveMeshObject( const char * pFilename );
 		bool GetSceneCommandResult_CreateLiveMeshObject( Key k, std::string & portName, int & nObjectID );
 		bool GetSceneCommandResult_CreateLiveMeshObject( Key k, std::vector<unsigned char> & portName, any_result & nObjectID );  // for SWIG
@@ -679,6 +679,13 @@ public:
 	Key AppendSceneCommand_RequestLiveMeshLock( const char * pPortName );
 	Key AppendSceneCommand_ReleaseLiveMeshLock( const char * pPortName );
 	Key AppendSceneCommand_NotifyLiveMeshUpdate( const char * pPortName );
+
+	// tracking live mesh (when nObjectID is modified, PackedMesh written to pFilename and then UDP port gets a datagram)
+	//   NOTE: when reading this file, use lock functions above!!
+	Key AppendSceneCommand_CreateTrackingLiveMesh( const char * pFilename, int nObjectID, int nUDPNotificationPort);
+		bool GetSceneCommandResult_CreateTrackingLiveMesh( Key k, std::string & portName );
+		bool GetSceneCommandResult_CreateTrackingLiveMesh( Key k, std::vector<unsigned char> & portName );
+	Key AppendSceneCommand_HaltTrackingLiveMesh( const char * pPortName );
 
 
 	/*
@@ -806,6 +813,8 @@ public:
 	 */
 
 	Key AppendActionCommand_BrushStroke3D( const std::vector<brush_stamp> & vPoints );
+	Key AppendActionCommand_BrushStamp3D( const vec3f & v0 );
+	Key AppendActionCommand_LinearBrushStroke3D( const vec3f & v0, const vec3f & v1, int nSteps );
 
 
 	/* Part Drop. During interactive part drop you can also use AppendToolParameterCommand() with following parameters:
@@ -1014,6 +1023,8 @@ private:
 		RequestLiveMeshLock,
 		ReleaseLiveMeshLock,
 		NotifyLiveMeshUpdated,
+		CreateTrackingLiveMesh,
+		HaltTrackingLiveMesh
 	};
 	struct SceneCmd {
 		SceneCmdType eType;

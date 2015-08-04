@@ -12,6 +12,7 @@ namespace std {
    %template(vectori) vector<int>;
    %template(vectorui) vector<unsigned int>;
    %template(vectorf) vector<float>;
+   %template(vectorBrushStamp) vector<mm::brush_stamp>;
 };
 
 %include <carrays.i>

@@ -36,6 +36,16 @@ inline static fstring __tofstr(const char * pString)
 	s.data[s.nSize+1] = 0;
 	return s;
 }
+inline static std::vector<unsigned char> __toucstr(const std::string & str)
+{
+	std::vector<unsigned char> result;
+	size_t n = str.length();
+	for ( unsigned int k = 0; k < n; ++k )
+		result.push_back(str[k]);
+	result.push_back('\0');
+	return result;
+}
+
 inline static void mmsc_init_vector( StoredCommands::vector_int & v, const std::vector<int> & vSource )
 {
 	size_t nCount = vSource.size();
@@ -1369,9 +1379,7 @@ bool StoredCommands::GetSceneCommandResult_CreateLiveMeshObject( Key k, std::vec
 {
 	std::string port; int nid;
 	if ( GetSceneCommandResult_CreateLiveMeshObject(k, port, nid) ) {
-		for ( unsigned int k = 0; k < port.length(); ++k )
-			portName.push_back(port[k]);
-		portName.push_back('\0');
+		portName = __toucstr(port);
 		nObjectID.type = 1;
 		nObjectID.i = nid;
 		return true;
@@ -1392,6 +1400,37 @@ StoredCommands::Key StoredCommands::AppendSceneCommand_NotifyLiveMeshUpdate( con
 {
 	MMAPI_SCENE_COMMAND_STR(NotifyLiveMeshUpdated, pPortName);
 }
+
+
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_CreateTrackingLiveMesh( const char * pFilename, int nObjectID, int nUDPNotificationPort)
+{
+    Command c;  MMAPI_INIT_SCENE_COMMAND(c, CreateTrackingLiveMesh);
+    c.c.scene.nObjectIDs.append(nObjectID);
+    c.c.scene.nObjectIDs.append(nUDPNotificationPort);
+    return append_command(c);
+}
+bool StoredCommands::GetSceneCommandResult_CreateTrackingLiveMesh( Key k, std::string & portName )
+{
+	if ( k < m_vCommands.size() && m_vCommands[k].r.scene.OK ) {
+		Command & c = m_vCommands[k];
+		portName = std::string(c.r.scene.str.data);	
+		return true;
+	}
+	return false;
+}
+bool StoredCommands::GetSceneCommandResult_CreateTrackingLiveMesh( Key k, std::vector<unsigned char> & portName )
+{
+	std::string s;
+	bool bOK = GetSceneCommandResult_CreateTrackingLiveMesh(k, s);
+	portName = __toucstr(s);
+	return bOK;
+}
+StoredCommands::Key StoredCommands::AppendSceneCommand_HaltTrackingLiveMesh( const char * pPortName )
+{
+	MMAPI_SCENE_COMMAND_STR(CreateTrackingLiveMesh, pPortName);
+}
+
 
 
 
@@ -2000,7 +2039,29 @@ StoredCommands::Key StoredCommands::AppendActionCommand_BrushStroke3D( const std
 	}
 	return append_command(c);
 }
-
+StoredCommands::Key StoredCommands::AppendActionCommand_BrushStamp3D( const vec3f & v0 )
+{
+	Command c; c.init();
+	c.eType = BrushCommand;
+	c.c.brush.eType = Stroke3D;
+	c.c.brush.vStamps.append(v0.x); c.c.brush.vStamps.append(v0.y); c.c.brush.vStamps.append(v0.z); c.c.brush.vStamps.append(1.0f);
+	return append_command(c);
+}
+StoredCommands::Key StoredCommands::AppendActionCommand_LinearBrushStroke3D( const vec3f & v0, const vec3f & v1, int nSteps )
+{
+	Command c; c.init();
+	c.eType = BrushCommand;
+	c.c.brush.eType = Stroke3D;
+	if ( nSteps < 2) nSteps = 2;
+	for ( int k = 0; k < nSteps; ++k ) {
+		float t = (float)k / (float)(nSteps-1);
+		float x = (1.0f-t)*v0.x + (t)*v1.x;
+		float y = (1.0f-t)*v0.y + (t)*v1.y;
+		float z = (1.0f-t)*v0.z + (t)*v1.z;
+		c.c.brush.vStamps.append(x); c.c.brush.vStamps.append(y); c.c.brush.vStamps.append(z); c.c.brush.vStamps.append(1.0f);
+	}
+	return append_command(c);
+}
 
 
 
