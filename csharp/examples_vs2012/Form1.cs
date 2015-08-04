@@ -20,7 +20,7 @@ namespace examples
 
         private void button1_Click(object sender, EventArgs e)
         {
-            mmapi_util.RemoteControl rc = new mmapi_util.RemoteControl();
+            mm.RemoteControl rc = new mm.RemoteControl();
             rc.Initialize();
 
             StoredCommands sc = new StoredCommands();
@@ -34,7 +34,7 @@ namespace examples
 
         private void button2_Click(object sender, EventArgs e)
         {
-            mmapi_util.RemoteControl rc = new mmapi_util.RemoteControl();
+            mm.RemoteControl rc = new mm.RemoteControl();
             rc.Initialize();
 
             // you could import a mesh using this command:
@@ -64,7 +64,7 @@ namespace examples
 
         private void queriesButton_Click(object sender, EventArgs e)
         {
-            mmapi_util.RemoteControl rc = new mmapi_util.RemoteControl();
+            mm.RemoteControl rc = new mm.RemoteControl();
             rc.Initialize();
 
             StoredCommands sc = new StoredCommands();
@@ -86,6 +86,17 @@ namespace examples
             Debug.WriteLine("got box");
 
             rc.Shutdown();
+        }
+
+
+
+
+
+        private void testWriteButton_Click(object sender, EventArgs e)
+        {
+            mm.PackedMesh pm = new mm.PackedMesh();
+            pm.InitializeToTestMesh();
+            pm.Write("c:\\scratch\\livemesh_test.bin");
         }
     }
 }

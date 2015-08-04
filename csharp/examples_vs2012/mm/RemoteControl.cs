@@ -5,9 +5,9 @@ using System.Text;
 using System.Net;
 using System.Net.Sockets;
 
-namespace mmapi_util
+namespace mm
 {
-    class RemoteControl
+    public class RemoteControl
     {
         protected IPEndPoint m_remoteIP;
         protected IPEndPoint m_listenIP;
