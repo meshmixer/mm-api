@@ -183,18 +183,15 @@ namespace LinkedMeshDemo
                 brush_timer.Interval = 100.0f;
                 brush_timer.Start();
 
-                StoredCommands sc = new StoredCommands();
-                sc.AppendBeginToolCommand("volumeBrush");
-                mmRemote.ExecuteCommands(sc);
+                mmRemote.BeginTool("volumeBrush");
             }
             else
             {
                 brush_timer.Stop();
                 brush_timer = null;
 
-                StoredCommands sc = new StoredCommands();
-                sc.AppendCompleteToolCommand("accept");
-                mmRemote.ExecuteCommands(sc);
+
+                mmRemote.AcceptTool();
             }
         }
 

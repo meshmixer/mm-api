@@ -41,9 +41,6 @@
     </StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mm">
-      <HintPath>..\examples_vs2012\mm\bin\Debug\mm.dll</HintPath>
-    </Reference>
     <Reference Include="mmapi_csharp">
       <HintPath>..\..\distrib\csharp_win\Release\mmapi_csharp.dll</HintPath>
     </Reference>
@@ -99,6 +96,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\mm\mm.csproj">
+      <Project>{d55ec0ee-de6e-4a77-abfb-c89ccd2604a9}</Project>
+      <Name>mm</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

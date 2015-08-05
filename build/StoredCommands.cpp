@@ -1125,12 +1125,12 @@ StoredCommands::Key StoredCommands::AppendQueryCommand_ConvertScalarToWorld(floa
 	c.c.generic_query.p.x = f;
 	return append_command(c);
 }
-bool StoredCommands::GetQueryResult_ConvertScalarToWorld(Key k, float * pResult)
+bool StoredCommands::GetQueryResult_ConvertScalarToWorld(Key k, float & fResult)
 {
 	if ( k >= m_vCommands.size() )
 		return false;
 	Command & c = m_vCommands[k];
-	*pResult = c.r.generic_query.p.x;
+	fResult = c.r.generic_query.p.x;
 	return ( c.r.generic_query.OK != 0 );
 }
 
@@ -1142,12 +1142,12 @@ StoredCommands::Key StoredCommands::AppendQueryCommand_ConvertScalarToScene(floa
 	c.c.generic_query.p.x = f;
 	return append_command(c);
 }
-bool StoredCommands::GetQueryResult_ConvertScalarToScene(Key k, float * pResult)
+bool StoredCommands::GetQueryResult_ConvertScalarToScene(Key k, float & fResult)
 {
 	if ( k >= m_vCommands.size() )
 		return false;
 	Command & c = m_vCommands[k];
-	*pResult = c.r.generic_query.p.x;
+	fResult = c.r.generic_query.p.x;
 	return ( c.r.generic_query.OK != 0 );
 }
 
@@ -1160,12 +1160,12 @@ StoredCommands::Key StoredCommands::AppendQueryCommand_ConvertPointToWorld(float
 	c.c.generic_query.p = make_vec3f(fPoint[0],fPoint[1],fPoint[2]);
 	return append_command(c);
 }
-bool StoredCommands::GetQueryResult_ConvertPointToWorld(Key k, float * pResult)
+bool StoredCommands::GetQueryResult_ConvertPointToWorld(Key k, float fPoint[3])
 {
 	if ( k >= m_vCommands.size() )
 		return false;
 	Command & c = m_vCommands[k];
-	pResult[0] = c.r.generic_query.p.x; pResult[1] = c.r.generic_query.p.y; pResult[2] = c.r.generic_query.p.z; 
+	fPoint[0] = c.r.generic_query.p.x; fPoint[1] = c.r.generic_query.p.y; fPoint[2] = c.r.generic_query.p.z; 
 	return ( c.r.generic_query.OK != 0 );
 }
 
@@ -1176,12 +1176,12 @@ StoredCommands::Key StoredCommands::AppendQueryCommand_ConvertPointToScene(float
 	c.c.generic_query.p = make_vec3f(fPoint[0],fPoint[1],fPoint[2]);
 	return append_command(c);
 }
-bool StoredCommands::GetQueryResult_ConvertPointToScene(Key k, float * pResult)
+bool StoredCommands::GetQueryResult_ConvertPointToScene(Key k, float fPoint[3])
 {
 	if ( k >= m_vCommands.size() )
 		return false;
 	Command & c = m_vCommands[k];
-	pResult[0] = c.r.generic_query.p.x; pResult[1] = c.r.generic_query.p.y; pResult[2] = c.r.generic_query.p.z; 
+	fPoint[0] = c.r.generic_query.p.x; fPoint[1] = c.r.generic_query.p.y; fPoint[2] = c.r.generic_query.p.z; 
 	return ( c.r.generic_query.OK != 0 );
 }
 

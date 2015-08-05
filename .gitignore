@@ -40,10 +40,10 @@ distrib/**/*.exe.config
 
 
 # example projects
-csharp/examples_vs2012/bin
-csharp/examples_vs2012/obj
-csharp/examples_vs2012/mm/bin
-csharp/examples_vs2012/mm/obj
+csharp/CommandDemos/bin
+csharp/CommandDemos/obj
+csharp/mm/bin
+csharp/mm/obj
 csharp/LinkedMeshDemo/bin
 csharp/LinkedMeshDemo/obj
 csharp/**/*.user

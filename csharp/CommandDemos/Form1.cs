@@ -67,23 +67,11 @@ namespace examples
             mm.RemoteControl rc = new mm.RemoteControl();
             rc.Initialize();
 
-            StoredCommands sc = new StoredCommands();
-            uint resultKey = sc.AppendQueryCommand_GetBoundingBox();
-            rc.ExecuteCommands(sc);
+            mm.Vector3 Min = new mm.Vector3(), Max = new mm.Vector3();
+            rc.SelectionBoundingBox(ref Min, ref Max);
 
-            floatArray min = new floatArray(3);
-            floatArray max = new floatArray(3);
-            sc.GetQueryResult_GetBoundingBox(resultKey, min.cast(), max.cast());
-
-            float minx = min.getitem(0);
-            float miny = min.getitem(1);
-            float minz = min.getitem(2);
-
-            float maxx = max.getitem(0);
-            float maxy = max.getitem(1);
-            float maxz = max.getitem(2);
-
-            Debug.WriteLine("got box");
+            outputTextBox.Text = String.Format("Bounding Box [{0},{1},{2}]  [{3},{4},{5}]",
+                Min[0], Min[1], Min[2], Max[0], Max[1], Max[2]);
 
             rc.Shutdown();
         }

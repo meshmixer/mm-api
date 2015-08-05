@@ -693,13 +693,13 @@ public:
 	 */
 
 	Key AppendQueryCommand_ConvertScalarToWorld(float f);
-		bool GetQueryResult_ConvertScalarToWorld(Key k, float * pResult);
+		bool GetQueryResult_ConvertScalarToWorld(Key k, float & fResult);
 	Key AppendQueryCommand_ConvertScalarToScene(float f);
-		bool GetQueryResult_ConvertScalarToScene(Key k, float * pResult);
+		bool GetQueryResult_ConvertScalarToScene(Key k, float & fResult);
 	Key AppendQueryCommand_ConvertPointToWorld(float fPoint[3]);
-		bool GetQueryResult_ConvertPointToWorld(Key k, float * pResult);
+		bool GetQueryResult_ConvertPointToWorld(Key k, float fPoint[3]);
 	Key AppendQueryCommand_ConvertPointToScene(float fPoint[3]);
-		bool GetQueryResult_ConvertPointToScene(Key k, float * pResult);
+		bool GetQueryResult_ConvertPointToScene(Key k, float fPoint[3]);
 
 	// get bounding box of selected objects
 	Key AppendQueryCommand_GetBoundingBox();

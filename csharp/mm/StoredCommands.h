@@ -191,6 +191,7 @@ public:
 		"makeSlices"			- Make Slices tool
 		"separateShells"		- Separate Shells tool
 		"addTube"				- Add Tube tool
+        "createPivot"           - Create Pivot tool
 
 		"combine"				- Combine tool (multiple selected objects)
 		"union"					- Boolean Union 
@@ -236,6 +237,7 @@ public:
 			"refine" : float         range [0,1]
 			"reduce" : float         range [0,1]
 			"refineSmooth" : float   range [0,1]
+            "refineAdaptive" : float range [0,1]
 			"attractStrength" : float 
 			"volumetric" : boolean 
 			"symmetric" : boolean 
@@ -245,8 +247,7 @@ public:
 			"restrictToGroup" : boolean 
 			"holdBoundary" : boolean 
 			"preserveGroups" : boolean 
-			"brushOnTarget" : boolean 
-			"adaptiveRefinement" : boolean 
+			"brushOnTarget" : boolean  
 		[surfaceBrush]		- start surface brush tool
 			"restrictToGroup" : boolean 
 			"holdBoundary" : boolean 
@@ -274,13 +275,20 @@ public:
 			"preserveBoundary" : boolean 
 			"adaptive" : boolean 
 		[remesh]			- Remesh tool
-			"density" : float 
-			"smooth" : float 
-			"normalThreshold" : float 
-			"boundaryMode" : integer 
-			"remeshType" : integer  values: Uniform = 0,	 Adaptive_Normal = 1
-			"preserveGroups" : boolean 
-			"adaptive" : boolean 
+             "density" : float
+             "edgeLength" : float
+             "edgeLengthWorld" : float
+             "smooth" : float
+             "transitionWidth" : float
+             "transitionWidthWorld" : float
+             "normalThreshold" : float
+             "goalType" : integer
+                    RelativeDensity = 0, AdaptiveDensity = 1, TargetEdgeLength = 2, LinearSubdivision = 3
+             "iterations" : integer
+             "boundaryMode" : integer
+                    FreeBoundary = 0, FixedBoundary = 1, RefinedFixedBoundary = 2
+             "preserveGroups" : boolean
+
 		[extrude]			- Extrude tool
 			"offset" : float   range [-inf, inf]
 			"harden" : float   range [0,1]
@@ -315,20 +323,21 @@ public:
 			"normal" : vector3f 
 			"rotation" : matrix3f 
 		[attractToTarget]	- Attract tool
-			"density" : float 
-			"smooth" : float 
-			"offset" : float 
-			"offsetWorld" : float 
-			"normalThreshold" : float 
-			"remeshType" : integer 
-			"preserveGroups" : boolean 
-			"preserveBoundary" : boolean 
-			"findSharpEdges" : boolean 
-			"adaptive" : boolean 
+             "density" : float
+             "smooth" : float
+             "offset" : float
+             "offsetWorld" : float
+             "normalThreshold" : float
+             "enableRefinement" : boolean
+             "preserveGroups" : boolean
+             "preserveBoundary" : boolean
+             "findSharpEdges" : boolean
 		[flipNormals]		- Flip Normals tool
 		[fitPrimitive]		- Fit Primitive tool
-			"primitiveType" : integer 
-			"singlePrimitive" : boolean 
+			"primitiveType" : integer
+                    Plane_Square = 0, Plane_Rectangle = 1, Cylinder = 2, Sphere_Centroid = 3, Sphere_LeastSquares = 4,
+                    Disc_Centroid = 5, Linear_Sweep = 6, Convex_Hull = 7
+			"singlePrimitive" : boolean
 			"createNewObjects" : boolean 
 
 		[makePart]			- Convert (selection) To Open Part
@@ -377,12 +386,30 @@ public:
 			"rotation" : matrix3f 
 		[duplicate]				- Duplicate tool
 		[transform]				- Transform tool
-			"pivotFrameMode" : integer 
-			"origin" : vector3f 
-			"translation" : vector3f 
+			"pivotFrameMode" : integer
+                WorldFrame = 0, LocalFrame = 1
+			"origin" : vector3f
+            "originWorld" : vector3f
+			"translation" : vector3f
+            "translationWorld" : vector3f
 			"scale" : vector3f 
 			"rotation" : matrix3f 
+            "initialFrameOrigin" : vector3f
+            "initialFrameOrientation" : matrix3f
 		[align]					- Align tool
+             "sourceType" : integer
+                    Source_ObjectBaseCenter = 1, Source_BoundingBoxCenter = 0, Source_SingleSurfacePoint = 10, 
+                    Source_SurfaceSamples = 11, Source_SurfaceDisc = 12, Source_Pivot = 13, Source_LastToolFrame = 20
+             "targetType" : integer
+                    Target_WorldOrigin_Yup = 0, Target_WorldOrigin_Zup = 1, Target_WorldOrigin_Xup = 2, Target_GroundPlanePoint = 9,
+                    Target_SingleSurfacePoint = 10, Target_SurfaceSamples = 11, Target_SurfaceDisc = 12, Target_Pivot = 13
+             "transformMode" : integer
+                    Translate = 0, TranslateAndRotate = 1
+             "flip" : boolean
+             "origin" : vector3f
+             "rotation" : matrix3f
+             "sourceFrame" : frame3f
+             "targetFrame" : frame3f
 		[closeCracks]			- Close Cracks tool
 		[generateFaceGroups]	- Generate Face Groups tool
 			"angleThreshold" : float 
@@ -442,6 +469,19 @@ public:
 			"operationType" : integer 
 			"directionConstraint" : integer 
 			"solveIterations" : integer 
+        [createPivot]           - Create Pivot tool
+             "offset" : float
+             "offsetWorld" : float
+             "positionMode" : integer  
+                    SurfaceHitPoint = 0, NearestVertex = 1, NearestEdgePoint = 2, NearestEdgeMidPoint = 3, 
+                    NearestFaceCenter = 4, FacegroupBorder = 5, FacegroupCenter = 6, FacegroupBorderCenter = 7, 
+                    BoundaryLoopCenter = 8, FirstRayMidpoint = 10, FirstNormalMidpoint = 11, 
+                    WorldBoundingBoxPoint = 20, LocalBoundingBoxPoint = 21, ExistingPivot = 25, FromLastToolFrame = 30
+             "frameMode" : integer
+                     WorldFrame = 0, FromGeometry = 1, AlongEyeRay = 2
+             "symmetric" : boolean
+             "linkToTarget" : boolean
+     
 		[combine]				- Combine tool (multiple selected objects)
 		[union]					- Boolean Union 
 		[difference]			- Boolean Difference
@@ -470,9 +510,9 @@ public:
 			"postBaseSize" : float 
 			"postTopSize" : float 
 			"postTipSize" : float 
-			"postTipLayers" : float 
+			"postTipHeight" : float 
 			"postDiscSize" : float 
-			"postDiscLayers" : float 
+			"postDiscHeight" : float 
 			"strutDensity" : float 
 			"solidMinOffset" : float 
 			"postResolution" : integer 
@@ -562,7 +602,7 @@ public:
 	bool GetSceneCommandResult_IsOK(Key k);
 
 	// write out screenshot at pFilename
-	void AppendSceneCommand_SaveScreenShot(const char * pFilename);
+	StoredCommands::Key AppendSceneCommand_SaveScreenShot(const char * pFilename);
 
 	// open a .mix file (replaces existing file)
 	Key AppendSceneCommand_OpenMixFile( const char * pFilename );
@@ -573,12 +613,27 @@ public:
 	Key AppendSceneCommand_AppendMeshFile( const char * pFilename );
 		bool GetSceneCommandResult_AppendMeshFile( Key k, std::vector<int> & vObjects );
 
+	// append binary packed mesh to current scene
+	Key AppendSceneCommand_AppendPackedMeshFile( const char * pFilename );
+		bool GetSceneCommandResult_AppendPackedMeshFile( Key k, int & nObjectID );
+		bool GetSceneCommandResult_AppendPackedMeshFile( Key k, any_result & nObjectID );
+
 	// append objects in mesh file to current scene as reference objects
 	Key AppendSceneCommand_AppendMeshFileAsReference( const char * pFilename );
 		bool GetSceneCommandResult_AppendMeshFileAsReference( Key k, std::vector<int> & vObjects );
 
 	Key AppendSceneCommand_ExportMeshFile_CurrentSelection( const char * pFilename );
 
+	Key AppendSceneCommand_ExportAsPackedMeshFile( const char * pFilename, int nObjectID );
+
+    // create pivot in scene
+    Key AppendSceneCommand_CreatePivot( frame3f f );
+        bool GetSceneCommandResult_CreatePivot( Key k, int & nObjectID );
+    
+    // link pivot to object. If object ID is invalid, pivot is unlinked
+    Key AppendSceneCommand_LinkPivot( int nPivotID, int nLinkToID );
+    Key AppendSceneCommand_UnlinkPivot( int nPivotID );
+    
 	// remove all objects from current scene
 	void AppendSceneCommand_Clear();
 
@@ -615,40 +670,96 @@ public:
 	Key AppendSceneCommand_SetHidden( int nObjectID );
 	Key AppendSceneCommand_ShowAll();
 
+	// input live mesh
+	Key AppendSceneCommand_CreateLiveMeshObject( const char * pFilename );
+		bool GetSceneCommandResult_CreateLiveMeshObject( Key k, std::string & portName, int & nObjectID );
+		bool GetSceneCommandResult_CreateLiveMeshObject( Key k, std::vector<unsigned char> & portName, any_result & nObjectID );  // for SWIG
+
+	// note: currently lock request will freeze main thread in app until lock is achieved...
+	Key AppendSceneCommand_RequestLiveMeshLock( const char * pPortName );
+	Key AppendSceneCommand_ReleaseLiveMeshLock( const char * pPortName );
+	Key AppendSceneCommand_NotifyLiveMeshUpdate( const char * pPortName );
+
+	// tracking live mesh (when nObjectID is modified, PackedMesh written to pFilename and then UDP port gets a datagram)
+	//   NOTE: when reading this file, use lock functions above!!
+	Key AppendSceneCommand_CreateTrackingLiveMesh( const char * pFilename, int nObjectID, int nUDPNotificationPort);
+		bool GetSceneCommandResult_CreateTrackingLiveMesh( Key k, std::string & portName );
+		bool GetSceneCommandResult_CreateTrackingLiveMesh( Key k, std::vector<unsigned char> & portName );
+	Key AppendSceneCommand_HaltTrackingLiveMesh( const char * pPortName );
+
 
 	/*
 	 * SPATIAL QUERY COMMANDS
 	 */
 
 	Key AppendQueryCommand_ConvertScalarToWorld(float f);
-		bool GetQueryResult_ConvertScalarToWorld(Key k, float * pResult);
+		bool GetQueryResult_ConvertScalarToWorld(Key k, float & fResult);
 	Key AppendQueryCommand_ConvertScalarToScene(float f);
-		bool GetQueryResult_ConvertScalarToScene(Key k, float * pResult);
+		bool GetQueryResult_ConvertScalarToScene(Key k, float & fResult);
 	Key AppendQueryCommand_ConvertPointToWorld(float fPoint[3]);
-		bool GetQueryResult_ConvertPointToWorld(Key k, float * pResult);
+		bool GetQueryResult_ConvertPointToWorld(Key k, float fPoint[3]);
 	Key AppendQueryCommand_ConvertPointToScene(float fPoint[3]);
-		bool GetQueryResult_ConvertPointToScene(Key k, float * pResult);
+		bool GetQueryResult_ConvertPointToScene(Key k, float fPoint[3]);
 
-	// get bounding box
+	// get bounding box of selected objects
 	Key AppendQueryCommand_GetBoundingBox();
 		bool GetQueryResult_GetBoundingBox( Key k, float fMin[3], float fMax[3] );
 
+	// get bounding box of a specific object
+	Key AppendQueryCommand_GetObjectBoundingBox( int nObjectID );
+		bool GetQueryResult_GetObjectBoundingBox( Key k, float fMin[3], float fMax[3] );
+
+	// get local frame of a specific object
+	Key AppendQueryCommand_GetObjectLocalFrame( int nObjectID );
+		bool GetQueryResult_GetObjectLocalFrame( Key k, frame3f * pFrame );
+
+	// get bounding box and centroid of currently-selected faces (only works when in FaceSelection tool)
 	Key AppendQueryCommand_GetSelectedFacesBoundingBox();
 		bool GetQueryResult_GetSelectedFacesBoundingBox( Key k, float fMin[3], float fMax[3] );
 	Key AppendQueryCommand_GetSelectedFacesCentroid();
 		bool GetQueryResult_GetSelectedFacesCentroid( Key k, float fCentroid[3] );
 
-	// find nearest point on selected object
+	// find first ray-intersection point with selected object
 	Key AppendQueryCommand_FindRayIntersection( float ox, float oy, float oz, float dx, float dy, float dz );
 	Key AppendQueryCommand_FindRayIntersection( const vec3f & o, const vec3f & d );
 		bool GetQueryResult_FindRayIntersection( Key k, frame3f * pFrame );
-
 
 	// find nearest point on selected object
 	Key AppendQueryCommand_FindNearestPoint( float x, float y, float z );
 	Key AppendQueryCommand_FindNearestPoint( const vec3f & p );
 		bool GetQueryResult_FindNearestPoint( Key k, frame3f * pFrame );
 
+	// test if point is inside selected object
+	Key AppendQueryCommand_IsInsideObject( const vec3f & p );
+		bool GetQueryResult_IsInsideObject( Key k );
+
+	// nFilter is a bitmap that controls which 'types' of objects the queries below will return.
+	// If no filter is set, or after clear, all object types are returned
+	// bit 0 = meshes, bit 1 = pivots
+	Key AppendQueryCommand_SetObjectTypeFilter( int nFilter );
+	Key AppendQueryCommand_ClearObjectTypeFilter();
+
+	// find all objects hit by ray. Results are returned sorted by ray-hit parameter.
+	Key AppendQueryCommand_FindObjectsHitByRay( const vec3f & o, const vec3f & d );
+		bool GetQueryResult_FindObjectsHitByRay( Key k, std::vector<int> & vObjects );
+
+	// find closest object to point
+	Key AppendQueryCommand_FindNearestObject( const vec3f & p );
+		bool GetQueryResult_FindNearestObject( Key k, int & nObjectID );
+		bool GetQueryResult_FindNearestObject( Key k, any_result & nObjectID );
+
+	// find objects within distance of point.
+	Key AppendQueryCommand_FindObjectsWithinDistance( const vec3f & p, float fDistance );
+		bool GetQueryResult_FindObjectsWithinDistance( Key k, std::vector<int> & vObjects );
+
+	// test if two objects intersect (requires that objects be meshes)
+	Key AppendQueryCommand_TestIntersection( int nObjectID, int nTestWithObjectID );
+		bool GetQueryResult_TestIntersection( Key k );
+	
+	// Find all objects intersecting first object
+	Key AppendQueryCommand_FindIntersectingObjects( int nObjectID );
+		bool GetQueryResult_FindIntersectingObjects( Key k, std::vector<int> & vObjects );
+	
 
 	/*
 	 *  SELECTION COMMANDS
@@ -702,6 +813,8 @@ public:
 	 */
 
 	Key AppendActionCommand_BrushStroke3D( const std::vector<brush_stamp> & vPoints );
+	Key AppendActionCommand_BrushStamp3D( const vec3f & v0 );
+	Key AppendActionCommand_LinearBrushStroke3D( const vec3f & v0, const vec3f & v1, int nSteps );
 
 
 	/* Part Drop. During interactive part drop you can also use AppendToolParameterCommand() with following parameters:
@@ -900,13 +1013,25 @@ private:
 		SetVisible,
 		SetHidden,
 		ShowAll,
-		AppendMeshFileAsReference
+		AppendMeshFileAsReference,
+        CreatePivot,
+        LinkPivot,
+		AppendPackedMeshFile,
+		ExportAsPackedMeshByID,
+
+		CreateLiveMeshObject,
+		RequestLiveMeshLock,
+		ReleaseLiveMeshLock,
+		NotifyLiveMeshUpdated,
+		CreateTrackingLiveMesh,
+		HaltTrackingLiveMesh
 	};
 	struct SceneCmd {
 		SceneCmdType eType;
 		fstring str;
 		vector_int nObjectIDs;
-	};
+        frame3f f;
+    };
 	struct SceneCmdResult {
 		int OK;
 		fstring str;
@@ -989,11 +1114,21 @@ private:
 
 
 	enum SpatialQueryType {
-		SelectedObjectsBoundingBoxQuery,
-		NearestPointSpatialQuery,
-		RayIntersectionSpatialQuery,
-		SelectedFacesBoundingBoxQuery,
-		SelectedFacesCentroidQuery
+		SelectedObjectsBoundingBoxQuery = 0,
+		NearestPointSpatialQuery = 1,
+		RayIntersectionSpatialQuery = 2,
+		SelectedFacesBoundingBoxQuery = 3,
+		SelectedFacesCentroidQuery = 4,
+		ObjectBoundingBoxQuery = 5,
+		ObjectLocalFrameQuery = 6,
+		RayHitObjectsQuery = 7,
+		NearestObjectQuery = 8,
+		ObjectsWithinRadiusQuery = 9,
+		IsInsideObjectQuery = 10,
+		ObjectIntersectionQuery = 11,
+		FindIntersectingObjects = 12,
+		SetObjectTypeFilter = 13,
+		ClearObjectTypeFilter = 14
 	};
 	struct SpatialQueryCmd {
 		SpatialQueryType eType;
