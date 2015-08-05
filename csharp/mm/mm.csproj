@@ -34,7 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mmapi_csharp">
-      <HintPath>..\..\..\distrib\csharp_win\Release\mmapi_csharp.dll</HintPath>
+      <HintPath>..\..\distrib\csharp_win\Release\mmapi_csharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
