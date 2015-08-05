@@ -97,9 +97,6 @@
     <Compile Include="mmapi\SWIGTYPE_p_std__string.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="mmapi\SWIGTYPE_p_std__vectorT_mm__brush_stamp_t.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="mmapi\SWIGTYPE_p_unsigned_char.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -109,6 +106,7 @@
     <Compile Include="mmapi\vec3f.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="mmapi\vectorBrushStamp.cs" />
     <Compile Include="mmapi\vectorf.cs" />
     <Compile Include="mmapi\vectori.cs" />
     <Compile Include="mmapi\vectorub.cs">
