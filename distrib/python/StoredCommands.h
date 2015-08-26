@@ -443,9 +443,15 @@ public:
 			"edgeCollapseThresh" : float 
 			"gradientValue0" : float 
 			"gradientValue1" : float 
-			"pattern" : integer 
+			"pattern" : integer
+					MeshEdges = 0, DualMeshEdges = 1, MeshEdges_DelaunayEdges = 2, DualMeshEdges_DualDelaunayEdges_Snapped = 3,
+					TiledTubes2D = 4, TiledSpheres3D = 5, Lattice = 6, 
+					PoissonDistribution3D = 7, PoissonDistribution2D = 8, FaceGroupEdges = 9,
+					CustomPattern = 20
 			"tiling" : integer 
+					RegularGrid = 0, SpherePacking = 1
 			"compositionMode" : integer 
+					Difference = 0, Intersection = 1
 			"smoothingIters" : integer 
 			"dimensionGradient" : integer 
 			"clipToSurface" : boolean 
@@ -568,6 +574,8 @@ public:
 			"update"
 	 *   [makePattern]
 			"update"
+			"addSegment"		// only applicable to Custom pattern
+			"clearSegments"		// only applicable to Custom pattern
 	 *   [inspector]
 			"repairAll"
 	 *   [hollow]
@@ -591,6 +599,7 @@ public:
 	void AppendToolUtilityCommand( std::string commandName );
 	void AppendToolUtilityCommand( std::string commandName, int nValue );
 	void AppendToolUtilityCommand( std::string commandName, std::string sValue );
+	void AppendToolUtilityCommand( std::string commandName, const vec3f & v0, const vec3f & v1, float r0, float r1 );
 
 
 
@@ -670,7 +679,7 @@ public:
 	Key AppendSceneCommand_SetHidden( int nObjectID );
 	Key AppendSceneCommand_ShowAll();
 
-	// live mesh
+	// input live mesh
 	Key AppendSceneCommand_CreateLiveMeshObject( const char * pFilename );
 		bool GetSceneCommandResult_CreateLiveMeshObject( Key k, std::string & portName, int & nObjectID );
 		bool GetSceneCommandResult_CreateLiveMeshObject( Key k, std::vector<unsigned char> & portName, any_result & nObjectID );  // for SWIG
@@ -680,19 +689,26 @@ public:
 	Key AppendSceneCommand_ReleaseLiveMeshLock( const char * pPortName );
 	Key AppendSceneCommand_NotifyLiveMeshUpdate( const char * pPortName );
 
+	// tracking live mesh (when nObjectID is modified, PackedMesh written to pFilename and then UDP port gets a datagram)
+	//   NOTE: when reading this file, use lock functions above!!
+	Key AppendSceneCommand_CreateTrackingLiveMesh( const char * pFilename, int nObjectID, int nUDPNotificationPort);
+		bool GetSceneCommandResult_CreateTrackingLiveMesh( Key k, std::string & portName );
+		bool GetSceneCommandResult_CreateTrackingLiveMesh( Key k, std::vector<unsigned char> & portName );
+	Key AppendSceneCommand_HaltTrackingLiveMesh( const char * pPortName );
+
 
 	/*
 	 * SPATIAL QUERY COMMANDS
 	 */
 
 	Key AppendQueryCommand_ConvertScalarToWorld(float f);
-		bool GetQueryResult_ConvertScalarToWorld(Key k, float * pResult);
+		bool GetQueryResult_ConvertScalarToWorld(Key k, float & fResult);
 	Key AppendQueryCommand_ConvertScalarToScene(float f);
-		bool GetQueryResult_ConvertScalarToScene(Key k, float * pResult);
+		bool GetQueryResult_ConvertScalarToScene(Key k, float & fResult);
 	Key AppendQueryCommand_ConvertPointToWorld(float fPoint[3]);
-		bool GetQueryResult_ConvertPointToWorld(Key k, float * pResult);
+		bool GetQueryResult_ConvertPointToWorld(Key k, float fPoint[3]);
 	Key AppendQueryCommand_ConvertPointToScene(float fPoint[3]);
-		bool GetQueryResult_ConvertPointToScene(Key k, float * pResult);
+		bool GetQueryResult_ConvertPointToScene(Key k, float fPoint[3]);
 
 	// get bounding box of selected objects
 	Key AppendQueryCommand_GetBoundingBox();
@@ -806,6 +822,8 @@ public:
 	 */
 
 	Key AppendActionCommand_BrushStroke3D( const std::vector<brush_stamp> & vPoints );
+	Key AppendActionCommand_BrushStamp3D( const vec3f & v0 );
+	Key AppendActionCommand_LinearBrushStroke3D( const vec3f & v0, const vec3f & v1, int nSteps );
 
 
 	/* Part Drop. During interactive part drop you can also use AppendToolParameterCommand() with following parameters:
@@ -1014,6 +1032,8 @@ private:
 		RequestLiveMeshLock,
 		ReleaseLiveMeshLock,
 		NotifyLiveMeshUpdated,
+		CreateTrackingLiveMesh,
+		HaltTrackingLiveMesh
 	};
 	struct SceneCmd {
 		SceneCmdType eType;

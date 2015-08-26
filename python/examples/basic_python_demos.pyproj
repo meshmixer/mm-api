@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{99a0b5d3-7b15-4aff-aad4-10e9b0c719a2}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>demo_scratch.py</StartupFile>
+    <StartupFile>demo_10_custom_pattern.py</StartupFile>
     <SearchPath>..\..\distrib\python\;..\</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -31,6 +31,7 @@
     <Compile Include="demo_09_connector.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="demo_10_custom_pattern.py" />
     <Compile Include="demo_scratch.py" />
     <Compile Include="demo_05_selection.py" />
     <Compile Include="demo_04_scene.py" />

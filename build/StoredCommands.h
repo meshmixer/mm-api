@@ -443,9 +443,15 @@ public:
 			"edgeCollapseThresh" : float 
 			"gradientValue0" : float 
 			"gradientValue1" : float 
-			"pattern" : integer 
+			"pattern" : integer
+					MeshEdges = 0, DualMeshEdges = 1, MeshEdges_DelaunayEdges = 2, DualMeshEdges_DualDelaunayEdges_Snapped = 3,
+					TiledTubes2D = 4, TiledSpheres3D = 5, Lattice = 6, 
+					PoissonDistribution3D = 7, PoissonDistribution2D = 8, FaceGroupEdges = 9,
+					CustomPattern = 20
 			"tiling" : integer 
+					RegularGrid = 0, SpherePacking = 1
 			"compositionMode" : integer 
+					Difference = 0, Intersection = 1
 			"smoothingIters" : integer 
 			"dimensionGradient" : integer 
 			"clipToSurface" : boolean 
@@ -568,6 +574,8 @@ public:
 			"update"
 	 *   [makePattern]
 			"update"
+			"addSegment"		// only applicable to Custom pattern
+			"clearSegments"		// only applicable to Custom pattern
 	 *   [inspector]
 			"repairAll"
 	 *   [hollow]
@@ -591,6 +599,7 @@ public:
 	void AppendToolUtilityCommand( std::string commandName );
 	void AppendToolUtilityCommand( std::string commandName, int nValue );
 	void AppendToolUtilityCommand( std::string commandName, std::string sValue );
+	void AppendToolUtilityCommand( std::string commandName, const vec3f & v0, const vec3f & v1, float r0, float r1 );
 
 
 

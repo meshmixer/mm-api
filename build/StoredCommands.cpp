@@ -1214,7 +1214,15 @@ void StoredCommands::AppendToolUtilityCommand( std::string commandName, std::str
 	c.c.toolparam.v.str = __tofstr(sValue.c_str());
 	append_command(c);
 }
-
+void StoredCommands::AppendToolUtilityCommand( std::string commandName, const vec3f & v0, const vec3f & v1, float r0, float r1 )
+{
+	Command c;  c.init();
+	c.eType = ToolParameterCommand;
+	sprintf_s(c.c.toolparam.name, sizeof(c.c.toolparam.name), "%s", commandName.c_str());
+	c.c.toolparam.eType = ToolParam_Utility_Mat3;
+	make_mat3f(v0.x,v0.y,v0.z, v1.x,v1.y,v1.z, r0,r1,0.0f, c.c.toolparam.v.mat3);
+	append_command(c);
+}
 
 
 

@@ -284,6 +284,53 @@ class vectorf(_object):
 vectorf_swigregister = _mmapi.vectorf_swigregister
 vectorf_swigregister(vectorf)
 
+class vectorBrushStamp(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, vectorBrushStamp, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, vectorBrushStamp, name)
+    __repr__ = _swig_repr
+    def iterator(self): return _mmapi.vectorBrushStamp_iterator(self)
+    def __iter__(self): return self.iterator()
+    def __nonzero__(self): return _mmapi.vectorBrushStamp___nonzero__(self)
+    def __bool__(self): return _mmapi.vectorBrushStamp___bool__(self)
+    def __len__(self): return _mmapi.vectorBrushStamp___len__(self)
+    def pop(self): return _mmapi.vectorBrushStamp_pop(self)
+    def __getslice__(self, *args): return _mmapi.vectorBrushStamp___getslice__(self, *args)
+    def __setslice__(self, *args): return _mmapi.vectorBrushStamp___setslice__(self, *args)
+    def __delslice__(self, *args): return _mmapi.vectorBrushStamp___delslice__(self, *args)
+    def __delitem__(self, *args): return _mmapi.vectorBrushStamp___delitem__(self, *args)
+    def __getitem__(self, *args): return _mmapi.vectorBrushStamp___getitem__(self, *args)
+    def __setitem__(self, *args): return _mmapi.vectorBrushStamp___setitem__(self, *args)
+    def append(self, *args): return _mmapi.vectorBrushStamp_append(self, *args)
+    def empty(self): return _mmapi.vectorBrushStamp_empty(self)
+    def size(self): return _mmapi.vectorBrushStamp_size(self)
+    def clear(self): return _mmapi.vectorBrushStamp_clear(self)
+    def swap(self, *args): return _mmapi.vectorBrushStamp_swap(self, *args)
+    def get_allocator(self): return _mmapi.vectorBrushStamp_get_allocator(self)
+    def begin(self): return _mmapi.vectorBrushStamp_begin(self)
+    def end(self): return _mmapi.vectorBrushStamp_end(self)
+    def rbegin(self): return _mmapi.vectorBrushStamp_rbegin(self)
+    def rend(self): return _mmapi.vectorBrushStamp_rend(self)
+    def pop_back(self): return _mmapi.vectorBrushStamp_pop_back(self)
+    def erase(self, *args): return _mmapi.vectorBrushStamp_erase(self, *args)
+    def __init__(self, *args): 
+        this = _mmapi.new_vectorBrushStamp(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    def push_back(self, *args): return _mmapi.vectorBrushStamp_push_back(self, *args)
+    def front(self): return _mmapi.vectorBrushStamp_front(self)
+    def back(self): return _mmapi.vectorBrushStamp_back(self)
+    def assign(self, *args): return _mmapi.vectorBrushStamp_assign(self, *args)
+    def resize(self, *args): return _mmapi.vectorBrushStamp_resize(self, *args)
+    def insert(self, *args): return _mmapi.vectorBrushStamp_insert(self, *args)
+    def reserve(self, *args): return _mmapi.vectorBrushStamp_reserve(self, *args)
+    def capacity(self): return _mmapi.vectorBrushStamp_capacity(self)
+    __swig_destroy__ = _mmapi.delete_vectorBrushStamp
+    __del__ = lambda self : None;
+vectorBrushStamp_swigregister = _mmapi.vectorBrushStamp_swigregister
+vectorBrushStamp_swigregister(vectorBrushStamp)
+
 class floatArray(_object):
     __swig_setmethods__ = {}
     __setattr__ = lambda self, name, value: _swig_setattr(self, floatArray, name, value)
@@ -648,6 +695,9 @@ class StoredCommands(_object):
     def AppendSceneCommand_RequestLiveMeshLock(self, *args): return _mmapi.StoredCommands_AppendSceneCommand_RequestLiveMeshLock(self, *args)
     def AppendSceneCommand_ReleaseLiveMeshLock(self, *args): return _mmapi.StoredCommands_AppendSceneCommand_ReleaseLiveMeshLock(self, *args)
     def AppendSceneCommand_NotifyLiveMeshUpdate(self, *args): return _mmapi.StoredCommands_AppendSceneCommand_NotifyLiveMeshUpdate(self, *args)
+    def AppendSceneCommand_CreateTrackingLiveMesh(self, *args): return _mmapi.StoredCommands_AppendSceneCommand_CreateTrackingLiveMesh(self, *args)
+    def GetSceneCommandResult_CreateTrackingLiveMesh(self, *args): return _mmapi.StoredCommands_GetSceneCommandResult_CreateTrackingLiveMesh(self, *args)
+    def AppendSceneCommand_HaltTrackingLiveMesh(self, *args): return _mmapi.StoredCommands_AppendSceneCommand_HaltTrackingLiveMesh(self, *args)
     def AppendQueryCommand_ConvertScalarToWorld(self, *args): return _mmapi.StoredCommands_AppendQueryCommand_ConvertScalarToWorld(self, *args)
     def GetQueryResult_ConvertScalarToWorld(self, *args): return _mmapi.StoredCommands_GetQueryResult_ConvertScalarToWorld(self, *args)
     def AppendQueryCommand_ConvertScalarToScene(self, *args): return _mmapi.StoredCommands_AppendQueryCommand_ConvertScalarToScene(self, *args)
@@ -700,6 +750,8 @@ class StoredCommands(_object):
     def AppendSelectCommand_ListSelectedFaceGroups(self): return _mmapi.StoredCommands_AppendSelectCommand_ListSelectedFaceGroups(self)
     def GetSelectCommandResult_ListSelectedFaceGroups(self, *args): return _mmapi.StoredCommands_GetSelectCommandResult_ListSelectedFaceGroups(self, *args)
     def AppendActionCommand_BrushStroke3D(self, *args): return _mmapi.StoredCommands_AppendActionCommand_BrushStroke3D(self, *args)
+    def AppendActionCommand_BrushStamp3D(self, *args): return _mmapi.StoredCommands_AppendActionCommand_BrushStamp3D(self, *args)
+    def AppendActionCommand_LinearBrushStroke3D(self, *args): return _mmapi.StoredCommands_AppendActionCommand_LinearBrushStroke3D(self, *args)
     def AppendActionCommand_DropPartAtPoint(self, *args): return _mmapi.StoredCommands_AppendActionCommand_DropPartAtPoint(self, *args)
     def AppendActionCommand_UpdateDropPart(self, *args): return _mmapi.StoredCommands_AppendActionCommand_UpdateDropPart(self, *args)
     def AppendActionCommand_AcceptDropPart(self): return _mmapi.StoredCommands_AppendActionCommand_AcceptDropPart(self)

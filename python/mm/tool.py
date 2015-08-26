@@ -76,3 +76,19 @@ def toolquery_new_groups(remote):
     new_groups = mmapi.vectori()
     bOK = cmd.GetToolQueryResult_NewGroups(key, new_groups)
     return vectori_to_list(new_groups)
+
+
+
+def append_pattern_segment(remote, p1, p2, scale1, scale2, is_scene = True):
+    """Run a Tool utility command, with optional argument (see ::AppendToolUtilityCommand in StoredCommands.h)"""
+    if ( is_scene == False ):
+        p1 = to_scene(remote, p1)
+        p2 = to_scene(remote, p2)
+
+    cmd = mmapi.StoredCommands()
+    op1 = mmapi.vec3f()
+    op1.x = p1[0]; op1.y = p1[1]; op1.z = p1[2];
+    op2 = mmapi.vec3f()
+    op2.x = p2[0]; op2.y = p2[1]; op2.z = p2[2];
+    cmd.AppendToolUtilityCommand( "addSegment", op1,op2, scale1,scale2 )
+    remote.runCommand(cmd)
