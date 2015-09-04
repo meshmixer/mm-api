@@ -57,40 +57,10 @@ remote.connect()
 #pivot_id = mm.create_pivot(remote, f)
 #link_ok = mm.link_pivot(remote, pivot_id, objects[0])
 
-mesh = mm.packedMesh()
-v1 = mesh.appendVertex( (0,0,0) )
-v2 = mesh.appendVertex( (1,0,0) )
-v3 = mesh.appendVertex( (1,0,1) )
-t = mesh.appendTriangle( (v1,v3,v2) )
-mesh.write("c:/scratch/livemesh_python.bin")
-
-cmd1 = mmapi.StoredCommands()
-create_key = cmd1.AppendSceneCommand_AppendPackedMeshFile("c:/scratch/livemesh_python.bin");
-remote.runCommand(cmd1)
-
-
 cmd2 = mmapi.StoredCommands()
-create_key = cmd2.AppendSceneCommand_CreateLiveMeshObject("c:/scratch/livemesh_python.bin");
+cmd2.AppendBeginToolCommand("select")
+cmd2.ViewControl_TakeFocus();
 remote.runCommand(cmd2)
-port_name_vec = mmapi.vectorub()
-obj_id = mmapi.any_result()
-cmd2.GetSceneCommandResult_CreateLiveMeshObject(create_key, port_name_vec, obj_id)
-port_name = mm.vectorub_to_string(port_name_vec)
-portid = obj_id.i
-
-for i in range(0,100):
-    mesh.vertices[0] = (0, 0+i*0.01, 0)
-
-    cmd_lock = mmapi.StoredCommands()
-    cmd_lock.AppendSceneCommand_RequestLiveMeshLock(port_name);
-    remote.runCommand(cmd_lock);
-
-    mesh.write("c:/scratch/livemesh_python.bin")
-
-    cmd_update = mmapi.StoredCommands()
-    cmd_update.AppendSceneCommand_ReleaseLiveMeshLock(port_name);
-    cmd_update.AppendSceneCommand_NotifyLiveMeshUpdate(port_name);
-    remote.runCommand(cmd_update)
 
 
 #done!

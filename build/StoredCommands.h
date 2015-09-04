@@ -130,6 +130,8 @@ public:
 	void ViewControl_ShowObjectBrowser();
 	void ViewControl_HideObjectBrowser();
 
+	void ViewControl_TakeFocus();
+
 	/*
 	 * INTERNAL MM TOOL API
 	 */
@@ -933,7 +935,7 @@ private:
 		SetViewNormalMode, SetViewColorMode, CamOrthographic, CamPerspective, 	
 		SetShowWireframe, SetShowBoundaries, SetShowGrid, SetShowPrinterBed, SetTransparentTarget,
 		SetShader_Default, SetShader_XRay, SetShader_Texture, SetShader_UV, SetShader_Overhang,
-		ShowObjectBrowser, HideObjectBrowser
+		ShowObjectBrowser, HideObjectBrowser, TakeFocus
 	};
 	struct CameraCmd {
 		CameraCmdType eType;

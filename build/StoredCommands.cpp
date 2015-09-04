@@ -891,6 +891,12 @@ void StoredCommands::ViewControl_HideObjectBrowser()
 	Command c;  	MMAPI_INIT_CAM_COMMAND(c, HideObjectBrowser);
 	append_command(c);
 }
+void StoredCommands::ViewControl_TakeFocus()
+{
+	Command c;  	MMAPI_INIT_CAM_COMMAND(c, TakeFocus);
+	append_command(c);
+}
+
 
 
 
