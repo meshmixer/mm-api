@@ -11,4 +11,6 @@ copy python\test.py %OUTPATH%
 
 copy StoredCommands.h %OUTPATH%
 
+copy LiveMesh.* %OUTPATH%
+
 

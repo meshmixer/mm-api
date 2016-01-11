@@ -18,7 +18,7 @@
 
 
 // [RMS] #define USING_MM_COMMAND_API to use this outside of meshmixer-desktop
-
+//#define USING_MM_COMMAND_API
 
 #include <BinarySerializer.h>
 
@@ -165,6 +165,7 @@ public:
 		"separate"			- Separate tool
 		"planeCut"			- Plane Cut tool (with or without selection)
 		"attractToTarget"	- Attract tool
+		"alignToTarget"		- Align to Target tool
 		"flipNormals"		- Flip Normals tool
 		"fitPrimitive"		- Fit Primitive tool
 
@@ -194,6 +195,10 @@ public:
 		"separateShells"		- Separate Shells tool
 		"addTube"				- Add Tube tool
         "createPivot"           - Create Pivot tool
+		"unwrap"				- Unwrap tool
+		"generateComplex"		- Generate Complex tool
+		"splitComplex"			- Split Complex tool
+		"filterComplex"			- Filter Complex tool
 
 		"combine"				- Combine tool (multiple selected objects)
 		"union"					- Boolean Union 
@@ -212,6 +217,9 @@ public:
 		"layout"				- Print Bed layout/packing tool
 		"deviation"				- Deviation measurement between two selected meshes
 		"clearance"				- Clearance measurement between two selected meshes
+		"meshQuery"				- display/measure various properties of selected mesh
+
+		"exportSVG"				- export selected objects as SVG
 	 *
 	 */
 	void AppendBeginToolCommand( std::string toolName );
@@ -810,6 +818,10 @@ public:
 	Key AppendSelectCommand_InsideSphere( float cx, float cy, float cz, float r );
 		bool GetSelectCommandResult_InsideSphere( Key k );
 
+	Key AppendSelectCommand_InsideBox( float xmin, float xmax, float ymin, float ymax, float zmin, float zmax );
+		bool GetSelectCommandResult_InsideBox( Key k );
+
+
 	Key AppendSelectCommand_ByFaceGroups( const std::vector<int> & vGroupIDs );
 		bool GetSelectCommandResult_ByFaceGroups( Key k );
 
@@ -934,7 +946,7 @@ private:
 		CamManip, CamToggleSnap, CamOrbit, CamTurntable, CamPan, CamDolly, CamRecenter, CamSet, CamQuery, CamGetRay, 
 		SetViewNormalMode, SetViewColorMode, CamOrthographic, CamPerspective, 	
 		SetShowWireframe, SetShowBoundaries, SetShowGrid, SetShowPrinterBed, SetTransparentTarget,
-		SetShader_Default, SetShader_XRay, SetShader_Texture, SetShader_UV, SetShader_Overhang,
+		SetShader_Default, SetShader_XRay, SetShader_Texture, SetShader_Texture_Unlit, SetShader_UV, SetShader_Overhang,
 		ShowObjectBrowser, HideObjectBrowser, TakeFocus
 	};
 	struct CameraCmd {
@@ -1063,6 +1075,7 @@ private:
 		SelectAllTrianglesIntersectingRay,
 
 		SelectInsideSphere,
+		SelectInsideBox,
 		SelectFaceGroups,
 
 		ListSelectedFaceGroups,

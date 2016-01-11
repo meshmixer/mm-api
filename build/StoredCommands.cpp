@@ -1704,6 +1704,7 @@ bool StoredCommands::GetQueryResult_GetBoundingBox( Key k, float fMin[3], float 
 StoredCommands::Key StoredCommands::AppendQueryCommand_GetObjectBoundingBox( int nObjectID )
 {
 	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, ObjectBoundingBoxQuery);
+
 	c.c.spatial.p.x = nObjectID;
 	return append_command(c);
 }
@@ -1712,6 +1713,7 @@ bool StoredCommands::GetQueryResult_GetObjectBoundingBox( Key k, float fMin[3], 
 	if ( k >= m_vCommands.size() )		return false;
 	Command & c = m_vCommands[k];
 	if ( c.r.spatial.OK == 0 )			return false;
+
 	fMin[0] = c.r.spatial.v.data[0];	fMin[1] = c.r.spatial.v.data[1];	fMin[2] = c.r.spatial.v.data[2];
 	fMax[0] = c.r.spatial.v.data[3];	fMax[1] = c.r.spatial.v.data[4];	fMax[2] = c.r.spatial.v.data[5];
 	return true;
@@ -1719,6 +1721,7 @@ bool StoredCommands::GetQueryResult_GetObjectBoundingBox( Key k, float fMin[3], 
 StoredCommands::Key StoredCommands::AppendQueryCommand_GetObjectLocalFrame( int nObjectID )
 {
 	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, ObjectLocalFrameQuery);
+
 	c.c.spatial.p.x = nObjectID;
 	return append_command(c);
 }
@@ -1727,6 +1730,7 @@ bool StoredCommands::GetQueryResult_GetObjectLocalFrame( Key k, frame3f * pFrame
 	if ( k >= m_vCommands.size() )		return false;
 	Command & c = m_vCommands[k];
 	if ( c.r.spatial.OK == 0 )			return false;
+
 	float * pData[] = { & pFrame->origin_x, &pFrame->origin_y, &pFrame->origin_z, 
 						&pFrame->tan1_x, &pFrame->tan1_y, &pFrame->tan1_z, 
 						&pFrame->tan2_x, &pFrame->tan2_y, &pFrame->tan2_z,
@@ -2001,6 +2005,23 @@ bool StoredCommands::GetSelectCommandResult_InsideSphere( Key k )
 		return false;
 	return ( m_vCommands[k].r.select.OK == 0 ) ? false : true;
 }
+
+
+StoredCommands::Key StoredCommands::AppendSelectCommand_InsideBox( float xmin, float xmax, float ymin, float ymax, float zmin, float zmax )
+{
+	Command c;  
+	MMAPI_INIT_SELECT_COMMAND(c, SelectInsideBox);
+	c.c.select.p.x = xmin;	c.c.select.p.y = ymin;	c.c.select.p.z = zmin;
+	c.c.select.d.x = xmax;	c.c.select.d.y = ymax;	c.c.select.d.z = zmax;
+	return append_command(c);
+}
+bool StoredCommands::GetSelectCommandResult_InsideBox( Key k )
+{
+	if ( k >= m_vCommands.size() )
+		return false;
+	return ( m_vCommands[k].r.select.OK == 0 ) ? false : true;
+}
+
 
 
 StoredCommands::Key StoredCommands::AppendSelectCommand_ByFaceGroups( const std::vector<int> & vGroupIDs )
