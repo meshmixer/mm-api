@@ -29,10 +29,16 @@ class packedMesh(object):
         """initialize empty mesh"""
         self.vertices = []
         self.triangles = []
+        self.normals = []
+        self.colors = []
 
-    def appendVertex(self, pos):
+    def appendVertex(self, pos, normal=(), color=() ):
         vID = len(self.vertices)
         self.vertices.append(pos)
+        if len(normal) > 0:
+            self.normals.append(normal)
+        if len(color) > 0:
+            self.colors.append(color)
         return vID
 
     def appendTriangle(self, tri):
@@ -51,18 +57,44 @@ class packedMesh(object):
 
     def write(self, path):
         with open(path, 'wb') as f:
+            have_colors = False
+            if len(self.colors) > 0:
+                have_colors = True
+            have_normals = False
+            if len(self.normals) == len(self.vertices):
+                have_normals = True
+
             # write version header
             version = 1
             f.write( struct.pack("i", version) )
             # write vertex count
             f.write( struct.pack("i", len(self.vertices) ) )
+
             # write vertex flags - currently don't have any
-            f.write( struct.pack("i", 0) )
+            vertex_flags = 0
+            if have_normals:
+                vertex_flags = vertex_flags | (1<<2)
+            if have_colors:
+                vertex_flags = vertex_flags | (1<<3)
+            f.write( struct.pack("i", vertex_flags) )
+
             # write vertex data
             for v in self.vertices:
                 f.write( struct.pack("f", v[0]) )
                 f.write( struct.pack("f", v[1]) )
                 f.write( struct.pack("f", v[2]) )
+                
+            if have_normals:
+                for n in self.normals:
+                    f.write( struct.pack("f", n[0]) )
+                    f.write( struct.pack("f", n[1]) )
+                    f.write( struct.pack("f", n[2]) )
+
+            if have_colors:
+                for c in self.colors:
+                    f.write( struct.pack("f", c[0]) )
+                    f.write( struct.pack("f", c[1]) )
+                    f.write( struct.pack("f", c[2]) )
 
 
             # write triangle count

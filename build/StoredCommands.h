@@ -576,7 +576,11 @@ public:
 
 	// [RMS] not yet implemented for most Tools...
 	Key AppendToolQuery_NewGroups();
-	bool GetToolQueryResult_NewGroups(Key k, std::vector<int> & vObjects);
+	bool GetToolQueryResult_NewGroups(Key k, std::vector<int> & vGroups);
+
+	Key AppendToolQuery_NewObjects();
+	bool GetToolQueryResult_NewObjects(Key k, std::vector<int> & vObjects);
+
 
 	/*
 	 * [RMS] handle cases where tool has explicit operation, like makeSolid update
@@ -782,6 +786,8 @@ public:
 
 	/*
 	 *  SELECTION COMMANDS
+	 *    Note: some selection commands take a mode argument which defines whether to replace/append/remove from the current selection
+	 *    The modes are 0=Replace 1=Append 2=Remove
 	 */
 
 	void AppendSelectCommand_All( );
@@ -821,6 +827,7 @@ public:
 	Key AppendSelectCommand_InsideBox( float xmin, float xmax, float ymin, float ymax, float zmin, float zmax );
 		bool GetSelectCommandResult_InsideBox( Key k );
 
+	Key AppendSelectCommand_IntersectingObject( int nObjectID, int nMode );
 
 	Key AppendSelectCommand_ByFaceGroups( const std::vector<int> & vGroupIDs );
 		bool GetSelectCommandResult_ByFaceGroups( Key k );
@@ -907,28 +914,28 @@ private:
 
 	// [RMS] API clients do not need to touch this, but mm-internals do
 	enum CommandType {
-		MouseEventCommand,
-		CameraControlCommand,
+		MouseEventCommand = 0,
+		CameraControlCommand = 1,
 
-		ToolParameterChangeCommand,
-		BeginToolCommand,
-		CompleteToolCommand,
-		ToolParameterCommand,
+		ToolParameterChangeCommand = 2,
+		BeginToolCommand = 3,
+		CompleteToolCommand = 4,
+		ToolParameterCommand = 5,
 
-		SceneCommand,
-		SelectCommand,
+		SceneCommand = 6,
+		SelectCommand = 7,
 
-		BrushCommand,
-		PartCommand,
-		StampCommand,
+		BrushCommand = 8,
+		PartCommand = 9,
+		StampCommand = 10,
 
-		SpatialQueryCommand,
-		GenericQueryCommand
+		SpatialQueryCommand = 11,
+		GenericQueryCommand = 12
 	};
 
 
 	enum MouseEventType {
-		MouseDown, MouseMove, MouseUp
+		MouseDown = 0, MouseMove = 1, MouseUp = 2
 	};
 	struct MouseEvent {
 		MouseEventType eType;
@@ -943,11 +950,11 @@ private:
 
 
 	enum CameraCmdType {
-		CamManip, CamToggleSnap, CamOrbit, CamTurntable, CamPan, CamDolly, CamRecenter, CamSet, CamQuery, CamGetRay, 
-		SetViewNormalMode, SetViewColorMode, CamOrthographic, CamPerspective, 	
-		SetShowWireframe, SetShowBoundaries, SetShowGrid, SetShowPrinterBed, SetTransparentTarget,
-		SetShader_Default, SetShader_XRay, SetShader_Texture, SetShader_Texture_Unlit, SetShader_UV, SetShader_Overhang,
-		ShowObjectBrowser, HideObjectBrowser, TakeFocus
+		CamManip = 0, CamToggleSnap = 1, CamOrbit = 2, CamTurntable = 3, CamPan = 4, CamDolly = 5, CamRecenter = 6, CamSet = 7, CamQuery = 8, CamGetRay = 9, 
+		SetViewNormalMode = 10, SetViewColorMode = 11, CamOrthographic = 12, CamPerspective = 13, 	
+		SetShowWireframe = 14, SetShowBoundaries = 15, SetShowGrid = 16, SetShowPrinterBed = 17, SetTransparentTarget = 18,
+		SetShader_Default = 19, SetShader_XRay = 20, SetShader_Texture = 21, SetShader_Texture_Unlit = 22, SetShader_UV = 23, SetShader_Overhang = 24,
+		ShowObjectBrowser = 25, HideObjectBrowser = 26, TakeFocus = 27
 	};
 	struct CameraCmd {
 		CameraCmdType eType;
@@ -1018,36 +1025,36 @@ private:
 
 
 	enum SceneCmdType {
-		ClearScene,
-		AppendMeshFile,
-		OpenMixFile,
-		ExportMixFile,
-		ExportMeshFile_SelectedObjects,
-		ListObjects,
-		ListSelectedObjects,
-		SelectObjects,
-		SetAsTarget,
-		ClearTarget,
-		DeleteSelected,
-		GetObjectName,
-		SetObjectName,
-		FindObjectByName,
-		SaveScreenShot,
-		SetVisible,
-		SetHidden,
-		ShowAll,
-		AppendMeshFileAsReference,
-        CreatePivot,
-        LinkPivot,
-		AppendPackedMeshFile,
-		ExportAsPackedMeshByID,
+		ClearScene = 0,
+		AppendMeshFile = 1,
+		OpenMixFile = 2,
+		ExportMixFile = 3,
+		ExportMeshFile_SelectedObjects = 4,
+		ListObjects = 5,
+		ListSelectedObjects = 6,
+		SelectObjects = 7,
+		SetAsTarget = 8,
+		ClearTarget = 9,
+		DeleteSelected = 10,
+		GetObjectName = 11,
+		SetObjectName = 12,
+		FindObjectByName = 13,
+		SaveScreenShot = 14,
+		SetVisible = 15,
+		SetHidden = 16,
+		ShowAll = 17,
+		AppendMeshFileAsReference = 18,
+        CreatePivot = 19,
+        LinkPivot = 20,
+		AppendPackedMeshFile = 21,
+		ExportAsPackedMeshByID = 22,
 
-		CreateLiveMeshObject,
-		RequestLiveMeshLock,
-		ReleaseLiveMeshLock,
-		NotifyLiveMeshUpdated,
-		CreateTrackingLiveMesh,
-		HaltTrackingLiveMesh
+		CreateLiveMeshObject = 23,
+		RequestLiveMeshLock = 24,
+		ReleaseLiveMeshLock = 25,
+		NotifyLiveMeshUpdated = 26,
+		CreateTrackingLiveMesh = 27,
+		HaltTrackingLiveMesh = 28
 	};
 	struct SceneCmd {
 		SceneCmdType eType;
@@ -1064,23 +1071,24 @@ private:
 
 
 	enum SelectCmdType {
-		SelectAll,
+		SelectAll = 0,
 
-		SelectNearestComponent,
-		SelectContainingComponent,
-		SelectFirstComponentIntersectingRay,
-		SelectAllComponentsIntersectingRay,
-		SelectNearestTriangle,
-		SelectFirstTriangleIntersectingRay,
-		SelectAllTrianglesIntersectingRay,
+		SelectNearestComponent = 1,
+		SelectContainingComponent = 2,
+		SelectFirstComponentIntersectingRay = 3,
+		SelectAllComponentsIntersectingRay = 4,
+		SelectNearestTriangle = 5,
+		SelectFirstTriangleIntersectingRay = 6,
+		SelectAllTrianglesIntersectingRay = 7,
 
-		SelectInsideSphere,
-		SelectInsideBox,
-		SelectFaceGroups,
+		SelectInsideSphere = 8,
+		SelectInsideBox = 9,
+		SelectFaceGroups = 10,
 
-		ListSelectedFaceGroups,
+		ListSelectedFaceGroups = 11,
 
-		SelectUtility
+		SelectUtility = 12,
+		SelectIntersectingObject = 13
 	};
 	struct SelectCmd {
 		SelectCmdType eType;
@@ -1098,7 +1106,7 @@ private:
 
 
 	enum BrushCmdType {
-		Stroke3D
+		Stroke3D = 0
 	};
 	struct BrushCmd {
 		BrushCmdType eType;
@@ -1108,7 +1116,7 @@ private:
 
 
 	enum PartCmdType {
-		DropPart, UpdatePart, AcceptPart
+		DropPart = 0, UpdatePart = 1, AcceptPart = 2
 	};
 	struct PartCmd {
 		PartCmdType eType;
@@ -1124,7 +1132,7 @@ private:
 
 
 	enum StampCmdType {
-		InsertPolygonStamp
+		InsertPolygonStamp = 0
 	};
 	struct StampCmd {
 		StampCmdType eType;
@@ -1167,11 +1175,12 @@ private:
 
 
 	enum GenericQueryCmdType {
-		ToolManager_NewGroups,
-		ToolManager_ScalarToWorld,
-		ToolManager_ScalarToScene,
-		ToolManager_PointToWorld,
-		ToolManager_PointToScene
+		ToolManager_NewGroups = 0,
+		ToolManager_ScalarToWorld = 1,
+		ToolManager_ScalarToScene = 2,
+		ToolManager_PointToWorld = 3,
+		ToolManager_PointToScene = 4,
+		ToolManager_NewObjects = 5
 	};
 	struct GenericQueryCmd {
 		GenericQueryCmdType eType;

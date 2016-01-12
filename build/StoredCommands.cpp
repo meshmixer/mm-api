@@ -1114,7 +1114,24 @@ StoredCommands::Key StoredCommands::AppendToolQuery_NewGroups()
 	c.c.generic_query.eType = ToolManager_NewGroups;
 	return append_command(c);
 }
-bool StoredCommands::GetToolQueryResult_NewGroups(StoredCommands::Key k, std::vector<int> & vObjects)
+bool StoredCommands::GetToolQueryResult_NewGroups(StoredCommands::Key k, std::vector<int> & vGroups)
+{
+	if ( k >= m_vCommands.size() )
+		return false;
+	Command & c = m_vCommands[k];
+	mmsc_extract_vector(vGroups, c.r.generic_query.vList);
+	return true;
+}
+
+
+StoredCommands::Key StoredCommands::AppendToolQuery_NewObjects()
+{
+	Command c;  c.init();
+	c.eType = GenericQueryCommand;
+	c.c.generic_query.eType = ToolManager_NewObjects;
+	return append_command(c);
+}
+bool StoredCommands::GetToolQueryResult_NewObjects(StoredCommands::Key k, std::vector<int> & vObjects)
 {
 	if ( k >= m_vCommands.size() )
 		return false;
@@ -1122,6 +1139,7 @@ bool StoredCommands::GetToolQueryResult_NewGroups(StoredCommands::Key k, std::ve
 	mmsc_extract_vector(vObjects, c.r.generic_query.vList);
 	return true;
 }
+
 
 
 StoredCommands::Key StoredCommands::AppendQueryCommand_ConvertScalarToWorld(float f)
@@ -1926,6 +1944,7 @@ void StoredCommands::AppendSelectUtilityCommand( std::string commandName, int nA
 }
 
 
+
 StoredCommands::Key StoredCommands::AppendSelectCommand_NearestComponent( float cx, float cy, float cz )
 {
 	Command c;  
@@ -2021,6 +2040,18 @@ bool StoredCommands::GetSelectCommandResult_InsideBox( Key k )
 		return false;
 	return ( m_vCommands[k].r.select.OK == 0 ) ? false : true;
 }
+
+
+
+StoredCommands::Key StoredCommands::AppendSelectCommand_IntersectingObject( int nObjectID, int nMode )
+{
+	Command c;  
+	MMAPI_INIT_SELECT_COMMAND(c, SelectIntersectingObject);
+	c.c.select.n = nObjectID;
+	c.c.select.r = (float)nMode;
+	return append_command(c);
+}
+
 
 
 

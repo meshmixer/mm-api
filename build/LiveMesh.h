@@ -67,8 +67,8 @@ class LiveMeshUtil
 {
 public:
 #ifndef USING_MM_COMMAND_API
-	static void VFMeshToPackedMesh(const rms::VFTriangleMesh * pMeshIn, PackedLiveMesh & p );
-	static void PackedMeshToVFMesh(const PackedLiveMesh & p, rms::VFTriangleMesh * pMesh);
+	static void VFMeshToPackedMesh(const rms::VFTriangleMesh * pMeshIn, PackedLiveMesh & p, const void * pXForm = NULL );
+	static void PackedMeshToVFMesh(const PackedLiveMesh & p, rms::VFTriangleMesh * pMesh, const void * pXForm = NULL);
 #endif
 
 	static bool WritePackedLiveMesh(boost::filesystem::ofstream & o, const PackedLiveMesh & m);

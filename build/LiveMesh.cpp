@@ -10,8 +10,10 @@ using namespace mm;
 
 #ifndef USING_MM_COMMAND_API
 
-void LiveMeshUtil::VFMeshToPackedMesh(const VFTriangleMesh * pMeshIn, PackedLiveMesh & p )
+void LiveMeshUtil::VFMeshToPackedMesh(const VFTriangleMesh * pMeshIn, PackedLiveMesh & p, const void * pXFormIn )
 {
+	const rms::AffineTransform3d * pXForm = (const rms::AffineTransform3d *)pXFormIn;
+
 	VFTriangleMesh m(*pMeshIn);
 	VertexMap mapV; TriangleMap mapT;
 	m.Compact(mapV, mapT);
@@ -23,8 +25,12 @@ void LiveMeshUtil::VFMeshToPackedMesh(const VFTriangleMesh * pMeshIn, PackedLive
 	p.pUVs = NULL;
 	p.nFlagsV = PackedLiveMesh_HasVertexNormals | PackedLiveMesh_HasVertexColorsRGB;
 	for ( unsigned int k = 0; k < p.nVertices; ++k ) {
-		const Wml::Vector3f & v = m.GetVertex(k);
-		const Wml::Vector3f & n = m.GetNormal(k);
+		Wml::Vector3f v = m.GetVertex(k);
+		Wml::Vector3f n = m.GetNormal(k);
+		if ( pXForm ) {
+			v = pXForm->ApplyPf(v);
+			n = pXForm->ApplyNf(n);
+		}
 		const Wml::ColorRGBA & c = m.GetColor(k);
 		for ( int j = 0; j < 3; ++j ) {
 			p.pVertices[3*k+j] = v[j];
@@ -48,8 +54,10 @@ void LiveMeshUtil::VFMeshToPackedMesh(const VFTriangleMesh * pMeshIn, PackedLive
 
 
 
-void LiveMeshUtil::PackedMeshToVFMesh(const PackedLiveMesh & p, VFTriangleMesh * pMesh)
+void LiveMeshUtil::PackedMeshToVFMesh(const PackedLiveMesh & p, VFTriangleMesh * pMesh, const void * pXFormIn )
 {
+	const rms::AffineTransform3d * pXForm = (const rms::AffineTransform3d *)pXFormIn;
+
 	VFTriangleMesh & m = *pMesh;
 
 	if ( p.pVertices == NULL )
@@ -58,6 +66,8 @@ void LiveMeshUtil::PackedMeshToVFMesh(const PackedLiveMesh & p, VFTriangleMesh *
 	//lgDevAssert(p.pVertices != NULL);
 	for ( unsigned int k = 0; k < p.nVertices; ++k ) {
 		Wml::Vector3f v(p.pVertices[3*k], p.pVertices[3*k+1], p.pVertices[3*k+2]);
+		if ( pXForm )
+			v = pXForm->ApplyPf(v);
 		VertexID vID = m.AppendVertex(v);
 		lgDevAssert(vID == k);
 	}
@@ -66,6 +76,8 @@ void LiveMeshUtil::PackedMeshToVFMesh(const PackedLiveMesh & p, VFTriangleMesh *
 		lgDevAssert(p.pNormals != NULL);
 		for ( unsigned int k = 0; k < p.nVertices; ++k ) {
 			Wml::Vector3f n(p.pNormals[3*k], p.pNormals[3*k+1], p.pNormals[3*k+2]);
+			if ( pXForm )
+				n = pXForm->ApplyNf(n);
 			m.SetNormal(k, n);
 		}
 	} else

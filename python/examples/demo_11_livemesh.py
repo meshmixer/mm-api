@@ -12,9 +12,10 @@ remote.connect()
 
 # create simple packedMesh object and store in file
 mesh = mm.packedMesh()
-v1 = mesh.appendVertex( (0,0,0) )
-v2 = mesh.appendVertex( (1,0,0) )
-v3 = mesh.appendVertex( (1,0,1) )
+n = (0,1,0)
+v1 = mesh.appendVertex( (0,0,0), n, (1,0,0) )
+v2 = mesh.appendVertex( (15,0,0), n, (0,1,0) )
+v3 = mesh.appendVertex( (15,0,15), n, (0,0,1) )
 t = mesh.appendTriangle( (v1,v3,v2) )
 mesh.write(TEST_FILE_PATH)
 
@@ -34,8 +35,8 @@ port_name = mm.vectorub_to_string(port_name_vec)
 portid = obj_id.i
 
 # animate this mesh
-for i in range(0,100):
-    mesh.vertices[0] = (0, 0+i*0.01, 0)
+for i in range(0,2500):
+    mesh.vertices[0] = (0, 0+i*0.1, 0)
 
     cmd_lock = mmapi.StoredCommands()
     cmd_lock.AppendSceneCommand_RequestLiveMeshLock(port_name);
