@@ -5,8 +5,8 @@
 // [RMS] You must #define USING_MM_COMMAND_API to use this outside of meshmixer-desktop
 //#define USING_MM_COMMAND_API
 
-
-#include <boost/filesystem/fstream.hpp>
+#include <fstream>
+#include <string>
 
 #define PackedLiveMesh_HasVertexNormals    (1<<2)
 #define PackedLiveMesh_HasVertexColorsRGB  (1<<3)
@@ -60,8 +60,10 @@ public:
 	}
 };
 
-
+#ifndef USING_MM_COMMAND_API
 typedef boost::shared_ptr<PackedLiveMesh> PackedLiveMeshPtr;
+#endif
+
 
 class LiveMeshUtil
 {
@@ -71,11 +73,11 @@ public:
 	static void PackedMeshToVFMesh(const PackedLiveMesh & p, rms::VFTriangleMesh * pMesh, const void * pXForm = NULL);
 #endif
 
-	static bool WritePackedLiveMesh(boost::filesystem::ofstream & o, const PackedLiveMesh & m);
+	static bool WritePackedLiveMesh(std::ofstream & o, const PackedLiveMesh & m);
 	static bool WritePackedLiveMesh(const char * pFilename, const PackedLiveMesh & m);
 	static bool WritePackedLiveMesh(const std::string & filename, const PackedLiveMesh & m) { return WritePackedLiveMesh(filename.c_str(), m); }
 
-	static bool ReadPackedLiveMesh(boost::filesystem::ifstream & in, PackedLiveMesh & m);
+	static bool ReadPackedLiveMesh(std::ifstream & in, PackedLiveMesh & m);
 	static bool ReadPackedLiveMesh(const char * pFilename, PackedLiveMesh & m);
 	static bool ReadPackedLiveMesh(const std::string & filename, PackedLiveMesh & m) { return ReadPackedLiveMesh(filename.c_str(), m); }
 };

@@ -49,6 +49,12 @@ csharp/LinkedMeshDemo/obj
 csharp/**/*.user
 csharp/**/*.pdb
 
+cpp/**/Debug
+cpp/**/Release
+cpp/**/*.sdf
+cpp/**/*.suo
+
+
 # certain local files
 rms_*.bat
 

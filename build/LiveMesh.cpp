@@ -1,14 +1,25 @@
 #include "stdafx.h"
 #include "LiveMesh.h"
 
-#include <VFTriangleMesh.h>
-#include <MeshUtils.h>
-
 using namespace rms;
 using namespace mm;
 
 
 #ifndef USING_MM_COMMAND_API
+#define lmAssert(x) lgDevAssert(x)
+#define lmInfo _RMSInfo
+#else
+#define lmAssert(x)
+#define lmInfo printf
+#endif
+
+
+
+#ifndef USING_MM_COMMAND_API
+
+#include <VFTriangleMesh.h>
+#include <MeshUtils.h>
+
 
 void LiveMeshUtil::VFMeshToPackedMesh(const VFTriangleMesh * pMeshIn, PackedLiveMesh & p, const void * pXFormIn )
 {
@@ -63,17 +74,17 @@ void LiveMeshUtil::PackedMeshToVFMesh(const PackedLiveMesh & p, VFTriangleMesh *
 	if ( p.pVertices == NULL )
 		return;
 
-	//lgDevAssert(p.pVertices != NULL);
+	//lmAssert(p.pVertices != NULL);
 	for ( unsigned int k = 0; k < p.nVertices; ++k ) {
 		Wml::Vector3f v(p.pVertices[3*k], p.pVertices[3*k+1], p.pVertices[3*k+2]);
 		if ( pXForm )
 			v = pXForm->ApplyPf(v);
 		VertexID vID = m.AppendVertex(v);
-		lgDevAssert(vID == k);
+		lmAssert(vID == k);
 	}
 
 	if ( (p.nFlagsV & PackedLiveMesh_HasVertexNormals) != 0 ) {
-		lgDevAssert(p.pNormals != NULL);
+		lmAssert(p.pNormals != NULL);
 		for ( unsigned int k = 0; k < p.nVertices; ++k ) {
 			Wml::Vector3f n(p.pNormals[3*k], p.pNormals[3*k+1], p.pNormals[3*k+2]);
 			if ( pXForm )
@@ -84,14 +95,14 @@ void LiveMeshUtil::PackedMeshToVFMesh(const PackedLiveMesh & p, VFTriangleMesh *
 		MeshUtils::EstimateNormals(m);
 
 	if ( (p.nFlagsV & PackedLiveMesh_HasVertexColorsRGB) != 0 ) {
-		lgDevAssert(p.pColors != NULL);
+		lmAssert(p.pColors != NULL);
 		for ( unsigned int k = 0; k < p.nVertices; ++k ) {
 			Wml::ColorRGBA c(p.pColors[3*k], p.pColors[3*k+1], p.pColors[3*k+2], 1.0f);
 			m.SetColor(k, c);
 		}
 	}
 	if ( (p.nFlagsV & PackedLiveMesh_HasVertexUVs) != 0 ) {
-		lgDevAssert(p.pUVs != NULL);
+		lmAssert(p.pUVs != NULL);
 		for ( unsigned int k = 0; k < p.nVertices; ++k ) {
 			Wml::Vector2f uv(p.pUVs[2*k], p.pUVs[2*k+1]);
 			m.SetVertexUV(k, uv);
@@ -99,14 +110,14 @@ void LiveMeshUtil::PackedMeshToVFMesh(const PackedLiveMesh & p, VFTriangleMesh *
 	}
 
 
-	lgDevAssert(p.pTriangles != NULL);
+	lmAssert(p.pTriangles != NULL);
 	for ( unsigned int k = 0; k < p.nTriangles; ++k ) {
-		//_RMSInfo("APPEND %d %d %d\n", p.pTriangles[3*k], p.pTriangles[3*k+1], p.pTriangles[3*k+2]);
+		//lmInfo("APPEND %d %d %d\n", p.pTriangles[3*k], p.pTriangles[3*k+1], p.pTriangles[3*k+2]);
 		TriangleID tID = m.AppendTriangle(p.pTriangles[3*k], p.pTriangles[3*k+1], p.pTriangles[3*k+2]);
-		lgDevAssert(tID == k);
+		lmAssert(tID == k);
 	}
 	if ( (p.nFlagsT & PackedLiveMesh_HasTriangleGroups) != 0 ) {
-		lgDevAssert(p.pGroups != NULL);
+		lmAssert(p.pGroups != NULL);
 		for ( unsigned int k = 0; k < p.nTriangles; ++k ) {
 			m.SetGroupID(k, p.pGroups[k]);
 		}
@@ -121,7 +132,7 @@ void LiveMeshUtil::PackedMeshToVFMesh(const PackedLiveMesh & p, VFTriangleMesh *
 
 bool LiveMeshUtil::WritePackedLiveMesh(const char * pFilename, const PackedLiveMesh & m)
 {
-	boost::filesystem::ofstream out(pFilename, std::ios_base::binary);
+	std::ofstream out(pFilename, std::ios_base::binary);
 	if (! out )
 		return false;
 	bool bOK = WritePackedLiveMesh(out, m);
@@ -129,36 +140,36 @@ bool LiveMeshUtil::WritePackedLiveMesh(const char * pFilename, const PackedLiveM
 	out.close();
 	return bOK;
 }
-bool LiveMeshUtil::WritePackedLiveMesh(boost::filesystem::ofstream & o, const PackedLiveMesh & m)
+bool LiveMeshUtil::WritePackedLiveMesh(std::ofstream & o, const PackedLiveMesh & m)
 {
 	o.write((char *)&m.nVersion, sizeof(unsigned int));
 	o.write((char *)&m.nVertices, sizeof(unsigned int));
 	o.write((char *)&m.nFlagsV, sizeof(unsigned int));
 
-	lgDevAssert(m.pVertices != NULL);
+	lmAssert(m.pVertices != NULL);
 	o.write( (char *)m.pVertices, 3*m.nVertices*sizeof(float) );
 
 	if ( (m.nFlagsV & PackedLiveMesh_HasVertexNormals) != 0 ) {
-		lgDevAssert(m.pNormals != NULL);
+		lmAssert(m.pNormals != NULL);
 		o.write( (char *)m.pNormals, 3*m.nVertices*sizeof(float) );
 	}
 	if ( (m.nFlagsV & PackedLiveMesh_HasVertexColorsRGB) != 0 ) {
-		lgDevAssert(m.pColors);
+		lmAssert(m.pColors);
 		o.write( (char *)m.pColors, 3*m.nVertices*sizeof(float) );
 	}
 	if ( (m.nFlagsV & PackedLiveMesh_HasVertexUVs) != 0 ) {
-		lgDevAssert(m.pUVs);
+		lmAssert(m.pUVs);
 		o.write( (char *)m.pUVs, 2*m.nVertices*sizeof(float) );
 	}
 
 	o.write((char *)&m.nTriangles, sizeof(unsigned int));
 	o.write((char *)&m.nFlagsT, sizeof(unsigned int));
 
-	lgDevAssert(m.pTriangles != NULL);
+	lmAssert(m.pTriangles != NULL);
 	o.write( (char *)m.pTriangles, 3*m.nTriangles*sizeof(unsigned int) );
 
 	if ( (m.nFlagsT & PackedLiveMesh_HasTriangleGroups) != 0 ) {
-		lgDevAssert(m.pGroups != NULL);
+		lmAssert(m.pGroups != NULL);
 		o.write( (char *)m.pGroups, m.nTriangles*sizeof(unsigned int) );
 	}
 
@@ -169,27 +180,27 @@ bool LiveMeshUtil::WritePackedLiveMesh(boost::filesystem::ofstream & o, const Pa
 
 bool LiveMeshUtil::ReadPackedLiveMesh(const char * pFilename, PackedLiveMesh & m)
 {
-	boost::filesystem::ifstream in(pFilename, std::ios_base::binary);
+	std::ifstream in(pFilename, std::ios_base::binary);
 	if (! in )
 		return false;
 	bool bOK = ReadPackedLiveMesh(in, m);
 	in.close();
 	return bOK;
 }
-bool LiveMeshUtil::ReadPackedLiveMesh(boost::filesystem::ifstream & in, PackedLiveMesh & m)
+bool LiveMeshUtil::ReadPackedLiveMesh(std::ifstream & in, PackedLiveMesh & m)
 {
 	if ( in.eof() )	return false;
 
 	m.Clear();
 
 	in.read( (char *)&m.nVersion, sizeof(unsigned int));
-	_RMSInfo("[ReadPackedLiveMesh] version %d\n", m.nVersion);
+	lmInfo("[ReadPackedLiveMesh] version %d\n", m.nVersion);
 	
 	m.nVertices = 0;
 	in.read( (char *)&m.nVertices, sizeof(unsigned int));
 	if ( m.nVertices == 0 )
 		return false;
-	_RMSInfo("[ReadPackedLiveMesh] header says %d vertices, flags %x...\n", m.nVertices, m.nFlagsV);
+	lmInfo("[ReadPackedLiveMesh] header says %d vertices, flags %x...\n", m.nVertices, m.nFlagsV);
 
 	in.read( (char *)&m.nFlagsV, sizeof(unsigned int));
 	if ( in.eof() ) return false;
@@ -218,7 +229,7 @@ bool LiveMeshUtil::ReadPackedLiveMesh(boost::filesystem::ifstream & in, PackedLi
 	in.read( (char *)&m.nFlagsT, sizeof(unsigned int));
 	if ( in.eof() ) return false;
 
-	_RMSInfo("[ReadPackedLiveMesh] header says %d triangles, flags %x...\n", m.nTriangles, m.nFlagsT);
+	lmInfo("[ReadPackedLiveMesh] header says %d triangles, flags %x...\n", m.nTriangles, m.nFlagsT);
 
 
 	m.pTriangles = new unsigned int[m.nTriangles*3];
@@ -230,7 +241,7 @@ bool LiveMeshUtil::ReadPackedLiveMesh(boost::filesystem::ifstream & in, PackedLi
 		in.read( (char *)m.pGroups, m.nTriangles * sizeof(unsigned int) );
 	}
 
-	_RMSInfo("[ReadPackedLiveMesh] have %d vertices, %d triangles\n", m.nVertices, m.nTriangles);
+	lmInfo("[ReadPackedLiveMesh] have %d vertices, %d triangles\n", m.nVertices, m.nTriangles);
 
 	return true;
 }
