@@ -6,3 +6,4 @@ from scene import *
 from tool import *
 from selection import *
 from external import *
+from packedMesh import *

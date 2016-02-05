@@ -27,6 +27,7 @@
     </Compile>
     <Compile Include="frame.py" />
     <Compile Include="mm_math.py" />
+    <Compile Include="packedMesh.py" />
     <Compile Include="scene.py" />
     <Compile Include="selection.py" />
     <Compile Include="tool.py" />

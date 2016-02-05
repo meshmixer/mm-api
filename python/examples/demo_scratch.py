@@ -51,11 +51,17 @@ remote.connect()
 #remote.runCommand(cmd2)
 
 #[RMS] this is how to create a pivot and link it to an object in the scene
-objects = mm.list_objects(remote)
-f = mm.mmFrame()
-f.origin = (1,0,0)
-pivot_id = mm.create_pivot(remote, f)
-link_ok = mm.link_pivot(remote, pivot_id, objects[0])
+#objects = mm.list_objects(remote)
+#f = mm.mmFrame()
+#f.origin = (1,0,0)
+#pivot_id = mm.create_pivot(remote, f)
+#link_ok = mm.link_pivot(remote, pivot_id, objects[0])
+
+cmd2 = mmapi.StoredCommands()
+cmd2.AppendBeginToolCommand("select")
+cmd2.ViewControl_TakeFocus();
+remote.runCommand(cmd2)
+
 
 #done!
 remote.shutdown();

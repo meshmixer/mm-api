@@ -31,9 +31,29 @@ build/csharp_vs
 # document build
 python/doc/_build
 
+# distrib files
+distrib/**/*.obj
+distrib/**/*.ilk
+distrib/**/*.pdb
+distrib/**/*.exp
+distrib/**/*.exe.config
+
+
 # example projects
-csharp/examples_vs2012/bin
-csharp/examples_vs2012/obj
+csharp/CommandDemos/bin
+csharp/CommandDemos/obj
+csharp/mm/bin
+csharp/mm/obj
+csharp/LinkedMeshDemo/bin
+csharp/LinkedMeshDemo/obj
+csharp/**/*.user
+csharp/**/*.pdb
+
+cpp/**/Debug
+cpp/**/Release
+cpp/**/*.sdf
+cpp/**/*.suo
+
 
 # certain local files
 rms_*.bat

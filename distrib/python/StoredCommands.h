@@ -18,7 +18,7 @@
 
 
 // [RMS] #define USING_MM_COMMAND_API to use this outside of meshmixer-desktop
-
+//#define USING_MM_COMMAND_API
 
 #include <BinarySerializer.h>
 
@@ -130,6 +130,8 @@ public:
 	void ViewControl_ShowObjectBrowser();
 	void ViewControl_HideObjectBrowser();
 
+	void ViewControl_TakeFocus();
+
 	/*
 	 * INTERNAL MM TOOL API
 	 */
@@ -163,6 +165,7 @@ public:
 		"separate"			- Separate tool
 		"planeCut"			- Plane Cut tool (with or without selection)
 		"attractToTarget"	- Attract tool
+		"alignToTarget"		- Align to Target tool
 		"flipNormals"		- Flip Normals tool
 		"fitPrimitive"		- Fit Primitive tool
 
@@ -192,6 +195,10 @@ public:
 		"separateShells"		- Separate Shells tool
 		"addTube"				- Add Tube tool
         "createPivot"           - Create Pivot tool
+		"unwrap"				- Unwrap tool
+		"generateComplex"		- Generate Complex tool
+		"splitComplex"			- Split Complex tool
+		"filterComplex"			- Filter Complex tool
 
 		"combine"				- Combine tool (multiple selected objects)
 		"union"					- Boolean Union 
@@ -210,6 +217,9 @@ public:
 		"layout"				- Print Bed layout/packing tool
 		"deviation"				- Deviation measurement between two selected meshes
 		"clearance"				- Clearance measurement between two selected meshes
+		"meshQuery"				- display/measure various properties of selected mesh
+
+		"exportSVG"				- export selected objects as SVG
 	 *
 	 */
 	void AppendBeginToolCommand( std::string toolName );
@@ -443,9 +453,15 @@ public:
 			"edgeCollapseThresh" : float 
 			"gradientValue0" : float 
 			"gradientValue1" : float 
-			"pattern" : integer 
+			"pattern" : integer
+					MeshEdges = 0, DualMeshEdges = 1, MeshEdges_DelaunayEdges = 2, DualMeshEdges_DualDelaunayEdges_Snapped = 3,
+					TiledTubes2D = 4, TiledSpheres3D = 5, Lattice = 6, 
+					PoissonDistribution3D = 7, PoissonDistribution2D = 8, FaceGroupEdges = 9,
+					CustomPattern = 20
 			"tiling" : integer 
+					RegularGrid = 0, SpherePacking = 1
 			"compositionMode" : integer 
+					Difference = 0, Intersection = 1
 			"smoothingIters" : integer 
 			"dimensionGradient" : integer 
 			"clipToSurface" : boolean 
@@ -476,7 +492,7 @@ public:
                     SurfaceHitPoint = 0, NearestVertex = 1, NearestEdgePoint = 2, NearestEdgeMidPoint = 3, 
                     NearestFaceCenter = 4, FacegroupBorder = 5, FacegroupCenter = 6, FacegroupBorderCenter = 7, 
                     BoundaryLoopCenter = 8, FirstRayMidpoint = 10, FirstNormalMidpoint = 11, 
-                    WorldBoundingBoxPoint = 20, LocalBoundingBoxPoint = 21, FromLastToolFrame = 30
+                    WorldBoundingBoxPoint = 20, LocalBoundingBoxPoint = 21, ExistingPivot = 25, FromLastToolFrame = 30
              "frameMode" : integer
                      WorldFrame = 0, FromGeometry = 1, AlongEyeRay = 2
              "symmetric" : boolean
@@ -560,7 +576,11 @@ public:
 
 	// [RMS] not yet implemented for most Tools...
 	Key AppendToolQuery_NewGroups();
-	bool GetToolQueryResult_NewGroups(Key k, std::vector<int> & vObjects);
+	bool GetToolQueryResult_NewGroups(Key k, std::vector<int> & vGroups);
+
+	Key AppendToolQuery_NewObjects();
+	bool GetToolQueryResult_NewObjects(Key k, std::vector<int> & vObjects);
+
 
 	/*
 	 * [RMS] handle cases where tool has explicit operation, like makeSolid update
@@ -568,6 +588,8 @@ public:
 			"update"
 	 *   [makePattern]
 			"update"
+			"addSegment"		// only applicable to Custom pattern
+			"clearSegments"		// only applicable to Custom pattern
 	 *   [inspector]
 			"repairAll"
 	 *   [hollow]
@@ -591,6 +613,7 @@ public:
 	void AppendToolUtilityCommand( std::string commandName );
 	void AppendToolUtilityCommand( std::string commandName, int nValue );
 	void AppendToolUtilityCommand( std::string commandName, std::string sValue );
+	void AppendToolUtilityCommand( std::string commandName, const vec3f & v0, const vec3f & v1, float r0, float r1 );
 
 
 
@@ -602,7 +625,7 @@ public:
 	bool GetSceneCommandResult_IsOK(Key k);
 
 	// write out screenshot at pFilename
-	void AppendSceneCommand_SaveScreenShot(const char * pFilename);
+	StoredCommands::Key AppendSceneCommand_SaveScreenShot(const char * pFilename);
 
 	// open a .mix file (replaces existing file)
 	Key AppendSceneCommand_OpenMixFile( const char * pFilename );
@@ -613,11 +636,18 @@ public:
 	Key AppendSceneCommand_AppendMeshFile( const char * pFilename );
 		bool GetSceneCommandResult_AppendMeshFile( Key k, std::vector<int> & vObjects );
 
+	// append binary packed mesh to current scene
+	Key AppendSceneCommand_AppendPackedMeshFile( const char * pFilename );
+		bool GetSceneCommandResult_AppendPackedMeshFile( Key k, int & nObjectID );
+		bool GetSceneCommandResult_AppendPackedMeshFile( Key k, any_result & nObjectID );
+
 	// append objects in mesh file to current scene as reference objects
 	Key AppendSceneCommand_AppendMeshFileAsReference( const char * pFilename );
 		bool GetSceneCommandResult_AppendMeshFileAsReference( Key k, std::vector<int> & vObjects );
 
 	Key AppendSceneCommand_ExportMeshFile_CurrentSelection( const char * pFilename );
+
+	Key AppendSceneCommand_ExportAsPackedMeshFile( const char * pFilename, int nObjectID );
 
     // create pivot in scene
     Key AppendSceneCommand_CreatePivot( frame3f f );
@@ -663,19 +693,36 @@ public:
 	Key AppendSceneCommand_SetHidden( int nObjectID );
 	Key AppendSceneCommand_ShowAll();
 
+	// input live mesh
+	Key AppendSceneCommand_CreateLiveMeshObject( const char * pFilename );
+		bool GetSceneCommandResult_CreateLiveMeshObject( Key k, std::string & portName, int & nObjectID );
+		bool GetSceneCommandResult_CreateLiveMeshObject( Key k, std::vector<unsigned char> & portName, any_result & nObjectID );  // for SWIG
+
+	// note: currently lock request will freeze main thread in app until lock is achieved...
+	Key AppendSceneCommand_RequestLiveMeshLock( const char * pPortName );
+	Key AppendSceneCommand_ReleaseLiveMeshLock( const char * pPortName );
+	Key AppendSceneCommand_NotifyLiveMeshUpdate( const char * pPortName );
+
+	// tracking live mesh (when nObjectID is modified, PackedMesh written to pFilename and then UDP port gets a datagram)
+	//   NOTE: when reading this file, use lock functions above!!
+	Key AppendSceneCommand_CreateTrackingLiveMesh( const char * pFilename, int nObjectID, int nUDPNotificationPort);
+		bool GetSceneCommandResult_CreateTrackingLiveMesh( Key k, std::string & portName );
+		bool GetSceneCommandResult_CreateTrackingLiveMesh( Key k, std::vector<unsigned char> & portName );
+	Key AppendSceneCommand_HaltTrackingLiveMesh( const char * pPortName );
+
 
 	/*
 	 * SPATIAL QUERY COMMANDS
 	 */
 
 	Key AppendQueryCommand_ConvertScalarToWorld(float f);
-		bool GetQueryResult_ConvertScalarToWorld(Key k, float * pResult);
+		bool GetQueryResult_ConvertScalarToWorld(Key k, float & fResult);
 	Key AppendQueryCommand_ConvertScalarToScene(float f);
-		bool GetQueryResult_ConvertScalarToScene(Key k, float * pResult);
+		bool GetQueryResult_ConvertScalarToScene(Key k, float & fResult);
 	Key AppendQueryCommand_ConvertPointToWorld(float fPoint[3]);
-		bool GetQueryResult_ConvertPointToWorld(Key k, float * pResult);
+		bool GetQueryResult_ConvertPointToWorld(Key k, float fPoint[3]);
 	Key AppendQueryCommand_ConvertPointToScene(float fPoint[3]);
-		bool GetQueryResult_ConvertPointToScene(Key k, float * pResult);
+		bool GetQueryResult_ConvertPointToScene(Key k, float fPoint[3]);
 
 	// get bounding box of selected objects
 	Key AppendQueryCommand_GetBoundingBox();
@@ -705,9 +752,42 @@ public:
 	Key AppendQueryCommand_FindNearestPoint( const vec3f & p );
 		bool GetQueryResult_FindNearestPoint( Key k, frame3f * pFrame );
 
+	// test if point is inside selected object
+	Key AppendQueryCommand_IsInsideObject( const vec3f & p );
+		bool GetQueryResult_IsInsideObject( Key k );
+
+	// nFilter is a bitmap that controls which 'types' of objects the queries below will return.
+	// If no filter is set, or after clear, all object types are returned
+	// bit 0 = meshes, bit 1 = pivots
+	Key AppendQueryCommand_SetObjectTypeFilter( int nFilter );
+	Key AppendQueryCommand_ClearObjectTypeFilter();
+
+	// find all objects hit by ray. Results are returned sorted by ray-hit parameter.
+	Key AppendQueryCommand_FindObjectsHitByRay( const vec3f & o, const vec3f & d );
+		bool GetQueryResult_FindObjectsHitByRay( Key k, std::vector<int> & vObjects );
+
+	// find closest object to point
+	Key AppendQueryCommand_FindNearestObject( const vec3f & p );
+		bool GetQueryResult_FindNearestObject( Key k, int & nObjectID );
+		bool GetQueryResult_FindNearestObject( Key k, any_result & nObjectID );
+
+	// find objects within distance of point.
+	Key AppendQueryCommand_FindObjectsWithinDistance( const vec3f & p, float fDistance );
+		bool GetQueryResult_FindObjectsWithinDistance( Key k, std::vector<int> & vObjects );
+
+	// test if two objects intersect (requires that objects be meshes)
+	Key AppendQueryCommand_TestIntersection( int nObjectID, int nTestWithObjectID );
+		bool GetQueryResult_TestIntersection( Key k );
+	
+	// Find all objects intersecting first object
+	Key AppendQueryCommand_FindIntersectingObjects( int nObjectID );
+		bool GetQueryResult_FindIntersectingObjects( Key k, std::vector<int> & vObjects );
+	
 
 	/*
 	 *  SELECTION COMMANDS
+	 *    Note: some selection commands take a mode argument which defines whether to replace/append/remove from the current selection
+	 *    The modes are 0=Replace 1=Append 2=Remove
 	 */
 
 	void AppendSelectCommand_All( );
@@ -744,6 +824,11 @@ public:
 	Key AppendSelectCommand_InsideSphere( float cx, float cy, float cz, float r );
 		bool GetSelectCommandResult_InsideSphere( Key k );
 
+	Key AppendSelectCommand_InsideBox( float xmin, float xmax, float ymin, float ymax, float zmin, float zmax );
+		bool GetSelectCommandResult_InsideBox( Key k );
+
+	Key AppendSelectCommand_IntersectingObject( int nObjectID, int nMode );
+
 	Key AppendSelectCommand_ByFaceGroups( const std::vector<int> & vGroupIDs );
 		bool GetSelectCommandResult_ByFaceGroups( Key k );
 
@@ -758,6 +843,8 @@ public:
 	 */
 
 	Key AppendActionCommand_BrushStroke3D( const std::vector<brush_stamp> & vPoints );
+	Key AppendActionCommand_BrushStamp3D( const vec3f & v0 );
+	Key AppendActionCommand_LinearBrushStroke3D( const vec3f & v0, const vec3f & v1, int nSteps );
 
 
 	/* Part Drop. During interactive part drop you can also use AppendToolParameterCommand() with following parameters:
@@ -827,28 +914,28 @@ private:
 
 	// [RMS] API clients do not need to touch this, but mm-internals do
 	enum CommandType {
-		MouseEventCommand,
-		CameraControlCommand,
+		MouseEventCommand = 0,
+		CameraControlCommand = 1,
 
-		ToolParameterChangeCommand,
-		BeginToolCommand,
-		CompleteToolCommand,
-		ToolParameterCommand,
+		ToolParameterChangeCommand = 2,
+		BeginToolCommand = 3,
+		CompleteToolCommand = 4,
+		ToolParameterCommand = 5,
 
-		SceneCommand,
-		SelectCommand,
+		SceneCommand = 6,
+		SelectCommand = 7,
 
-		BrushCommand,
-		PartCommand,
-		StampCommand,
+		BrushCommand = 8,
+		PartCommand = 9,
+		StampCommand = 10,
 
-		SpatialQueryCommand,
-		GenericQueryCommand
+		SpatialQueryCommand = 11,
+		GenericQueryCommand = 12
 	};
 
 
 	enum MouseEventType {
-		MouseDown, MouseMove, MouseUp
+		MouseDown = 0, MouseMove = 1, MouseUp = 2
 	};
 	struct MouseEvent {
 		MouseEventType eType;
@@ -863,11 +950,11 @@ private:
 
 
 	enum CameraCmdType {
-		CamManip, CamToggleSnap, CamOrbit, CamTurntable, CamPan, CamDolly, CamRecenter, CamSet, CamQuery, CamGetRay, 
-		SetViewNormalMode, SetViewColorMode, CamOrthographic, CamPerspective, 	
-		SetShowWireframe, SetShowBoundaries, SetShowGrid, SetShowPrinterBed, SetTransparentTarget,
-		SetShader_Default, SetShader_XRay, SetShader_Texture, SetShader_UV, SetShader_Overhang,
-		ShowObjectBrowser, HideObjectBrowser
+		CamManip = 0, CamToggleSnap = 1, CamOrbit = 2, CamTurntable = 3, CamPan = 4, CamDolly = 5, CamRecenter = 6, CamSet = 7, CamQuery = 8, CamGetRay = 9, 
+		SetViewNormalMode = 10, SetViewColorMode = 11, CamOrthographic = 12, CamPerspective = 13, 	
+		SetShowWireframe = 14, SetShowBoundaries = 15, SetShowGrid = 16, SetShowPrinterBed = 17, SetTransparentTarget = 18,
+		SetShader_Default = 19, SetShader_XRay = 20, SetShader_Texture = 21, SetShader_Texture_Unlit = 22, SetShader_UV = 23, SetShader_Overhang = 24,
+		ShowObjectBrowser = 25, HideObjectBrowser = 26, TakeFocus = 27
 	};
 	struct CameraCmd {
 		CameraCmdType eType;
@@ -938,27 +1025,36 @@ private:
 
 
 	enum SceneCmdType {
-		ClearScene,
-		AppendMeshFile,
-		OpenMixFile,
-		ExportMixFile,
-		ExportMeshFile_SelectedObjects,
-		ListObjects,
-		ListSelectedObjects,
-		SelectObjects,
-		SetAsTarget,
-		ClearTarget,
-		DeleteSelected,
-		GetObjectName,
-		SetObjectName,
-		FindObjectByName,
-		SaveScreenShot,
-		SetVisible,
-		SetHidden,
-		ShowAll,
-		AppendMeshFileAsReference,
-        CreatePivot,
-        LinkPivot
+		ClearScene = 0,
+		AppendMeshFile = 1,
+		OpenMixFile = 2,
+		ExportMixFile = 3,
+		ExportMeshFile_SelectedObjects = 4,
+		ListObjects = 5,
+		ListSelectedObjects = 6,
+		SelectObjects = 7,
+		SetAsTarget = 8,
+		ClearTarget = 9,
+		DeleteSelected = 10,
+		GetObjectName = 11,
+		SetObjectName = 12,
+		FindObjectByName = 13,
+		SaveScreenShot = 14,
+		SetVisible = 15,
+		SetHidden = 16,
+		ShowAll = 17,
+		AppendMeshFileAsReference = 18,
+        CreatePivot = 19,
+        LinkPivot = 20,
+		AppendPackedMeshFile = 21,
+		ExportAsPackedMeshByID = 22,
+
+		CreateLiveMeshObject = 23,
+		RequestLiveMeshLock = 24,
+		ReleaseLiveMeshLock = 25,
+		NotifyLiveMeshUpdated = 26,
+		CreateTrackingLiveMesh = 27,
+		HaltTrackingLiveMesh = 28
 	};
 	struct SceneCmd {
 		SceneCmdType eType;
@@ -975,22 +1071,24 @@ private:
 
 
 	enum SelectCmdType {
-		SelectAll,
+		SelectAll = 0,
 
-		SelectNearestComponent,
-		SelectContainingComponent,
-		SelectFirstComponentIntersectingRay,
-		SelectAllComponentsIntersectingRay,
-		SelectNearestTriangle,
-		SelectFirstTriangleIntersectingRay,
-		SelectAllTrianglesIntersectingRay,
+		SelectNearestComponent = 1,
+		SelectContainingComponent = 2,
+		SelectFirstComponentIntersectingRay = 3,
+		SelectAllComponentsIntersectingRay = 4,
+		SelectNearestTriangle = 5,
+		SelectFirstTriangleIntersectingRay = 6,
+		SelectAllTrianglesIntersectingRay = 7,
 
-		SelectInsideSphere,
-		SelectFaceGroups,
+		SelectInsideSphere = 8,
+		SelectInsideBox = 9,
+		SelectFaceGroups = 10,
 
-		ListSelectedFaceGroups,
+		ListSelectedFaceGroups = 11,
 
-		SelectUtility
+		SelectUtility = 12,
+		SelectIntersectingObject = 13
 	};
 	struct SelectCmd {
 		SelectCmdType eType;
@@ -1008,7 +1106,7 @@ private:
 
 
 	enum BrushCmdType {
-		Stroke3D
+		Stroke3D = 0
 	};
 	struct BrushCmd {
 		BrushCmdType eType;
@@ -1018,7 +1116,7 @@ private:
 
 
 	enum PartCmdType {
-		DropPart, UpdatePart, AcceptPart
+		DropPart = 0, UpdatePart = 1, AcceptPart = 2
 	};
 	struct PartCmd {
 		PartCmdType eType;
@@ -1034,7 +1132,7 @@ private:
 
 
 	enum StampCmdType {
-		InsertPolygonStamp
+		InsertPolygonStamp = 0
 	};
 	struct StampCmd {
 		StampCmdType eType;
@@ -1054,7 +1152,15 @@ private:
 		SelectedFacesBoundingBoxQuery = 3,
 		SelectedFacesCentroidQuery = 4,
 		ObjectBoundingBoxQuery = 5,
-		ObjectLocalFrameQuery = 6
+		ObjectLocalFrameQuery = 6,
+		RayHitObjectsQuery = 7,
+		NearestObjectQuery = 8,
+		ObjectsWithinRadiusQuery = 9,
+		IsInsideObjectQuery = 10,
+		ObjectIntersectionQuery = 11,
+		FindIntersectingObjects = 12,
+		SetObjectTypeFilter = 13,
+		ClearObjectTypeFilter = 14
 	};
 	struct SpatialQueryCmd {
 		SpatialQueryType eType;
@@ -1069,11 +1175,12 @@ private:
 
 
 	enum GenericQueryCmdType {
-		ToolManager_NewGroups,
-		ToolManager_ScalarToWorld,
-		ToolManager_ScalarToScene,
-		ToolManager_PointToWorld,
-		ToolManager_PointToScene
+		ToolManager_NewGroups = 0,
+		ToolManager_ScalarToWorld = 1,
+		ToolManager_ScalarToScene = 2,
+		ToolManager_PointToWorld = 3,
+		ToolManager_PointToScene = 4,
+		ToolManager_NewObjects = 5
 	};
 	struct GenericQueryCmd {
 		GenericQueryCmdType eType;

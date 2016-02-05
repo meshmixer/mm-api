@@ -31,6 +31,8 @@
     <Compile Include="demo_09_connector.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="demo_10_custom_pattern.py" />
+    <Compile Include="demo_11_livemesh.py" />
     <Compile Include="demo_scratch.py" />
     <Compile Include="demo_05_selection.py" />
     <Compile Include="demo_04_scene.py" />
