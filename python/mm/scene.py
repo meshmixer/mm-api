@@ -1,5 +1,6 @@
 import mmapi;
 from convert import *;
+from mm.frame import *
 
 def open_mix(remote, path):
     """Open a .mix file at the given location"""
@@ -86,6 +87,25 @@ def set_object_name(remote, object_id, new_name):
     remote.runCommand(cmd)
 
 
+def get_object_frame(remote, object_id):
+    """get local frame of object"""
+    cmd = mmapi.StoredCommands()
+    cmd_key = cmd.AppendSceneCommand_GetObjectFrame(object_id)
+    remote.runCommand(cmd)
+    cur_frame = mmapi.frame3f()
+    cmd.GetSceneCommandResult_GetObjectFrame(cmd_key, cur_frame)
+    f = mmFrame()
+    f.set_frame3f(cur_frame)
+    return f
+
+def set_object_frame(remote, object_id, frame):
+    """set local frame of object"""
+    mmframe = frame.get_frame3f()
+    cmd = mmapi.StoredCommands()
+    cmd_key = cmd.AppendSceneCommand_SetObjectFrame(object_id, mmframe)
+    remote.runCommand(cmd)
+
+
 def find_object_by_name(remote, obj_name):
     """Find the ID of the scene object with the given string name. Returns a 2-tuple (boolFound, object_id)"""
     cmd = mmapi.StoredCommands()
@@ -136,4 +156,11 @@ def clear_target(remote):
 
 
 
-
+def list_number_of_holes(remote):
+    """Returns a list of object IDs for the current set of selected scene objects"""
+    cmd1 = mmapi.StoredCommands()
+    key1 = cmd1.AppendQueryCommand_ListNumberOfHoles()
+    remote.runCommand(cmd1)
+    result_val = mmapi.any_result()
+    cmd1.GetQueryResult_ListNumberOfHoles(key1, result_val)
+    return result_val.i

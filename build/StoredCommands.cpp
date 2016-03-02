@@ -1,5 +1,5 @@
 /********************************************************************
- * (C) Copyright 2014 by Autodesk, Inc. All Rights Reserved. By using
+ * (C) Copyright 2016 by Autodesk, Inc. All Rights Reserved. By using
  * this code,  you  are  agreeing  to the terms and conditions of the
  * License  Agreement  included  in  the documentation for this code.
  * AUTODESK  MAKES  NO  WARRANTIES,  EXPRESS  OR  IMPLIED,  AS TO THE
@@ -70,7 +70,7 @@ inline static void mmsc_extract_string_from_vector( std::string & str, const Sto
 	char buf[4096];
 	for ( unsigned int k = 0; k < vSource.nElements; ++k ) {
 		scAssert(vSource.data[k] < 255);
-		buf[k] = vSource.data[k];
+		buf[k] = static_cast<char>(vSource.data[k]);
 	}
 	buf[vSource.nElements] = '\0';
 	str = std::string(buf);
@@ -469,6 +469,7 @@ void StoredCommands::Store_Results(rms::BinarySerializer & s)
 				s.append( c.r.scene.nObjectIDs.nElements );
 				if ( c.r.scene.nObjectIDs.nElements > 0 )
 					s.append( c.r.scene.nObjectIDs.data, c.r.scene.nObjectIDs.nElements );
+				append_frame3f(s, c.r.scene.f);
 				break;
 
 			case SelectCommand:
@@ -584,6 +585,7 @@ void StoredCommands::Restore_Results(BinarySerializer & s)
 				s.restore( c.r.scene.nObjectIDs.nElements );
 				if ( c.r.scene.nObjectIDs.nElements > 0 )
 					s.restore( c.r.scene.nObjectIDs.data, c.r.scene.nObjectIDs.nElements );
+				restore_frame3f(s, c.r.scene.f);
 				break;
 
 			case SelectCommand:
@@ -1238,6 +1240,15 @@ void StoredCommands::AppendToolUtilityCommand( std::string commandName, std::str
 	c.c.toolparam.v.str = __tofstr(sValue.c_str());
 	append_command(c);
 }
+void StoredCommands::AppendToolUtilityCommand( std::string commandName, const vec3f & p )
+{
+	Command c;  c.init();
+	c.eType = ToolParameterCommand;
+	sprintf_s(c.c.toolparam.name, sizeof(c.c.toolparam.name), "%s", commandName.c_str());
+	c.c.toolparam.eType = ToolParam_Utility_Vec3;
+	c.c.toolparam.v.vec = p;
+	append_command(c);
+}
 void StoredCommands::AppendToolUtilityCommand( std::string commandName, const vec3f & v0, const vec3f & v1, float r0, float r1 )
 {
 	Command c;  c.init();
@@ -1618,6 +1629,61 @@ bool StoredCommands::GetSceneCommandResult_FindObjectByName( Key k, any_result &
 }
 
 
+StoredCommands::Key StoredCommands::AppendSceneCommand_GetObjectType( int nObjectID )
+{
+	Command c;  c.init();
+	c.eType = SceneCommand;
+	c.c.scene.eType = GetObjectType;
+	c.c.scene.nObjectIDs.append(nObjectID);
+	return append_command(c);
+}
+ bool StoredCommands::GetSceneCommandResult_GetObjectType( StoredCommands::Key k, int & nObjectType )
+ {
+	if ( k >= m_vCommands.size() )
+		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK != 0 )
+		nObjectType = c.r.scene.nObjectIDs.data[0];
+	return ( c.r.scene.OK == 0 ) ? false : true;
+ }
+
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_GetObjectFrame( int nObjectID )
+{
+	Command c;  c.init();
+	c.eType = SceneCommand;
+	c.c.scene.eType = GetObjectFrame;
+	c.c.scene.nObjectIDs.append(nObjectID);
+	return append_command(c);
+}
+ bool StoredCommands::GetSceneCommandResult_GetObjectFrame( StoredCommands::Key k, frame3f & f )
+ {
+	if ( k >= m_vCommands.size() )
+		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK != 0 )
+		f = c.r.scene.f;
+	return ( c.r.scene.OK == 0 ) ? false : true;
+ }
+
+
+ StoredCommands::Key StoredCommands::AppendSceneCommand_SetObjectFrame( int nObjectID, const frame3f & f )
+{
+	Command c;  c.init();
+	c.eType = SceneCommand;
+	c.c.scene.eType = SetObjectFrame;
+	c.c.scene.nObjectIDs.append(nObjectID);
+	c.c.scene.f = f;
+	return append_command(c);
+}
+ bool StoredCommands::GetSceneCommandResult_SetObjectFrame( StoredCommands::Key k )
+ {
+	if ( k >= m_vCommands.size() )
+		return false;
+	Command & c = m_vCommands[k];
+	return ( c.r.scene.OK == 0 ) ? false : true;
+ }
+
 
 
 StoredCommands::Key StoredCommands::AppendSceneCommand_SetVisible( int nObjectID )
@@ -1906,9 +1972,63 @@ bool StoredCommands::GetQueryResult_FindIntersectingObjects( Key k, std::vector<
 
 
 
+StoredCommands::Key StoredCommands::AppendQueryCommand_ListNumberOfHoles()
+{
+	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, ListNumberOfHoles);
+	return append_command(c);
+}
+bool StoredCommands::GetQueryResult_ListNumberOfHoles( Key k, int & nHoles )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.spatial.OK == 0 )			return false;
+	nHoles = (int)c.r.spatial.v.data[0];
+	return true;
+}
+bool StoredCommands::GetQueryResult_ListNumberOfHoles( Key k, any_result & nHoles )
+{
+	return GetQueryResult_FindNearestObject(k, nHoles.i);
+}
 
 
 
+StoredCommands::Key StoredCommands::AppendQueryCommand_FindClosestHole(const vec3f & p)
+{
+	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, FindClosestHole);
+	c.c.spatial.p = p;
+	return append_command(c);
+}
+bool StoredCommands::GetQueryResult_FindClosestHole( Key k, int & nHoleID )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.spatial.OK == 0 )			return false;
+	nHoleID = (int)c.r.spatial.v.data[0];
+	return true;
+}
+bool StoredCommands::GetQueryResult_FindClosestHole( Key k, any_result & nHoleID )
+{
+	return GetQueryResult_FindNearestObject(k, nHoleID.i);
+}
+
+
+
+StoredCommands::Key StoredCommands::AppendQueryCommand_GetHoleBoundingBox( int nHoleID )
+{
+	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, GetHoleBoundingBox);
+	c.c.spatial.p.x = nHoleID;
+	return append_command(c);
+}
+bool StoredCommands::GetQueryResult_GetHoleBoundingBox( Key k, float fMin[3], float fMax[3] )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.spatial.OK == 0 )			return false;
+
+	fMin[0] = c.r.spatial.v.data[0];	fMin[1] = c.r.spatial.v.data[1];	fMin[2] = c.r.spatial.v.data[2];
+	fMax[0] = c.r.spatial.v.data[3];	fMax[1] = c.r.spatial.v.data[4];	fMax[2] = c.r.spatial.v.data[5];
+	return true;
+}
 
 
 
@@ -1944,37 +2064,56 @@ void StoredCommands::AppendSelectUtilityCommand( std::string commandName, int nA
 }
 
 
-
 StoredCommands::Key StoredCommands::AppendSelectCommand_NearestComponent( float cx, float cy, float cz )
+{
+	return AppendSelectCommand_NearestComponent(cx,cy,cz,0);
+}
+StoredCommands::Key StoredCommands::AppendSelectCommand_NearestComponent( float cx, float cy, float cz, int nMode )
 {
 	Command c;  
 	MMAPI_INIT_SELECT_COMMAND(c, SelectNearestComponent);
 	c.c.select.p.x = cx;	c.c.select.p.y = cy;	c.c.select.p.z = cz;
+	c.c.select.n = nMode;
 	return append_command(c);
 }
 StoredCommands::Key StoredCommands::AppendSelectCommand_ContainingComponent( float cx, float cy, float cz )
 {
+	return AppendSelectCommand_ContainingComponent(cx,cy,cz, 0);
+}
+StoredCommands::Key StoredCommands::AppendSelectCommand_ContainingComponent( float cx, float cy, float cz, int nMode)
+{
 	Command c;  
 	MMAPI_INIT_SELECT_COMMAND(c, SelectContainingComponent);
 	c.c.select.p.x = cx;	c.c.select.p.y = cy;	c.c.select.p.z = cz;
+	c.c.select.n = nMode;
 	return append_command(c);
 }
 
 
 StoredCommands::Key StoredCommands::AppendSelectCommand_FirstComponentIntersectingRay( float ox, float oy, float oz, float dx, float dy, float dz )
 {
+	return AppendSelectCommand_FirstComponentIntersectingRay(ox,oy,oz, dx,dy,dz, 0);
+}
+StoredCommands::Key StoredCommands::AppendSelectCommand_FirstComponentIntersectingRay( float ox, float oy, float oz, float dx, float dy, float dz, int nMode )
+{
 	Command c;  
 	MMAPI_INIT_SELECT_COMMAND(c, SelectFirstComponentIntersectingRay);
 	c.c.select.p.x = ox;	c.c.select.p.y = oy;	c.c.select.p.z = oz;
 	c.c.select.d.x = dx;	c.c.select.d.y = dy;	c.c.select.d.z = dz;
+	c.c.select.n = nMode;
 	return append_command(c);
 }
 StoredCommands::Key StoredCommands::AppendSelectCommand_AllComponentsIntersectingRay( float ox, float oy, float oz, float dx, float dy, float dz )
+{
+	return AppendSelectCommand_AllComponentsIntersectingRay(ox,oy,oz, dx,dy,dz, 0);
+}
+StoredCommands::Key StoredCommands::AppendSelectCommand_AllComponentsIntersectingRay( float ox, float oy, float oz, float dx, float dy, float dz, int nMode )
 {
 	Command c;  
 	MMAPI_INIT_SELECT_COMMAND(c, SelectAllComponentsIntersectingRay);
 	c.c.select.p.x = ox;	c.c.select.p.y = oy;	c.c.select.p.z = oz;
 	c.c.select.d.x = dx;	c.c.select.d.y = dy;	c.c.select.d.z = dz;
+	c.c.select.n = nMode;
 	return append_command(c);
 }
 
@@ -1982,40 +2121,58 @@ StoredCommands::Key StoredCommands::AppendSelectCommand_AllComponentsIntersectin
 // parameter is 3D point
 StoredCommands::Key StoredCommands::AppendSelectCommand_NearestTriangle( float cx, float cy, float cz )
 {
+	return AppendSelectCommand_NearestTriangle(cx,cy,cz,1);
+}
+StoredCommands::Key StoredCommands::AppendSelectCommand_NearestTriangle( float cx, float cy, float cz, int nMode )
+{
 	Command c;  
 	MMAPI_INIT_SELECT_COMMAND(c, SelectNearestTriangle);
 	c.c.select.p.x = cx;	c.c.select.p.y = cy;	c.c.select.p.z = cz;
+	c.c.select.n = nMode;
 	return append_command(c);
 }
 
 // parameters are ray origin & direction
 StoredCommands::Key StoredCommands::AppendSelectCommand_FirstTriangleIntersectingRay( float ox, float oy, float oz, float dx, float dy, float dz )
 {
+	return AppendSelectCommand_FirstTriangleIntersectingRay(ox,oy,oz,dx,dy,dz,1);
+}
+StoredCommands::Key StoredCommands::AppendSelectCommand_FirstTriangleIntersectingRay( float ox, float oy, float oz, float dx, float dy, float dz, int nMode )
+{
 	Command c;  
 	MMAPI_INIT_SELECT_COMMAND(c, SelectFirstTriangleIntersectingRay);
 	c.c.select.p.x = ox;	c.c.select.p.y = oy;	c.c.select.p.z = oz;
 	c.c.select.d.x = dx;	c.c.select.d.y = dy;	c.c.select.d.z = dz;
+	c.c.select.n = nMode;
 	return append_command(c);
 }
 StoredCommands::Key StoredCommands::AppendSelectCommand_AllTrianglesIntersectingRay( float ox, float oy, float oz, float dx, float dy, float dz )
+{
+	return AppendSelectCommand_AllTrianglesIntersectingRay(ox,oy,oz,dx,dy,dz,1);
+}
+StoredCommands::Key StoredCommands::AppendSelectCommand_AllTrianglesIntersectingRay( float ox, float oy, float oz, float dx, float dy, float dz, int nMode )
 {
 	Command c;  
 	MMAPI_INIT_SELECT_COMMAND(c, SelectAllTrianglesIntersectingRay);
 	c.c.select.p.x = ox;	c.c.select.p.y = oy;	c.c.select.p.z = oz;
 	c.c.select.d.x = dx;	c.c.select.d.y = dy;	c.c.select.d.z = dz;
+	c.c.select.n = nMode;
 	return append_command(c);
 }
-
 
 
 
 
 StoredCommands::Key StoredCommands::AppendSelectCommand_InsideSphere( float cx, float cy, float cz, float r )
 {
+	return AppendSelectCommand_InsideSphere(cx, cy, cz, r, 0);
+}
+StoredCommands::Key StoredCommands::AppendSelectCommand_InsideSphere( float cx, float cy, float cz, float r, int nMode )
+{
 	Command c;  
 	MMAPI_INIT_SELECT_COMMAND(c, SelectInsideSphere);
 	c.c.select.p.x = cx;	c.c.select.p.y = cy;	c.c.select.p.z = cz;
-	c.c.select.r = r;
+	c.c.select.n = nMode;
 	return append_command(c);
 }
 bool StoredCommands::GetSelectCommandResult_InsideSphere( Key k )
@@ -2028,10 +2185,15 @@ bool StoredCommands::GetSelectCommandResult_InsideSphere( Key k )
 
 StoredCommands::Key StoredCommands::AppendSelectCommand_InsideBox( float xmin, float xmax, float ymin, float ymax, float zmin, float zmax )
 {
+	return AppendSelectCommand_InsideBox( xmin, xmax, ymin, ymax, zmin, zmax, 0 );
+}
+StoredCommands::Key StoredCommands::AppendSelectCommand_InsideBox( float xmin, float xmax, float ymin, float ymax, float zmin, float zmax, int nMode )
+{
 	Command c;  
 	MMAPI_INIT_SELECT_COMMAND(c, SelectInsideBox);
 	c.c.select.p.x = xmin;	c.c.select.p.y = ymin;	c.c.select.p.z = zmin;
 	c.c.select.d.x = xmax;	c.c.select.d.y = ymax;	c.c.select.d.z = zmax;
+	c.c.select.n = nMode;
 	return append_command(c);
 }
 bool StoredCommands::GetSelectCommandResult_InsideBox( Key k )
@@ -2053,13 +2215,16 @@ StoredCommands::Key StoredCommands::AppendSelectCommand_IntersectingObject( int 
 }
 
 
-
-
 StoredCommands::Key StoredCommands::AppendSelectCommand_ByFaceGroups( const std::vector<int> & vGroupIDs )
+{
+	return AppendSelectCommand_ByFaceGroups(vGroupIDs, 0);
+}
+StoredCommands::Key StoredCommands::AppendSelectCommand_ByFaceGroups( const std::vector<int> & vGroupIDs, int nMode )
 {
 	Command c;  
 	MMAPI_INIT_SELECT_COMMAND(c, SelectFaceGroups);
 	mmsc_init_vector( c.c.select.vGroups, vGroupIDs );
+	c.c.select.r = (float)nMode;
 	return append_command(c);
 }
 bool StoredCommands::GetSelectCommandResult_ByFaceGroups( Key k )
@@ -2068,6 +2233,23 @@ bool StoredCommands::GetSelectCommandResult_ByFaceGroups( Key k )
 		return false;
 	return ( m_vCommands[k].r.select.OK == 0 ) ? false : true;
 }
+
+
+StoredCommands::Key StoredCommands::AppendSelectCommand_HoleBorderRing( int nHoleID, int nMode )
+{
+	Command c;  
+	MMAPI_INIT_SELECT_COMMAND(c, SelectHoleBorderRing);
+	c.c.select.n = nHoleID;
+	c.c.select.r = (float)nMode;
+	return append_command(c);
+}
+bool StoredCommands::GetSelectCommandResult_HoleBorderRing( Key k )
+{
+	if ( k >= m_vCommands.size() )
+		return false;
+	return ( m_vCommands[k].r.select.OK == 0 ) ? false : true;
+}
+
 
 
 
@@ -2087,6 +2269,19 @@ bool StoredCommands::GetSelectCommandResult_ListSelectedFaceGroups( Key k, std::
 }
 
 
+StoredCommands::Key StoredCommands::AppendSelectCommand_HasValidSelection()
+{
+	Command c;  
+	MMAPI_INIT_SELECT_COMMAND(c, HasValidSelection);
+	return append_command(c);
+}
+bool StoredCommands::GetSelectCommandResult_HasValidSelection( Key k )
+{
+	if ( k >= m_vCommands.size() )
+		return false;
+	Command & c = m_vCommands[k];
+	return (m_vCommands[k].r.select.OK != 0);
+}
 
 
 

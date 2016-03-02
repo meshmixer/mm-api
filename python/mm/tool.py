@@ -63,6 +63,10 @@ def tool_utility_command(remote, command_name, arg = -99):
     cmd = mmapi.StoredCommands()
     if ( isinstance(arg, int) and arg == -99 ):
         cmd.AppendToolUtilityCommand( command_name )
+    elif ( isinstance(arg, tuple) and len(arg) == 3 ):
+        v = mmapi.vec3f()
+        v.x = arg[0]; v.y = arg[1]; v.z = arg[2];
+        cmd.AppendToolUtilityCommand( command_name, v )
     else:
         cmd.AppendToolUtilityCommand( command_name, arg )
     remote.runCommand(cmd)
