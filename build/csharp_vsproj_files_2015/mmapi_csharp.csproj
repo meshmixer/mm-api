@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2BB420DB-D987-47EA-AB93-A16DABD83650}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>mmapi</RootNamespace>
+    <AssemblyName>mmapi_csharp</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Debug\mmapi_csharp_dll.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Release\mmapi_csharp.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="mmapi\any_result.cs" />
+    <Compile Include="mmapi\BinarySerializer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mmapi\brush_stamp.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mmapi\camera_info.cs" />
+    <Compile Include="mmapi\floatArray.cs" />
+    <Compile Include="mmapi\frame3f.cs" />
+    <Compile Include="mmapi\fstring.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mmapi\intArray.cs" />
+    <Compile Include="mmapi\mat3f.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mmapi\mmapi.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mmapi\mmapiPINVOKE.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mmapi\StoredCommands.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mmapi\SWIGTYPE_p_bool.cs" />
+    <Compile Include="mmapi\SWIGTYPE_p_float.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mmapi\SWIGTYPE_p_int.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mmapi\SWIGTYPE_p_mm__MainWindow.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mmapi\SWIGTYPE_p_std__string.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mmapi\SWIGTYPE_p_unsigned_char.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mmapi\SWIGTYPE_p_unsigned_int.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mmapi\vec3f.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mmapi\vectorBrushStamp.cs" />
+    <Compile Include="mmapi\vectorf.cs" />
+    <Compile Include="mmapi\vectori.cs" />
+    <Compile Include="mmapi\vectorub.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mmapi\vectorui.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
