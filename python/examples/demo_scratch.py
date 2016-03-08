@@ -57,11 +57,20 @@ remote.connect()
 #pivot_id = mm.create_pivot(remote, f)
 #link_ok = mm.link_pivot(remote, pivot_id, objects[0])
 
-cmd2 = mmapi.StoredCommands()
-cmd2.AppendBeginToolCommand("select")
-cmd2.ViewControl_TakeFocus();
-remote.runCommand(cmd2)
+#cmd2 = mmapi.StoredCommands()
+#cmd2.AppendBeginToolCommand("select")
+#cmd2.ViewControl_TakeFocus();
+#remote.runCommand(cmd2)
 
+#mm.begin_tool(remote, "volumeBrush")
+#mm.tool_utility_command(remote, "setPrimary", "drag")
+#mm.tool_utility_command(remote, "setSecondary", "bubbleSmooth")
+
+#mm.select_printer(remote, "replicator 2")
+
+cmd2 = mmapi.StoredCommands();
+cmd2.ViewControl_SetTriangleColorMode(0);
+remote.runCommand(cmd2);
 
 #done!
 remote.shutdown();

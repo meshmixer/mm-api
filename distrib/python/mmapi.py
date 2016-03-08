@@ -707,6 +707,7 @@ class StoredCommands(_object):
     def AppendSceneCommand_CreateTrackingLiveMesh(self, *args): return _mmapi.StoredCommands_AppendSceneCommand_CreateTrackingLiveMesh(self, *args)
     def GetSceneCommandResult_CreateTrackingLiveMesh(self, *args): return _mmapi.StoredCommands_GetSceneCommandResult_CreateTrackingLiveMesh(self, *args)
     def AppendSceneCommand_HaltTrackingLiveMesh(self, *args): return _mmapi.StoredCommands_AppendSceneCommand_HaltTrackingLiveMesh(self, *args)
+    def AppendSceneCommand_SelectPrinter(self, *args): return _mmapi.StoredCommands_AppendSceneCommand_SelectPrinter(self, *args)
     def AppendQueryCommand_ConvertScalarToWorld(self, *args): return _mmapi.StoredCommands_AppendQueryCommand_ConvertScalarToWorld(self, *args)
     def GetQueryResult_ConvertScalarToWorld(self, *args): return _mmapi.StoredCommands_GetQueryResult_ConvertScalarToWorld(self, *args)
     def AppendQueryCommand_ConvertScalarToScene(self, *args): return _mmapi.StoredCommands_AppendQueryCommand_ConvertScalarToScene(self, *args)

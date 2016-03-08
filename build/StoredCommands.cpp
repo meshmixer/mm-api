@@ -1709,6 +1709,12 @@ StoredCommands::Key StoredCommands::AppendSceneCommand_ShowAll()
 
 
 
+StoredCommands::Key StoredCommands::AppendSceneCommand_SelectPrinter( const char * pPrinterName )
+{
+	MMAPI_SCENE_COMMAND_STR(SelectPrinter, pPrinterName);
+}
+
+
 
 /*
  * Spatial Query Commands

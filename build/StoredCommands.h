@@ -544,6 +544,7 @@ public:
 			"smallComponentThreshold" : float 
 			"replaceType" : integer 
 		[units]					- Units/Dimensions tool
+			"units" : int	Centimeters = 1, Inches = 2, Millimeters = 3, Meters = 4, Feet = 5
 			"worldX" : float 
 			"worldY" : float 
 			"worldZ" : float 
@@ -560,6 +561,10 @@ public:
 			"queryPosition" : vector3f 
 		[stability]				- Stability analysis tool
 			"contactTolerance" : float 
+			"isStable" : boolean
+			"volume" : float
+			"surfaceArea" : float
+			"centerOfMassWorld" : vector3f
 		[strength]				- Strength analysis tool
 			"showSections" : boolean 
 		[overhangs]				- Overhangs/Support-Generation tool
@@ -587,6 +592,14 @@ public:
 		[thickness]				- Thickness analysis tool
 			"minThickness" : float 
 			"minThicknessWorld" : float 
+			"minFeatureSize" : float 
+			"minFeatureSizeWorld" : float 
+			"coneAngle" : float 
+			"grazingThresh" : float 
+			"wallThresh" : float 
+			"coneSamples" : integer 
+			"wallsOnly" : boolean 
+			"bakeVertexColors" : boolean 
 		[orientation]			- Orientation optimization tool
 			"overhangAngleDeg" : float 
 			"strengthWeight" : float 
@@ -606,10 +619,12 @@ public:
 		[deviation]				- Deviation measurement between two selected meshes
 			"maxDeviation" : float 
 			"maxDeviationWorld" : float 
+			"measuredMaxDeviationWorld" : float
 			"symmetric"	: bool
 		[clearance]				- Clearance measurement between two selected meshes
 			"minClearance" : float
 			"minClearanceWorld" : float
+			"measuredMinClearanceWorld" : float
 			"symmetric"	: bool
 		[meshQuery]
 			"snapMode" : integer 
@@ -830,6 +845,8 @@ public:
 		bool GetSceneCommandResult_CreateTrackingLiveMesh( Key k, std::vector<unsigned char> & portName );
 	Key AppendSceneCommand_HaltTrackingLiveMesh( const char * pPortName );
 
+
+	Key AppendSceneCommand_SelectPrinter( const char * pPrinterName );
 
 	/*
 	 * SPATIAL QUERY COMMANDS
@@ -1207,7 +1224,9 @@ private:
 
 		GetObjectType = 29,
 		GetObjectFrame = 30,
-		SetObjectFrame = 31
+		SetObjectFrame = 31,
+
+		SelectPrinter = 32
 	};
 	struct SceneCmd {
 		SceneCmdType eType;

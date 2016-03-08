@@ -164,3 +164,11 @@ def list_number_of_holes(remote):
     result_val = mmapi.any_result()
     cmd1.GetQueryResult_ListNumberOfHoles(key1, result_val)
     return result_val.i
+
+
+
+def select_printer(remote, printer_name):
+    """Select printer based on name"""
+    cmd = mmapi.StoredCommands()
+    cmd.AppendSceneCommand_SelectPrinter(printer_name)
+    remote.runCommand(cmd)
