@@ -1384,6 +1384,17 @@ bool StoredCommands::GetSceneCommandResult_CreatePivot( Key k, int & nObjectID )
     nObjectID = c.r.scene.nObjectIDs.data[0];
     return true;
 }
+bool StoredCommands::GetSceneCommandResult_CreatePivot( Key k, any_result & nObjectID )
+{
+	int nid;
+	if ( GetSceneCommandResult_CreatePivot(k, nid) ) {
+		nObjectID.type = 1;
+		nObjectID.i = nid;
+		return true;
+	}
+	return false;
+}
+
 
 
 StoredCommands::Key StoredCommands::AppendSceneCommand_LinkPivot( int nPivotID, int nLinkToID )
@@ -1637,15 +1648,25 @@ StoredCommands::Key StoredCommands::AppendSceneCommand_GetObjectType( int nObjec
 	c.c.scene.nObjectIDs.append(nObjectID);
 	return append_command(c);
 }
- bool StoredCommands::GetSceneCommandResult_GetObjectType( StoredCommands::Key k, int & nObjectType )
- {
+bool StoredCommands::GetSceneCommandResult_GetObjectType( StoredCommands::Key k, int & nObjectType )
+{
 	if ( k >= m_vCommands.size() )
 		return false;
 	Command & c = m_vCommands[k];
 	if ( c.r.scene.OK != 0 )
 		nObjectType = c.r.scene.nObjectIDs.data[0];
 	return ( c.r.scene.OK == 0 ) ? false : true;
- }
+}
+bool StoredCommands::GetSceneCommandResult_GetObjectType( Key k, any_result & nObjectType )
+{
+	int ntype;
+	if ( GetSceneCommandResult_GetObjectType(k, ntype) ) {
+		nObjectType.type = 1;
+		nObjectType.i = ntype;
+		return true;
+	}
+	return false;
+}
 
 
 StoredCommands::Key StoredCommands::AppendSceneCommand_GetObjectFrame( int nObjectID )
@@ -2389,7 +2410,16 @@ bool StoredCommands::GetActionCommandResult_InsertPolygon( StoredCommands::Key k
 	nNewGroupID = m_vCommands[k].r.stamp.nNewGroupID;
 	return true;
 }
-
+bool StoredCommands::GetActionCommandResult_InsertPolygon( Key k, any_result & nNewGroupID )
+{
+	int gid;
+	if ( GetActionCommandResult_InsertPolygon(k, gid) ) {
+		nNewGroupID.type = 1;
+		nNewGroupID.i = gid;
+		return true;
+	}
+	return false;
+}
 
 
 

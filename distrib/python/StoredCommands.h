@@ -777,6 +777,7 @@ public:
     // create pivot in scene
     Key AppendSceneCommand_CreatePivot( frame3f f );
         bool GetSceneCommandResult_CreatePivot( Key k, int & nObjectID );
+		bool GetSceneCommandResult_CreatePivot( Key k, any_result & nObjectID );
     
     // link pivot to object. If object ID is invalid, pivot is unlinked
     Key AppendSceneCommand_LinkPivot( int nPivotID, int nLinkToID );
@@ -816,6 +817,7 @@ public:
 	// -1 = Unknown, 1 = Mesh, 2 = Complex, 3 = Pivot, 4 = LiveMesh, 5 = Reference
     Key AppendSceneCommand_GetObjectType( int nObjectID );
         bool GetSceneCommandResult_GetObjectType( Key k, int & nObjectType );
+        bool GetSceneCommandResult_GetObjectType( Key k, any_result & nObjectType );
 
     Key AppendSceneCommand_GetObjectFrame( int nObjectID );
         bool GetSceneCommandResult_GetObjectFrame( Key k, frame3f & f );
@@ -1040,6 +1042,7 @@ public:
 
 	Key AppendActionCommand_InsertPolygon( float x, float y, float z, float fRadius );
 	bool GetActionCommandResult_InsertPolygon( Key k, int & nNewGroupID );
+	bool GetActionCommandResult_InsertPolygon( Key k, any_result & nNewGroupID );
 
 
 
