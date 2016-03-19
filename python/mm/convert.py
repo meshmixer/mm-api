@@ -17,6 +17,20 @@ def vectorub_to_string(vub):
     return str(bytearray(lst));
 
 
+def to_vec3f(vec):
+    p = mmapi.vec3f()
+    p.x = vec[0]
+    p.y = vec[1]
+    p.z = vec[2]
+    return p
+
+def to_vec3i(vec):
+    p = mmapi.vec3i()
+    p.i = vec[0]
+    p.j = vec[1]
+    p.k = vec[2]
+    return p
+
 def to_world_xyz(remote, x,y,z):
     """convert a 3D point from Scene space to World space"""
     vScene = mmapi.floatArray(3)

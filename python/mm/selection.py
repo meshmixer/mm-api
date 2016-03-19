@@ -45,3 +45,33 @@ def select_hole(remote, hole_index, mode = 0):
     cmd = mmapi.StoredCommands()
     cmd.AppendSelectCommand_HoleBorderRing(hole_index, mode)
     remote.runCommand(cmd)
+
+def select_triangles(remote, triangles_list, mode = 0):
+    """Select the listed triangles"""
+    cmd = mmapi.StoredCommands()
+    vtris = mmapi.vectori();
+    for t in triangles_list:
+        vtris.push_back(t);
+    cmd2 = mmapi.StoredCommands()
+    cmd2.AppendSelectCommand_ByTriangleID(vtris, mode)
+    remote.runCommand(cmd2)
+
+
+
+def list_selected_groups(remote):
+    """Returns a list of unique facegroup IDs for the current face selection (requires an active selection)"""
+    cmd1 = mmapi.StoredCommands()
+    key1 = cmd1.AppendSelectCommand_ListSelectedFaceGroups()
+    remote.runCommand(cmd1)
+    groups1 = mmapi.vectori()
+    cmd1.GetSelectCommandResult_ListSelectedFaceGroups(key1, groups1);
+    return vectori_to_list(groups1);
+
+def list_selected_triangles(remote):
+    """Returns a list of currently-selected triangles (requires an active selection)"""
+    cmd1 = mmapi.StoredCommands()
+    key1 = cmd1.AppendSelectCommand_ListSelectedTriangles()
+    remote.runCommand(cmd1)
+    groups1 = mmapi.vectori()
+    cmd1.GetSelectCommandResult_ListSelectedTriangles(key1, groups1);
+    return vectori_to_list(groups1);

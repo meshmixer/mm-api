@@ -42,14 +42,6 @@ def list_selected_objects(remote):
     cmd1.GetSceneCommandResult_ListObjects(key1, objects)
     return vectori_to_list(objects)
 
-def list_selected_groups(remote):
-    """Returns a list of unique facegroup IDs for the current face selection (requires an active selection)"""
-    cmd1 = mmapi.StoredCommands()
-    key1 = cmd1.AppendSelectCommand_ListSelectedFaceGroups()
-    remote.runCommand(cmd1)
-    groups1 = mmapi.vectori()
-    cmd1.GetSelectCommandResult_ListSelectedFaceGroups(key1, groups1);
-    return vectori_to_list(groups1);
 
 def select_objects(remote, objects_list):
     """Set the current objects selection to be the set of scene objects corresponding to the IDs in objects_list"""
@@ -172,3 +164,133 @@ def select_printer(remote, printer_name):
     cmd = mmapi.StoredCommands()
     cmd.AppendSceneCommand_SelectPrinter(printer_name)
     remote.runCommand(cmd)
+
+
+
+
+
+
+
+def create_mesh(remote):
+    """force MM to compactify mesh object, so that vertex/triangle ids are contiguous"""
+    cmd1 = mmapi.StoredCommands()
+    key1 = cmd1.AppendSceneCommand_CreateMesh()
+    remote.runCommand(cmd1)
+    result_val = mmapi.any_result()
+    cmd1.GetSceneCommandResult_CreateMesh(key1, result_val)
+    return result_val.i
+
+def compact_mesh(remote, objectid):
+    """force MM to compactify mesh object, so that vertex/triangle ids are contiguous"""
+    cmd1 = mmapi.StoredCommands()
+    key1 = cmd1.AppendSceneCommand_CompactMesh(objectid)
+    remote.runCommand(cmd1)
+
+def update_mesh(remote, objectid):
+    """force MM to update data structures for mesh object"""
+    cmd1 = mmapi.StoredCommands()
+    key1 = cmd1.AppendSceneCommand_UpdateMesh(objectid)
+    remote.runCommand(cmd1)
+
+def get_vertex_count(remote, objectid):
+    """Returns number of vertices for object"""
+    cmd1 = mmapi.StoredCommands()
+    key1 = cmd1.AppendSceneCommand_GetVertexCount(objectid)
+    remote.runCommand(cmd1)
+    result_val = mmapi.any_result()
+    cmd1.GetSceneCommandResult_GetVertexCount(key1, result_val)
+    return result_val.i
+
+def get_triangle_count(remote, objectid):
+    """Returns number of triangles for object"""
+    cmd1 = mmapi.StoredCommands()
+    key1 = cmd1.AppendSceneCommand_GetTriangleCount(objectid)
+    remote.runCommand(cmd1)
+    result_val = mmapi.any_result()
+    cmd1.GetSceneCommandResult_GetTriangleCount(key1, result_val)
+    return result_val.i
+
+def get_vertex_info(remote, objectid, vertexid):
+    """returns tuple of 3-tuples of vertex info"""
+    cmd1 = mmapi.StoredCommands()
+    key1 = cmd1.AppendSceneCommand_GetVertexInfo(objectid, vertexid)
+    remote.runCommand(cmd1)
+    p = mmapi.vec3f() 
+    n = mmapi.vec3f()
+    c = mmapi.vec3f()
+    cmd1.GetSceneCommandResult_GetVertexInfo(key1, p, n, c)
+    return ( (p.x,p.y,p.z), (n.x,n.y,n.z), (c.x,c.y,c.z) )
+
+def set_vertex_position(remote, objectid, vertexid, pos):
+    cmd1 = mmapi.StoredCommands()
+    p = mmapi.vec3f()
+    p.x = pos[0]
+    p.y = pos[1]
+    p.z = pos[2]
+    key1 = cmd1.AppendSceneCommand_SetVertexPosition(objectid, vertexid, p)
+    remote.runCommand(cmd1)
+def set_vertex_color(remote, objectid, vertexid, col):
+    cmd1 = mmapi.StoredCommands()
+    p = mmapi.vec3f()
+    p.x = col[0]
+    p.y = col[1]
+    p.z = col[2]
+    key1 = cmd1.AppendSceneCommand_SetVertexColor(objectid, vertexid, p)
+    remote.runCommand(cmd1)
+
+
+def append_vertex(remote, objectid, position, normal=(0,1,0), color=(1,1,1) ):
+    """Appends a vertex to mesh and returns new VertexID"""
+    cmd1 = mmapi.StoredCommands()
+    key1 = cmd1.AppendSceneCommand_AppendVertex(objectid, to_vec3f(position), to_vec3f(normal), to_vec3f(color) )
+    remote.runCommand(cmd1)
+    result_val = mmapi.any_result()
+    cmd1.GetSceneCommandResult_AppendVertex(key1, result_val)
+    return result_val.i
+
+
+def append_triangle(remote, objectid, newtri, newgroup = 0):
+    """Appends a triangle to mesh and returns new TriangleID"""
+    cmd1 = mmapi.StoredCommands()
+    t = to_vec3i(newtri)
+    key1 = cmd1.AppendSceneCommand_AppendTriangle(objectid, to_vec3i(newtri), newgroup )
+    remote.runCommand(cmd1)
+    result_val = mmapi.any_result()
+    cmd1.GetSceneCommandResult_AppendTriangle(key1, result_val)
+    return result_val.i
+
+
+def get_triangle(remote, objectid, triangleid):
+    """returns tuple of indices"""
+    cmd1 = mmapi.StoredCommands()
+    key1 = cmd1.AppendSceneCommand_GetTriangleIndices(objectid, triangleid)
+    remote.runCommand(cmd1)
+    t = mmapi.vec3i()
+    cmd1.GetSceneCommandResult_GetTriangleIndices(key1, t)
+    return (t.i, t.j, t.k)
+
+def get_group(remote, objectid, triangleid):
+    """returns group id for triangle"""
+    cmd1 = mmapi.StoredCommands()
+    key1 = cmd1.AppendSceneCommand_GetTriangleGroup(objectid, triangleid)
+    remote.runCommand(cmd1)
+    result_val = mmapi.any_result()
+    cmd1.GetSceneCommandResult_GetTriangleGroup(key1, result_val)
+    return result_val.i
+
+
+def allocate_group(remote, objectid):
+    """allocates a new group id"""
+    cmd1 = mmapi.StoredCommands()
+    key1 = cmd1.AppendSceneCommand_AllocateNewGroupID(objectid)
+    remote.runCommand(cmd1)
+    result_val = mmapi.any_result()
+    cmd1.GetSceneCommandResult_AllocateNewGroupID(key1, result_val)
+    return result_val.i
+
+def set_group(remote, objectid, triangleid, groupid):
+    cmd1 = mmapi.StoredCommands()
+    key1 = cmd1.AppendSceneCommand_SetTriangleGroup(objectid, triangleid, groupid)
+    remote.runCommand(cmd1)
+
+

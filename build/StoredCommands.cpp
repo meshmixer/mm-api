@@ -76,9 +76,46 @@ inline static void mmsc_extract_string_from_vector( std::string & str, const Sto
 	str = std::string(buf);
 }
 
-inline vec3f make_vec3f(float x, float y, float z)
+inline static vec3f make_vec3f(float x, float y, float z)
 {
 	vec3f v = {x,y,z};
+	return v;
+}
+inline static frame3f make_frame3f(float x, float y, float z)
+{
+	frame3f f;
+	f.origin_x = x; f.origin_y = y; f.origin_z = z;
+	return f;
+}
+inline static frame3f make_frame3f(float x, float y, float z, float nx, float ny, float nz)
+{
+	frame3f f;
+	f.origin_x = x; f.origin_y = y; f.origin_z = z;
+	f.normal_x = nx; f.normal_y = ny; f.normal_z = nz;
+	return f;
+}
+inline static frame3f make_frame3f(float x, float y, float z, float nx, float ny, float nz, float ax, float ay, float az, float bx, float by, float bz)
+{
+	frame3f f;
+	f.origin_x = x; f.origin_y = y; f.origin_z = z;
+	f.normal_x = nx; f.normal_y = ny; f.normal_z = nz;
+	f.tan1_x = ax; f.tan1_y = ay; f.tan1_z = az;
+	f.tan2_x = bx; f.tan2_y = by; f.tan2_z = bz;
+	return f;
+}
+inline static vec3f get_origin(frame3f f) 
+{
+	vec3f v = {f.origin_x, f.origin_y, f.origin_z};
+	return v;
+}
+inline static vec3f get_normal(frame3f f) 
+{
+	vec3f v = {f.normal_x, f.normal_y, f.normal_z};
+	return v;
+}
+inline static vec3f get_tan1(frame3f f) 
+{
+	vec3f v = {f.tan1_x, f.tan1_y, f.tan1_z};
 	return v;
 }
 inline void make_mat3f(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22, float mat[9])
@@ -1268,7 +1305,9 @@ void StoredCommands::AppendToolUtilityCommand( std::string commandName, const ve
 
 #define MMAPI_SCENE_COMMAND(cmdtype) Command c; c.init(); c.eType = SceneCommand; c.c.scene.eType = cmdtype; append_command(c);
 #define MMAPI_SCENE_COMMAND_STR(cmdtype, pString) Command c; c.init(); c.eType = SceneCommand; c.c.scene.eType = cmdtype; c.c.scene.str = __tofstr(pString); return append_command(c);
+#define MMAPI_SCENE_COMMAND_OBJ(cmdtype, nObjectID) Command c; c.init(); c.eType = SceneCommand; c.c.scene.eType = cmdtype; c.c.scene.nObjectIDs.append(nObjectID); return append_command(c);
 
+#define MMAPI_SCENE_RESPONSE_ANYINT(IntFuncName, keyname, retvalname) int intval; if ( IntFuncName(keyname, intval) ) { retvalname.type = 1; retvalname.i = intval; return true;	} return false;
 
 
 bool StoredCommands::GetSceneCommandResult_IsOK( Key k )
@@ -1734,6 +1773,293 @@ StoredCommands::Key StoredCommands::AppendSceneCommand_SelectPrinter( const char
 {
 	MMAPI_SCENE_COMMAND_STR(SelectPrinter, pPrinterName);
 }
+
+
+
+
+
+
+
+
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_CreateMesh( )
+{
+    Command c;  MMAPI_INIT_SCENE_COMMAND(c, CreateMeshObject);
+    return append_command(c);
+}
+bool StoredCommands::GetSceneCommandResult_CreateMesh( Key k, int & nObjectID )
+{
+    if ( k >= m_vCommands.size() )        return false;
+    Command & c = m_vCommands[k];
+    if ( c.r.scene.OK == 0 )	        return false;
+    nObjectID = c.r.scene.nObjectIDs.data[0];
+    return true;
+}
+bool StoredCommands::GetSceneCommandResult_CreateMesh( Key k, any_result & nObjectID )
+{
+	MMAPI_SCENE_RESPONSE_ANYINT(GetSceneCommandResult_CreateMesh, k, nObjectID);
+}
+
+
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_CompactMesh( int nObjectID )
+{
+	MMAPI_SCENE_COMMAND_OBJ(CompactMeshObject, nObjectID);
+}
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_UpdateMesh( int nObjectID )
+{
+	MMAPI_SCENE_COMMAND_OBJ(UpdateMesh, nObjectID);
+}
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_GetVertexCount( int nObjectID )
+{
+	MMAPI_SCENE_COMMAND_OBJ(GetVertexCount, nObjectID);
+}
+bool StoredCommands::GetSceneCommandResult_GetVertexCount( Key k, int & nCount )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK != 0 )			nCount = c.r.scene.nObjectIDs.data[0];
+	return ( c.r.scene.OK == 0 ) ? false : true;
+}
+bool StoredCommands::GetSceneCommandResult_GetVertexCount( Key k, any_result & nCount )
+{
+	MMAPI_SCENE_RESPONSE_ANYINT(GetSceneCommandResult_GetTriangleCount, k, nCount);
+}
+StoredCommands::Key StoredCommands::AppendSceneCommand_GetTriangleCount( int nObjectID )
+{
+	MMAPI_SCENE_COMMAND_OBJ(GetTriangleCount, nObjectID);
+}
+bool StoredCommands::GetSceneCommandResult_GetTriangleCount( Key k, int & nCount )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK != 0 )			nCount = c.r.scene.nObjectIDs.data[0];
+	return ( c.r.scene.OK == 0 ) ? false : true;
+}
+bool StoredCommands::GetSceneCommandResult_GetTriangleCount( Key k, any_result & nCount )
+{
+	MMAPI_SCENE_RESPONSE_ANYINT(GetSceneCommandResult_GetTriangleCount, k, nCount);
+}
+
+
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_GetVertexPosition( int nObjectID, int nVertexID )
+{
+	Command c;  
+	MMAPI_INIT_SCENE_COMMAND(c, GetVertexPosition);
+	c.c.scene.nObjectIDs.append(nObjectID);		c.c.scene.nObjectIDs.append(nVertexID);
+	return append_command(c);
+}
+bool StoredCommands::GetSceneCommandResult_GetVertexPosition( Key k, vec3f & v )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK != 0 ) { v = get_origin(c.r.scene.f); } 
+	return ( c.r.scene.OK == 0 ) ? false : true;
+}
+StoredCommands::Key StoredCommands::AppendSceneCommand_GetVertexNormal( int nObjectID, int nVertexID )
+{
+	Command c;  
+	MMAPI_INIT_SCENE_COMMAND(c, GetVertexNormal);
+	c.c.scene.nObjectIDs.append(nObjectID);		c.c.scene.nObjectIDs.append(nVertexID);
+	return append_command(c);
+}
+bool StoredCommands::GetSceneCommandResult_GetVertexNormal( Key k, vec3f & v )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK != 0 ) { v = get_origin(c.r.scene.f); } 
+	return ( c.r.scene.OK == 0 ) ? false : true;
+}
+StoredCommands::Key StoredCommands::AppendSceneCommand_GetVertexColor( int nObjectID, int nVertexID )
+{
+	Command c;  
+	MMAPI_INIT_SCENE_COMMAND(c, GetVertexColor);
+	c.c.scene.nObjectIDs.append(nObjectID);		c.c.scene.nObjectIDs.append(nVertexID);
+	return append_command(c);
+}
+bool StoredCommands::GetSceneCommandResult_GetVertexColor( Key k, vec3f & v )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK != 0 ) { v = get_origin(c.r.scene.f); } 
+	return ( c.r.scene.OK == 0 ) ? false : true;
+}
+StoredCommands::Key StoredCommands::AppendSceneCommand_GetVertexInfo( int nObjectID, int nVertexID )
+{
+	Command c;  
+	MMAPI_INIT_SCENE_COMMAND(c, GetVertexInfo);
+	c.c.scene.nObjectIDs.append(nObjectID);		c.c.scene.nObjectIDs.append(nVertexID);
+	return append_command(c);
+}
+bool StoredCommands::GetSceneCommandResult_GetVertexInfo( Key k, vec3f & v, vec3f & n, vec3f & col )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK != 0 ) { v = get_origin(c.r.scene.f); n = get_normal(c.r.scene.f); col = get_tan1(c.r.scene.f); }
+	return ( c.r.scene.OK == 0 ) ? false : true;
+}
+
+
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_GetTriangleIndices( int nObjectID, int nTriangleID )
+{
+	Command c;  
+	MMAPI_INIT_SCENE_COMMAND(c, GetTriangleIndices);
+	c.c.scene.nObjectIDs.append(nObjectID);		c.c.scene.nObjectIDs.append(nTriangleID);
+	return append_command(c);
+}
+bool StoredCommands::GetSceneCommandResult_GetTriangleIndices( Key k, vec3i & t )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK != 0 ) {
+		t.i = c.r.scene.nObjectIDs.data[0]; t.j = c.r.scene.nObjectIDs.data[1]; t.k = c.r.scene.nObjectIDs.data[2];
+	}
+	return ( c.r.scene.OK == 0 ) ? false : true;
+}
+StoredCommands::Key StoredCommands::AppendSceneCommand_GetTriangleGroup( int nObjectID, int nTriangleID )
+{
+	Command c;  
+	MMAPI_INIT_SCENE_COMMAND(c, GetTriangleGroup);
+	c.c.scene.nObjectIDs.append(nObjectID);		c.c.scene.nObjectIDs.append(nTriangleID);
+	return append_command(c);
+}
+bool StoredCommands::GetSceneCommandResult_GetTriangleGroup( Key k, int & nGroupID )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK != 0 ) 
+		nGroupID = c.r.scene.nObjectIDs.data[0];
+	return ( c.r.scene.OK == 0 ) ? false : true;
+}
+bool StoredCommands::GetSceneCommandResult_GetTriangleGroup( Key k, any_result & nGroupID )
+{
+	MMAPI_SCENE_RESPONSE_ANYINT(GetSceneCommandResult_GetTriangleGroup, k, nGroupID);
+}
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_SetVertexPosition(int nObjectID, int nVertexID, vec3f & v )
+{
+	Command c;  
+	MMAPI_INIT_SCENE_COMMAND(c, SetVertexPosition);
+	c.c.scene.nObjectIDs.append(nObjectID);		c.c.scene.nObjectIDs.append(nVertexID);
+	c.c.scene.f = make_frame3f(v.x,v.y,v.z);
+	return append_command(c);
+}
+StoredCommands::Key StoredCommands::AppendSceneCommand_SetVertexNormal(int nObjectID, int nVertexID, vec3f & v )
+{
+	Command c;  
+	MMAPI_INIT_SCENE_COMMAND(c, SetVertexNormal);
+	c.c.scene.nObjectIDs.append(nObjectID);		c.c.scene.nObjectIDs.append(nVertexID);
+	c.c.scene.f = make_frame3f(v.x,v.y,v.z);
+	return append_command(c);
+}
+StoredCommands::Key StoredCommands::AppendSceneCommand_SetVertexColor(int nObjectID, int nVertexID, vec3f & v )
+{
+	Command c;  
+	MMAPI_INIT_SCENE_COMMAND(c, SetVertexColor);
+	c.c.scene.nObjectIDs.append(nObjectID);		c.c.scene.nObjectIDs.append(nVertexID);
+	c.c.scene.f = make_frame3f(v.x,v.y,v.z);
+	return append_command(c);
+}
+StoredCommands::Key StoredCommands::AppendSceneCommand_SetTriangleGroup(int nObjectID, int nTriangleID, int nGroupID )
+{
+	Command c;  
+	MMAPI_INIT_SCENE_COMMAND(c, SetTriangleGroup);
+	c.c.scene.nObjectIDs.append(nObjectID);		c.c.scene.nObjectIDs.append(nTriangleID);		c.c.scene.nObjectIDs.append(nGroupID);
+	return append_command(c);
+}
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_AppendVertex( int nObjectID, vec3f & v )
+{
+	Command c;  
+	MMAPI_INIT_SCENE_COMMAND(c, AppendVertex);
+	c.c.scene.nObjectIDs.append(nObjectID); c.c.scene.nObjectIDs.append(-1); c.c.scene.nObjectIDs.append(-1);
+	c.c.scene.f = make_frame3f(v.x,v.y,v.z);
+	return append_command(c);
+}
+StoredCommands::Key StoredCommands::AppendSceneCommand_AppendVertex( int nObjectID, vec3f & v, vec3f & n )
+{
+	Command c;  
+	MMAPI_INIT_SCENE_COMMAND(c, AppendVertex);
+	c.c.scene.nObjectIDs.append(nObjectID); c.c.scene.nObjectIDs.append(1); c.c.scene.nObjectIDs.append(-1);
+	c.c.scene.f = make_frame3f(v.x,v.y,v.z, n.x,n.y,n.z);
+	return append_command(c);
+}
+StoredCommands::Key StoredCommands::AppendSceneCommand_AppendVertex( int nObjectID, vec3f & v, vec3f & n, vec3f & col )
+{
+	Command c;  
+	MMAPI_INIT_SCENE_COMMAND(c, AppendVertex);
+	c.c.scene.nObjectIDs.append(nObjectID); c.c.scene.nObjectIDs.append(1); c.c.scene.nObjectIDs.append(1);
+	c.c.scene.f = make_frame3f(v.x,v.y,v.z, n.x,n.y,n.z, col.x,col.y,col.z,  0,0,0);
+	return append_command(c);
+}
+bool StoredCommands::GetSceneCommandResult_AppendVertex( Key k, int & nNewVertexID )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK != 0 ) 
+		nNewVertexID = c.r.scene.nObjectIDs.data[0];
+	return ( c.r.scene.OK == 0 ) ? false : true;
+}
+bool StoredCommands::GetSceneCommandResult_AppendVertex( Key k, any_result & nNewVertexID )
+{
+	MMAPI_SCENE_RESPONSE_ANYINT(GetSceneCommandResult_AppendVertex, k, nNewVertexID);
+}
+
+
+
+
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_AppendTriangle( int nObjectID, vec3i & t )
+{
+	Command c;  
+	MMAPI_INIT_SCENE_COMMAND(c, AppendTriangle);
+	c.c.scene.nObjectIDs.append(nObjectID); 
+	c.c.scene.nObjectIDs.append(t.i);	c.c.scene.nObjectIDs.append(t.j);	c.c.scene.nObjectIDs.append(t.k);   c.c.scene.nObjectIDs.append(-1);
+	return append_command(c);
+}
+StoredCommands::Key StoredCommands::AppendSceneCommand_AppendTriangle( int nObjectID, vec3i & t, int nGroupID )
+{
+	Command c;  
+	MMAPI_INIT_SCENE_COMMAND(c, AppendTriangle);
+	c.c.scene.nObjectIDs.append(nObjectID); 
+	c.c.scene.nObjectIDs.append(t.i);	c.c.scene.nObjectIDs.append(t.j);	c.c.scene.nObjectIDs.append(t.k);   c.c.scene.nObjectIDs.append(nGroupID);
+	return append_command(c);
+}
+bool StoredCommands::GetSceneCommandResult_AppendTriangle( Key k, int & nNewTriID )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK != 0 ) 
+		nNewTriID = c.r.scene.nObjectIDs.data[0];
+	return ( c.r.scene.OK == 0 ) ? false : true;
+}
+bool StoredCommands::GetSceneCommandResult_AppendTriangle( Key k, any_result & nNewTriID )
+{
+	MMAPI_SCENE_RESPONSE_ANYINT(GetSceneCommandResult_AppendTriangle, k, nNewTriID);
+}
+
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_AllocateNewGroupID( int nObjectID )
+{
+	MMAPI_SCENE_COMMAND_OBJ(AllocateNewGroupID, nObjectID);
+}
+bool StoredCommands::GetSceneCommandResult_AllocateNewGroupID( Key k, int & nNewGroupID )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK != 0 ) 
+		nNewGroupID = c.r.scene.nObjectIDs.data[0];
+	return ( c.r.scene.OK == 0 ) ? false : true;
+}
+bool StoredCommands::GetSceneCommandResult_AllocateNewGroupID( Key k, any_result & nNewGroupID )
+{
+	MMAPI_SCENE_RESPONSE_ANYINT(GetSceneCommandResult_AllocateNewGroupID, k, nNewGroupID);
+}
+
 
 
 
@@ -2277,6 +2603,33 @@ bool StoredCommands::GetSelectCommandResult_HoleBorderRing( Key k )
 	return ( m_vCommands[k].r.select.OK == 0 ) ? false : true;
 }
 
+
+
+bool StoredCommands::AppendSelectCommand_ByTriangleID( const std::vector<int> & vTriangles, int nMode )
+{
+	Command c;  
+	MMAPI_INIT_SELECT_COMMAND(c, SelectTriangles);
+	mmsc_init_vector(c.c.select.vGroups, vTriangles);
+	c.c.select.n = nMode;
+	return append_command(c);
+}
+
+
+
+StoredCommands::Key StoredCommands::AppendSelectCommand_ListSelectedTriangles()
+{
+	Command c;  
+	MMAPI_INIT_SELECT_COMMAND(c, ListSelectedTriangles);
+	return append_command(c);
+}
+bool StoredCommands::GetSelectCommandResult_ListSelectedTriangles( Key k, std::vector<int> & vTriangleIDs )
+{
+	if ( k >= m_vCommands.size() || m_vCommands[k].r.select.OK == 0)
+		return false;
+	Command & c = m_vCommands[k];
+	mmsc_extract_vector( vTriangleIDs, c.r.select.vGroups );
+	return true;
+}
 
 
 

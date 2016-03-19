@@ -30,6 +30,9 @@ class MainWindow;
 struct vec3f {
 	float x,y,z;
 };
+struct vec3i {
+	int i,j,k;
+};
 struct mat3f {
 	float data[9];
 };
@@ -422,7 +425,11 @@ public:
 			"translation" : vector3f
             "translationWorld" : vector3f
 			"scale" : vector3f 
+			"dimensions" : vector3f 
 			"rotation" : matrix3f 
+			"enableSnapping" : boolean 
+			"absoluteSnapping" : boolean 
+			"snapStepSize" : float 
             "initialFrameOrigin" : vector3f
             "initialFrameOrientation" : matrix3f
 		[align]					- Align tool
@@ -691,7 +698,11 @@ public:
 
 	/*
 	 * [RMS] handle cases where tool has explicit operation, like makeSolid update
+	 *	 [any tool]
+			"resetToDefaults"
 	 *	 [transform]
+			"setActivePivot"	// argument is integer ID of PivotSO
+	 *	 [planeCut]
 			"setActivePivot"	// argument is integer ID of PivotSO
 	 *   [makeSolid]
 			"update"
@@ -850,6 +861,67 @@ public:
 
 	Key AppendSceneCommand_SelectPrinter( const char * pPrinterName );
 
+
+	/*
+	 * Mesh modification commands
+	 */
+
+    // create pivot in scene
+    Key AppendSceneCommand_CreateMesh();
+        bool GetSceneCommandResult_CreateMesh( Key k, int & nObjectID );
+		bool GetSceneCommandResult_CreateMesh( Key k, any_result & nObjectID );
+
+	// Discard un-used vertex and triangle IDs, and pack the rest into contiguous IDs.
+	// You **MUST** use this on existing Mesh objects before you use per-vertex/triangle commands, otherwise the results will be garbage
+	Key AppendSceneCommand_CompactMesh( int nObjectID );
+
+	// notify mesh that it has been modified. If you use Set or Append commands below, you will not see changes
+	// reflected until you run this command
+	Key AppendSceneCommand_UpdateMesh( int nObjectID );
+
+    Key AppendSceneCommand_GetVertexCount( int nObjectID );
+        bool GetSceneCommandResult_GetVertexCount( Key k, int & nCount );
+        bool GetSceneCommandResult_GetVertexCount( Key k, any_result & nCount );
+    Key AppendSceneCommand_GetTriangleCount( int nObjectID );
+        bool GetSceneCommandResult_GetTriangleCount( Key k, int & nCount );
+        bool GetSceneCommandResult_GetTriangleCount( Key k, any_result & nCount );
+
+    Key AppendSceneCommand_GetVertexPosition( int nObjectID, int nVertexID );
+        bool GetSceneCommandResult_GetVertexPosition( Key k, vec3f & v );
+    Key AppendSceneCommand_GetVertexNormal( int nObjectID, int nVertexID );
+        bool GetSceneCommandResult_GetVertexNormal( Key k, vec3f & v );
+    Key AppendSceneCommand_GetVertexColor( int nObjectID, int nVertexID );
+        bool GetSceneCommandResult_GetVertexColor( Key k, vec3f & v );
+    Key AppendSceneCommand_GetVertexInfo( int nObjectID, int nVertexID );		// more efficient than each of above sequentially
+        bool GetSceneCommandResult_GetVertexInfo( Key k, vec3f & v, vec3f & n, vec3f & c );
+
+    Key AppendSceneCommand_GetTriangleIndices( int nObjectID, int nTriangleID );
+        bool GetSceneCommandResult_GetTriangleIndices( Key k, vec3i & t );
+    Key AppendSceneCommand_GetTriangleGroup( int nObjectID, int nTriangleID );
+        bool GetSceneCommandResult_GetTriangleGroup( Key k, int & nGroupID );
+        bool GetSceneCommandResult_GetTriangleGroup( Key k, any_result & nGroupID );
+
+	Key AppendSceneCommand_SetVertexPosition(int nObjectID, int nVertexID, vec3f & v );
+	Key AppendSceneCommand_SetVertexNormal(int nObjectID, int nVertexID, vec3f & v );
+	Key AppendSceneCommand_SetVertexColor(int nObjectID, int nVertexID, vec3f & v );
+	Key AppendSceneCommand_SetTriangleGroup(int nObjectID, int nTriangleID, int nGroupID );
+
+    Key AppendSceneCommand_AppendVertex( int nObjectID, vec3f & v );
+    Key AppendSceneCommand_AppendVertex( int nObjectID, vec3f & v, vec3f & n );
+    Key AppendSceneCommand_AppendVertex( int nObjectID, vec3f & v, vec3f & n, vec3f & c );
+        bool GetSceneCommandResult_AppendVertex( Key k, int & nNewVertexID );
+        bool GetSceneCommandResult_AppendVertex( Key k, any_result & nNewVertexID );
+    Key AppendSceneCommand_AppendTriangle( int nObjectID, vec3i & t );
+    Key AppendSceneCommand_AppendTriangle( int nObjectID, vec3i & t, int nGroupID );
+        bool GetSceneCommandResult_AppendTriangle( Key k, int & nNewTriID );
+        bool GetSceneCommandResult_AppendTriangle( Key k, any_result & nNewTriID );
+
+    Key AppendSceneCommand_AllocateNewGroupID( int nObjectID );
+        bool GetSceneCommandResult_AllocateNewGroupID( Key k, int & nNewGroupID );
+        bool GetSceneCommandResult_AllocateNewGroupID( Key k, any_result & nNewGroupID );
+
+
+
 	/*
 	 * SPATIAL QUERY COMMANDS
 	 */
@@ -946,7 +1018,7 @@ public:
 	void AppendSelectCommand_All( );
 
 	// commands:
-	//  "selectVisible"    nArgument 0=Replace 1=Append 2=Remove
+	//  "selectVisible"
 	//  "expandToConnected"
 	//  "expandToGroups"
 	//  "expandByOneRing"
@@ -998,8 +1070,16 @@ public:
 	Key AppendSelectCommand_HoleBorderRing( int nHoleID, int nMode );
 		bool GetSelectCommandResult_HoleBorderRing( Key k );
 
+	// WARNING: this may overflow the command buffer over UDP sockets
 	Key AppendSelectCommand_ListSelectedFaceGroups();
 		bool GetSelectCommandResult_ListSelectedFaceGroups( Key k, std::vector<int> & vGroupIDs );
+
+	// WARNING: this may overflow the command buffer over UDP sockets
+	Key AppendSelectCommand_ListSelectedTriangles();
+		bool GetSelectCommandResult_ListSelectedTriangles( Key k, std::vector<int> & vTriangleIDs );
+
+	bool AppendSelectCommand_ByTriangleID( const std::vector<int> & vTriangles, int nMode );
+
 
 	Key AppendSelectCommand_HasValidSelection();
 		bool GetSelectCommandResult_HasValidSelection( Key k );
@@ -1229,7 +1309,28 @@ private:
 		GetObjectFrame = 30,
 		SetObjectFrame = 31,
 
-		SelectPrinter = 32
+		SelectPrinter = 32,
+
+
+		CompactMeshObject = 33,
+		GetVertexCount = 34,
+		GetTriangleCount = 35,
+		GetVertexPosition = 36,
+		GetVertexNormal = 37,
+		GetVertexColor = 38,
+		GetTriangleIndices = 39,
+		GetTriangleGroup = 40,
+		SetVertexPosition = 41,
+		SetVertexNormal = 42,
+		SetVertexColor = 43,
+		SetTriangleGroup = 44,
+		AppendVertex = 45,
+		AppendTriangle = 46,
+		UpdateMesh = 47,
+		AllocateNewGroupID = 48,
+		GetVertexInfo = 49,
+
+		CreateMeshObject = 50
 	};
 	struct SceneCmd {
 		SceneCmdType eType;
@@ -1266,7 +1367,10 @@ private:
 		SelectUtility = 12,
 		SelectIntersectingObject = 13,
 		HasValidSelection = 14,
-		SelectHoleBorderRing = 15
+		SelectHoleBorderRing = 15,
+
+		ListSelectedTriangles = 16,
+		SelectTriangles = 17
 	};
 	struct SelectCmd {
 		SelectCmdType eType;
