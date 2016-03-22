@@ -105,6 +105,7 @@
     <Compile Include="mmapi\vec3f.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="mmapi\vec3i.cs" />
     <Compile Include="mmapi\vectorBrushStamp.cs" />
     <Compile Include="mmapi\vectorf.cs" />
     <Compile Include="mmapi\vectori.cs" />
