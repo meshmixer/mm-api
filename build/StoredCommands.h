@@ -26,6 +26,11 @@ namespace mm {
 
 class MainWindow;
 
+template <typename Type, size_t N>
+struct wrapped_array {
+	Type data[N];
+};
+
 
 struct vec3f {
 	float x,y,z;
@@ -34,7 +39,7 @@ struct vec3i {
 	int i,j,k;
 };
 struct mat3f {
-	float data[9];
+	wrapped_array<float, 9> m;
 };
 struct frame3f {
 	float origin_x, origin_y, origin_z;
@@ -678,6 +683,8 @@ public:
 	void AppendToolParameterCommand( std::string paramName, bool bValue );
 	void AppendToolParameterCommand( std::string paramName, float x, float y, float z );
 	void AppendToolParameterCommand( std::string paramName, float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22 );
+	void AppendToolParameterCommand( std::string paramName, vec3f v);
+	void AppendToolParameterCommand( std::string paramName, mat3f m );
 
 	Key AppendGetToolParameterCommand( std::string paramName );
 
@@ -687,6 +694,8 @@ public:
 	bool GetToolParameterCommandResult( Key k, bool & bValue );
 	bool GetToolParameterCommandResult( Key k, float & x, float & y, float & z );
 	bool GetToolParameterCommandResult( Key k, float & m00, float & m01, float & m02, float & m10, float & m11, float & m12, float & m20, float & m21, float & m22 );
+	bool GetToolParameterCommandResult( Key k, vec3f & v );
+	bool GetToolParameterCommandResult( Key k, mat3f & m );
 
 	// [RMS] not yet implemented for most Tools...
 	Key AppendToolQuery_NewGroups();
@@ -728,6 +737,8 @@ public:
 			"autoGenerate"
 	 *   [meshQuery]
 			"setQueryPoint"	 : vec3
+	 *   [createPivot]
+			"dropPivot"
 	 *   [measure]
 			"setSourcePoint" : vec3
 			"setDestPoint"	 : vec3
@@ -821,9 +832,18 @@ public:
 		bool GetSceneCommandResult_GetObjectName( Key k, std::vector<unsigned char> & objectName );		// [RMS] for SWIG
 	Key AppendSceneCommand_SetObjectName(int nObjectID, const std::string & objectName );
 
+	Key AppendSceneCommand_GetObjectUUID(int nObjectID);
+		bool GetSceneCommandResult_GetObjectUUID( Key k, std::string & objectUUID );
+		bool GetSceneCommandResult_GetObjectUUID( Key k, std::vector<unsigned char> & objectUUID );		// [RMS] for SWIG
+
+
 	Key AppendSceneCommand_FindObjectByName(const std::string & objectName);
 		bool GetSceneCommandResult_FindObjectByName( Key k, int & nObjectID );
 		bool GetSceneCommandResult_FindObjectByName( Key k, any_result & nObjectID );
+
+	Key AppendSceneCommand_FindObjectByUUID(const std::string & objectUUID);
+		bool GetSceneCommandResult_FindObjectByUUID( Key k, int & nObjectID );
+		bool GetSceneCommandResult_FindObjectByUUID( Key k, any_result & nObjectID );
 
 	// -1 = Unknown, 1 = Mesh, 2 = Complex, 3 = Pivot, 4 = LiveMesh, 5 = Reference
     Key AppendSceneCommand_GetObjectType( int nObjectID );
@@ -1078,7 +1098,7 @@ public:
 	Key AppendSelectCommand_ListSelectedTriangles();
 		bool GetSelectCommandResult_ListSelectedTriangles( Key k, std::vector<int> & vTriangleIDs );
 
-	bool AppendSelectCommand_ByTriangleID( const std::vector<int> & vTriangles, int nMode );
+	Key AppendSelectCommand_ByTriangleID( const std::vector<int> & vTriangles, int nMode );
 
 
 	Key AppendSelectCommand_HasValidSelection();
@@ -1330,7 +1350,9 @@ private:
 		AllocateNewGroupID = 48,
 		GetVertexInfo = 49,
 
-		CreateMeshObject = 50
+		CreateMeshObject = 50,
+		GetObjectUUID = 51,
+		FindObjectByUUID = 52
 	};
 	struct SceneCmd {
 		SceneCmdType eType;

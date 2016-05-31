@@ -78,6 +78,14 @@ def set_object_name(remote, object_id, new_name):
     cmd.AppendSceneCommand_SetObjectName(object_id, new_name)
     remote.runCommand(cmd)
 
+def get_object_uuid(remote, object_id):
+    """Return the string uuid of the scene object with the given ID"""
+    cmd = mmapi.StoredCommands()
+    cmd_key = cmd.AppendSceneCommand_GetObjectUUID(object_id)
+    remote.runCommand(cmd)
+    byte_vec = mmapi.vectorub()
+    cmd.GetSceneCommandResult_GetObjectUUID(cmd_key, byte_vec)
+    return vectorub_to_string(byte_vec)
 
 def get_object_frame(remote, object_id):
     """get local frame of object"""
@@ -107,6 +115,14 @@ def find_object_by_name(remote, obj_name):
     bFound = cmd.GetSceneCommandResult_FindObjectByName(cmd_key, result_val)
     return (bFound, result_val.i)
 
+def find_object_by_uuid(remote, uuid):
+    """Find the ID of the scene object with the given string name. Returns a 2-tuple (boolFound, object_id)"""
+    cmd = mmapi.StoredCommands()
+    cmd_key = cmd.AppendSceneCommand_FindObjectByUUID(uuid)
+    remote.runCommand(cmd)
+    result_val = mmapi.any_result()
+    bFound = cmd.GetSceneCommandResult_FindObjectByUUID(cmd_key, result_val)
+    return (bFound, result_val.i)
 
 def create_pivot(remote, frame):
     """create a pivot at a given mmFrame (not frame3f)"""

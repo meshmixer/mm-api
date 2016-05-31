@@ -24,6 +24,8 @@ def set_toolparam(remote, param_name, f):
     cmd = mmapi.StoredCommands()
     if type(f) in (int, float, bool):
         key = cmd.AppendToolParameterCommand(param_name, f)
+    elif isinstance(f, mmapi.mat3f):
+        key = cmd.AppendToolParameterCommand(param_name, f)
     elif len(f) == 3:
         key = cmd.AppendToolParameterCommand(param_name, f[0],f[1],f[2])
     elif len(f) == 9:
@@ -56,6 +58,18 @@ def get_toolparam(remote, param_name):
     else:
         return ()
 
+
+def get_toolparam_mat3f(remote, param_name):
+    """Returns the current value of the given Tool parameter, or empty list if the parameter is not found."""
+    cmd = mmapi.StoredCommands()
+    key = cmd.AppendGetToolParameterCommand(param_name)
+    remote.runCommand(cmd)
+    m = mmapi.mat3f()
+    bFound = cmd.GetToolParameterCommandResult(key, m)
+    if bFound:
+        return m
+    else:
+        return ()
 
 
 def tool_utility_command(remote, command_name, arg = -99):

@@ -118,6 +118,13 @@ inline static vec3f get_tan1(frame3f f)
 	vec3f v = {f.tan1_x, f.tan1_y, f.tan1_z};
 	return v;
 }
+inline mat3f make_mat3f(float f[9]) 
+{
+	mat3f m;
+	for ( int j = 0; j < 9; ++j) 
+		m.m.data[j] = f[j];
+	return m;
+}
 inline void make_mat3f(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22, float mat[9])
 {
 	mat[0] = m00; mat[1] = m01; mat[2] = m02;
@@ -126,7 +133,7 @@ inline void make_mat3f(float m00, float m01, float m02, float m10, float m11, fl
 }
 inline void make_mat3f(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22, mat3f & m)
 {
-	make_mat3f(m00,m01,m02,m10,m11,m12,m20,m21,m22,m.data);
+	make_mat3f(m00,m01,m02,m10,m11,m12,m20,m21,m22,m.m.data);
 }
 inline void unpack_mat3f(float & m00, float & m01, float & m02, float & m10, float & m11, float & m12, float & m20, float & m21, float & m22, const float mat[9])
 {
@@ -136,7 +143,7 @@ inline void unpack_mat3f(float & m00, float & m01, float & m02, float & m10, flo
 }
 inline void unpack_mat3f(float & m00, float & m01, float & m02, float & m10, float & m11, float & m12, float & m20, float & m21, float & m22, const mat3f & m)
 {
-	unpack_mat3f(m00,m01,m02,m10,m11,m12,m20,m21,m22,m.data);
+	unpack_mat3f(m00,m01,m02,m10,m11,m12,m20,m21,m22,m.m.data);
 }
 
 
@@ -224,7 +231,7 @@ void StoredCommands::Store(BinarySerializer & s)
 					s.append( c.c.toolparam.v.vec.y );
 					s.append( c.c.toolparam.v.vec.z );
 				} else if ( c.c.toolparam.eType == ToolParam_Mat3 || c.c.toolparam.eType == ToolParam_Utility_Mat3 ) {
-					s.append( c.c.toolparam.v.mat3.data, 9 );
+					s.append( c.c.toolparam.v.mat3.m.data, 9 );
 				} else if ( c.c.toolparam.eType == ToolParam_String || c.c.toolparam.eType == ToolParam_Utility_String ) {
 					s.append( c.c.toolparam.v.str.nSize );
 					if ( c.c.toolparam.v.str.nSize > 0 )
@@ -367,7 +374,7 @@ void StoredCommands::Restore(BinarySerializer & s)
 					s.restore( c.c.toolparam.v.vec.y );
 					s.restore( c.c.toolparam.v.vec.z );
 				} else if ( c.c.toolparam.eType == ToolParam_Mat3 || c.c.toolparam.eType == ToolParam_Utility_Mat3 ) {
-					s.restore( c.c.toolparam.v.mat3.data, 9 );
+					s.restore( c.c.toolparam.v.mat3.m.data, 9 );
 				} else if ( c.c.toolparam.eType == ToolParam_String || c.c.toolparam.eType == ToolParam_Utility_String ) {
 					s.restore( c.c.toolparam.v.str.nSize );
 					if ( c.c.toolparam.v.str.nSize > 0 )
@@ -492,7 +499,7 @@ void StoredCommands::Store_Results(rms::BinarySerializer & s)
 					s.append( c.r.toolparam.v.vec.y );
 					s.append( c.r.toolparam.v.vec.z );
 				} else if ( c.r.toolparam.eType == ToolParam_Get_Mat3 ) {
-					s.append( c.r.toolparam.v.mat3.data, 9 );
+					s.append( c.r.toolparam.v.mat3.m.data, 9 );
 				} else
 					s.append( c.r.toolparam.v.i );
 				break;
@@ -608,7 +615,7 @@ void StoredCommands::Restore_Results(BinarySerializer & s)
 					s.restore( c.r.toolparam.v.vec.y );
 					s.restore( c.r.toolparam.v.vec.z );
 				} else if ( c.r.toolparam.eType == ToolParam_Get_Mat3 ) {
-					s.restore( c.r.toolparam.v.mat3.data, 9 );
+					s.restore( c.r.toolparam.v.mat3.m.data, 9 );
 				} else
 					s.restore( c.r.toolparam.v.i );
 				break;
@@ -1053,7 +1060,24 @@ void StoredCommands::AppendToolParameterCommand( std::string paramName, float m0
 	append_command(c);
 }
 
-
+void StoredCommands::AppendToolParameterCommand( std::string paramName, vec3f v )
+{
+	Command c;  c.init();
+	c.eType = ToolParameterCommand;
+	sprintf_s(c.c.toolparam.name, sizeof(c.c.toolparam.name), "%s", paramName.c_str());
+	c.c.toolparam.eType = ToolParam_Vec3;
+	c.c.toolparam.v.vec = v;
+	append_command(c);
+}
+void StoredCommands::AppendToolParameterCommand( std::string paramName, mat3f m )
+{
+	Command c;  c.init();
+	c.eType = ToolParameterCommand;
+	sprintf_s(c.c.toolparam.name, sizeof(c.c.toolparam.name), "%s", paramName.c_str());
+	c.c.toolparam.eType = ToolParam_Mat3;
+	c.c.toolparam.v.mat3 = m;
+	append_command(c);
+}
 
 
 
@@ -1143,7 +1167,24 @@ bool StoredCommands::GetToolParameterCommandResult( Key k, float & m00, float & 
 	} 
 	return false;
 }
-
+bool StoredCommands::GetToolParameterCommandResult( Key k, vec3f & v )
+{
+	any_result r;
+	if ( GetToolParameterCommandResult(k,r) && r.type == 3 ) {
+		v.x = r.x; v.y = r.y; v.z = r.z;
+		return true;
+	} 
+	return false;
+}
+bool StoredCommands::GetToolParameterCommandResult( Key k, mat3f & m)
+{
+	any_result r;
+	if ( GetToolParameterCommandResult(k,r) && r.type == 4 ) {
+		m = make_mat3f(r.m);
+		return true;
+	} 
+	return false;
+}
 
 
 StoredCommands::Key StoredCommands::AppendToolQuery_NewGroups()
@@ -1650,6 +1691,37 @@ StoredCommands::Key StoredCommands::AppendSceneCommand_SetObjectName(int nObject
 	return append_command(c);
 }
 
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_GetObjectUUID(int nObjectID)
+{
+	Command c;  c.init();
+	c.eType = SceneCommand;
+	c.c.scene.eType = GetObjectUUID;
+	c.c.scene.nObjectIDs.append(nObjectID);
+	return append_command(c);
+}
+bool StoredCommands::GetSceneCommandResult_GetObjectUUID( Key k, std::string & objectUUID )
+{
+	if ( k >= m_vCommands.size() )
+		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK != 0 )
+		objectUUID = std::string(c.r.scene.str.data);
+	return ( c.r.scene.OK == 0 ) ? false : true;
+}
+bool StoredCommands::GetSceneCommandResult_GetObjectUUID( Key k, std::vector<unsigned char> & objectUUID )
+{
+	std::string objUUID;
+	if ( GetSceneCommandResult_GetObjectUUID(k, objUUID) ) {
+		for ( unsigned int k = 0; k < objUUID.length(); ++k )
+			objectUUID.push_back(objUUID[k]);
+		objectUUID.push_back('\0');
+		return true;
+	} 
+	return false;
+}
+
+
 StoredCommands::Key StoredCommands::AppendSceneCommand_FindObjectByName(const std::string & objectName)
 {
 	Command c;  c.init();
@@ -1677,6 +1749,37 @@ bool StoredCommands::GetSceneCommandResult_FindObjectByName( Key k, any_result &
 	}
 	return false;
 }
+
+
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_FindObjectByUUID(const std::string & objectUUID)
+{
+	Command c;  c.init();
+	c.eType = SceneCommand;
+	c.c.scene.eType = FindObjectByUUID;
+	c.c.scene.str = __tofstr(objectUUID.c_str());
+	return append_command(c);
+}
+bool StoredCommands::GetSceneCommandResult_FindObjectByUUID( Key k, int & nObjectID )
+{
+	if ( k >= m_vCommands.size() )
+		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK != 0 )
+		nObjectID = c.r.scene.nObjectIDs.data[0];
+	return ( c.r.scene.OK == 0 ) ? false : true;
+}
+bool StoredCommands::GetSceneCommandResult_FindObjectByUUID( Key k, any_result & nObjectID )
+{
+	int nObjID;
+	if ( GetSceneCommandResult_FindObjectByUUID(k, nObjID) ) {
+		nObjectID.type = 1;
+		nObjectID.i = nObjID;
+		return true;
+	}
+	return false;
+}
+
 
 
 StoredCommands::Key StoredCommands::AppendSceneCommand_GetObjectType( int nObjectID )
@@ -2142,7 +2245,7 @@ StoredCommands::Key StoredCommands::AppendQueryCommand_GetObjectBoundingBox( int
 {
 	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, ObjectBoundingBoxQuery);
 
-	c.c.spatial.p.x = nObjectID;
+	c.c.spatial.p.x = (float)nObjectID;
 	return append_command(c);
 }
 bool StoredCommands::GetQueryResult_GetObjectBoundingBox( Key k, float fMin[3], float fMax[3] )
@@ -2159,7 +2262,7 @@ StoredCommands::Key StoredCommands::AppendQueryCommand_GetObjectLocalFrame( int 
 {
 	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, ObjectLocalFrameQuery);
 
-	c.c.spatial.p.x = nObjectID;
+	c.c.spatial.p.x = (float)nObjectID;
 	return append_command(c);
 }
 bool StoredCommands::GetQueryResult_GetObjectLocalFrame( Key k, frame3f * pFrame )
@@ -2231,7 +2334,7 @@ bool StoredCommands::GetQueryResult_IsInsideObject( Key k )
 StoredCommands::Key StoredCommands::AppendQueryCommand_SetObjectTypeFilter( int nFilter )
 {
 	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, SetObjectTypeFilter);
-	c.c.spatial.p.x = nFilter;
+	c.c.spatial.p.x = (float)nFilter;
 	return append_command(c);
 }
 StoredCommands::Key StoredCommands::AppendQueryCommand_ClearObjectTypeFilter()
@@ -2297,7 +2400,7 @@ bool StoredCommands::GetQueryResult_FindObjectsWithinDistance( Key k, std::vecto
 StoredCommands::Key StoredCommands::AppendQueryCommand_TestIntersection( int nObjectID, int nTestWithObjectID )
 {
 	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, ObjectIntersectionQuery);
-	c.c.spatial.p.x = nObjectID; c.c.spatial.p.y = nTestWithObjectID;
+	c.c.spatial.p.x = (float)nObjectID; c.c.spatial.p.y = (float)nTestWithObjectID;
 	return append_command(c);
 }
 bool StoredCommands::GetQueryResult_TestIntersection( Key k )
@@ -2311,7 +2414,7 @@ bool StoredCommands::GetQueryResult_TestIntersection( Key k )
 StoredCommands::Key StoredCommands::AppendQueryCommand_FindIntersectingObjects( int nObjectID )
 {
 	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, FindIntersectingObjects);
-	c.c.spatial.p.x = nObjectID;
+	c.c.spatial.p.x = (float)nObjectID;
 	return append_command(c);
 }
 bool StoredCommands::GetQueryResult_FindIntersectingObjects( Key k, std::vector<int> & vObjects )
@@ -2369,7 +2472,7 @@ bool StoredCommands::GetQueryResult_FindClosestHole( Key k, any_result & nHoleID
 StoredCommands::Key StoredCommands::AppendQueryCommand_GetHoleBoundingBox( int nHoleID )
 {
 	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, GetHoleBoundingBox);
-	c.c.spatial.p.x = nHoleID;
+	c.c.spatial.p.x = (float)nHoleID;
 	return append_command(c);
 }
 bool StoredCommands::GetQueryResult_GetHoleBoundingBox( Key k, float fMin[3], float fMax[3] )
@@ -2605,7 +2708,7 @@ bool StoredCommands::GetSelectCommandResult_HoleBorderRing( Key k )
 
 
 
-bool StoredCommands::AppendSelectCommand_ByTriangleID( const std::vector<int> & vTriangles, int nMode )
+StoredCommands::Key StoredCommands::AppendSelectCommand_ByTriangleID( const std::vector<int> & vTriangles, int nMode )
 {
 	Command c;  
 	MMAPI_INIT_SELECT_COMMAND(c, SelectTriangles);

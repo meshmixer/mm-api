@@ -458,9 +458,9 @@ class mat3f(_object):
     __swig_getmethods__ = {}
     __getattr__ = lambda self, name: _swig_getattr(self, mat3f, name)
     __repr__ = _swig_repr
-    __swig_setmethods__["data"] = _mmapi.mat3f_data_set
-    __swig_getmethods__["data"] = _mmapi.mat3f_data_get
-    if _newclass:data = _swig_property(_mmapi.mat3f_data_get, _mmapi.mat3f_data_set)
+    __swig_setmethods__["m"] = _mmapi.mat3f_m_set
+    __swig_getmethods__["m"] = _mmapi.mat3f_m_get
+    if _newclass:m = _swig_property(_mmapi.mat3f_m_get, _mmapi.mat3f_m_set)
     def __init__(self): 
         this = _mmapi.new_mat3f()
         try: self.this.append(this)
@@ -712,8 +712,12 @@ class StoredCommands(_object):
     def AppendSceneCommand_GetObjectName(self, *args): return _mmapi.StoredCommands_AppendSceneCommand_GetObjectName(self, *args)
     def GetSceneCommandResult_GetObjectName(self, *args): return _mmapi.StoredCommands_GetSceneCommandResult_GetObjectName(self, *args)
     def AppendSceneCommand_SetObjectName(self, *args): return _mmapi.StoredCommands_AppendSceneCommand_SetObjectName(self, *args)
+    def AppendSceneCommand_GetObjectUUID(self, *args): return _mmapi.StoredCommands_AppendSceneCommand_GetObjectUUID(self, *args)
+    def GetSceneCommandResult_GetObjectUUID(self, *args): return _mmapi.StoredCommands_GetSceneCommandResult_GetObjectUUID(self, *args)
     def AppendSceneCommand_FindObjectByName(self, *args): return _mmapi.StoredCommands_AppendSceneCommand_FindObjectByName(self, *args)
     def GetSceneCommandResult_FindObjectByName(self, *args): return _mmapi.StoredCommands_GetSceneCommandResult_FindObjectByName(self, *args)
+    def AppendSceneCommand_FindObjectByUUID(self, *args): return _mmapi.StoredCommands_AppendSceneCommand_FindObjectByUUID(self, *args)
+    def GetSceneCommandResult_FindObjectByUUID(self, *args): return _mmapi.StoredCommands_GetSceneCommandResult_FindObjectByUUID(self, *args)
     def AppendSceneCommand_GetObjectType(self, *args): return _mmapi.StoredCommands_AppendSceneCommand_GetObjectType(self, *args)
     def GetSceneCommandResult_GetObjectType(self, *args): return _mmapi.StoredCommands_GetSceneCommandResult_GetObjectType(self, *args)
     def AppendSceneCommand_GetObjectFrame(self, *args): return _mmapi.StoredCommands_AppendSceneCommand_GetObjectFrame(self, *args)
@@ -854,6 +858,27 @@ class StoredCommands(_object):
     __del__ = lambda self : None;
 StoredCommands_swigregister = _mmapi.StoredCommands_swigregister
 StoredCommands_swigregister(StoredCommands)
+
+class floatArray9(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, floatArray9, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, floatArray9, name)
+    __repr__ = _swig_repr
+    __swig_setmethods__["data"] = _mmapi.floatArray9_data_set
+    __swig_getmethods__["data"] = _mmapi.floatArray9_data_get
+    if _newclass:data = _swig_property(_mmapi.floatArray9_data_get, _mmapi.floatArray9_data_set)
+    def __len__(self): return _mmapi.floatArray9___len__(self)
+    def __getitem__(self, *args): return _mmapi.floatArray9___getitem__(self, *args)
+    def __setitem__(self, *args): return _mmapi.floatArray9___setitem__(self, *args)
+    def __init__(self): 
+        this = _mmapi.new_floatArray9()
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _mmapi.delete_floatArray9
+    __del__ = lambda self : None;
+floatArray9_swigregister = _mmapi.floatArray9_swigregister
+floatArray9_swigregister(floatArray9)
 
 # This file is compatible with both classic and new-style classes.
 

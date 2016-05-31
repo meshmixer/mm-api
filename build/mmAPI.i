@@ -24,3 +24,19 @@ namespace std {
 %include "BinarySerializer.h"
 %include "StoredCommands.h"
 
+namespace mm {
+%extend wrapped_array {
+  inline size_t __len__() const { return N; }
+  inline const Type& __getitem__(size_t i) const throw(std::out_of_range) {
+    if (i >= N || i < 0)
+      throw std::out_of_range("out of bounds access");
+    return self->data[i];
+  }
+  inline void __setitem__(size_t i, const Type& v) throw(std::out_of_range) {
+    if (i >= N || i < 0)
+      throw std::out_of_range("out of bounds access");
+    self->data[i] = v;
+  }
+}
+%template (floatArray9) wrapped_array<float, 9>;
+}

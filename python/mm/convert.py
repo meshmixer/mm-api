@@ -31,6 +31,13 @@ def to_vec3i(vec):
     p.k = vec[2]
     return p
 
+def to_mat3f(m_in):
+    """convert 9-tuple to mmapi.mat3f"""
+    m = mmapi.mat3f()
+    for i in xrange(0,9):
+        m.m[i] = m_in[i]
+    return m
+
 def to_world_xyz(remote, x,y,z):
     """convert a 3D point from Scene space to World space"""
     vScene = mmapi.floatArray(3)
