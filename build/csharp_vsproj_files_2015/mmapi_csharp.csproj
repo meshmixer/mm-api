@@ -66,6 +66,7 @@
     </Compile>
     <Compile Include="mmapi\camera_info.cs" />
     <Compile Include="mmapi\floatArray.cs" />
+    <Compile Include="mmapi\floatArray9.cs" />
     <Compile Include="mmapi\frame3f.cs" />
     <Compile Include="mmapi\fstring.cs">
       <SubType>Code</SubType>
