@@ -1116,7 +1116,7 @@ public:
 
 
 	/* Part Drop. During interactive part drop you can also use AppendToolParameterCommand() with following parameters:
-			"radius" : float range [0, inf]
+			"radius" : float range [0, inf]   (IN SCENE COORDINATES!!)
 			"angle" : float range [0, 2pi]
 			"position" : 3-float point   *** must be point on surface ***
 
@@ -1132,6 +1132,7 @@ public:
 			"tweakRaduis" : float range [0.0001, inf]
 	*/
 	Key AppendActionCommand_DropPartAtPoint( const char * pPartPath, const frame3f & f, float fRadius, bool bInteractive = false );
+	Key AppendActionCommand_DropSolidPartAtPoint( const char * pPartPath, const frame3f & f, float fRadius, bool bInteractive = false );
 	Key AppendActionCommand_UpdateDropPart( const frame3f & f, float fRadius, bool bMinimizeRotation );
 	Key AppendActionCommand_AcceptDropPart( );
 	// [RMS] for any of above, returns whether drop was successful or not. Only returns new GroupIDs when drop is completed
@@ -1420,7 +1421,7 @@ private:
 
 
 	enum PartCmdType {
-		DropPart = 0, UpdatePart = 1, AcceptPart = 2
+		DropPart = 0, UpdatePart = 1, AcceptPart = 2, DropSolidPart = 3
 	};
 	struct PartCmd {
 		PartCmdType eType;

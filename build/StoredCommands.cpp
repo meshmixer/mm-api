@@ -2822,6 +2822,18 @@ StoredCommands::Key StoredCommands::AppendActionCommand_DropPartAtPoint( const c
 	return append_command(c);
 }
 
+StoredCommands::Key StoredCommands::AppendActionCommand_DropSolidPartAtPoint( const char * pPartPath, const frame3f & f, float fRadius, bool bInteractive )
+{
+	Command c; c.init();
+	c.eType = PartCommand;
+	c.c.part.eType = DropSolidPart;
+	c.c.part.filename = __tofstr(pPartPath);
+	c.c.part.f = f;
+	c.c.part.r = fRadius;
+	c.c.part.bFlag = bInteractive;
+	return append_command(c);
+}
+
 StoredCommands::Key StoredCommands::AppendActionCommand_UpdateDropPart( const frame3f & f, float fRadius, bool bMinimizeRotation )
 {
 	Command c; c.init();
