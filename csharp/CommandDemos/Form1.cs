@@ -33,6 +33,10 @@ namespace examples
             align_test();
         }
 
+        private void setColorButton_Click(object sender, EventArgs e)
+        {
+            set_mesh_color_test();
+        }
 
         private void plane_cut_test()
         {
@@ -91,6 +95,7 @@ namespace examples
         {
             StoredCommands sc = new StoredCommands();
             uint key = sc.AppendSceneCommand_ListSelectedObjects();
+            rc.ExecuteCommands(sc);
             vectori v = new vectori();
             bool bOK = sc.GetSceneCommandResult_ListSelectedObjects(key, v);
             return v.ToList();
@@ -108,7 +113,7 @@ namespace examples
             System.Diagnostics.Debug.Assert(destPivotID != -1, "scene must have pivot with name dest_pivot");
 
             List<int> selected = get_selected_objects(rc);
-            System.Diagnostics.Debug.Assert(selected != null && selected.Count != 1, "the mesh you want to move must be selected");
+            System.Diagnostics.Debug.Assert(selected != null && selected.Count == 1, "the mesh you want to move must be selected");
 
             StoredCommands sc = new StoredCommands();
             sc.AppendBeginToolCommand("align");
@@ -120,6 +125,28 @@ namespace examples
             sc.AppendCompleteToolCommand("accept");
 
             rc.ExecuteCommands(sc);
+            rc.Shutdown();
+        }
+
+
+        private void set_mesh_color_test()
+        {
+            mm.RemoteControl rc = new mm.RemoteControl();
+            rc.Initialize();
+
+            List<int> selected = get_selected_objects(rc);
+            System.Diagnostics.Debug.Assert(selected != null && selected.Count == 1, "the mesh you want to color must be selected");
+
+            vec3f c = new vec3f();
+            c.x = 1.0f; c.y = 0.0f; c.z = 0.0f;
+
+            StoredCommands sc = new StoredCommands();
+            sc.ViewControl_SetTriangleColorMode(0);
+            sc.AppendSceneCommand_SetAllVertexColors(selected[0], c);
+            sc.AppendSceneCommand_UpdateMesh(selected[0]);
+
+            rc.ExecuteCommands(sc);
+
             rc.Shutdown();
         }
 
@@ -227,6 +254,8 @@ namespace examples
             pm.InitializeToTestMesh();
             pm.Write("c:\\scratch\\livemesh_test.bin");
         }
+
+
 
     }
 }

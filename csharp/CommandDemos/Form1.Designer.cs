@@ -33,12 +33,13 @@
             this.queriesButton = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.alignButton = new System.Windows.Forms.Button();
             this.outputTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.testWriteButton = new System.Windows.Forms.Button();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.alignButton = new System.Windows.Forms.Button();
+            this.setColorButton = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -82,7 +83,7 @@
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Location = new System.Drawing.Point(16, 15);
-            this.tabControl1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabControl1.Margin = new System.Windows.Forms.Padding(4);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(945, 363);
@@ -90,6 +91,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.setColorButton);
             this.tabPage1.Controls.Add(this.alignButton);
             this.tabPage1.Controls.Add(this.outputTextBox);
             this.tabPage1.Controls.Add(this.label1);
@@ -97,18 +99,29 @@
             this.tabPage1.Controls.Add(this.queriesButton);
             this.tabPage1.Controls.Add(this.button2);
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
-            this.tabPage1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPage1.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(4);
             this.tabPage1.Size = new System.Drawing.Size(937, 334);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Basic Stuff";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // alignButton
+            // 
+            this.alignButton.Location = new System.Drawing.Point(7, 135);
+            this.alignButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.alignButton.Name = "alignButton";
+            this.alignButton.Size = new System.Drawing.Size(131, 39);
+            this.alignButton.TabIndex = 5;
+            this.alignButton.Text = "align";
+            this.alignButton.UseVisualStyleBackColor = true;
+            this.alignButton.Click += new System.EventHandler(this.alignButton_Click);
+            // 
             // outputTextBox
             // 
             this.outputTextBox.Location = new System.Drawing.Point(0, 286);
-            this.outputTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.outputTextBox.Margin = new System.Windows.Forms.Padding(4);
             this.outputTextBox.Name = "outputTextBox";
             this.outputTextBox.Size = new System.Drawing.Size(929, 22);
             this.outputTextBox.TabIndex = 4;
@@ -127,9 +140,9 @@
             // 
             this.tabPage2.Controls.Add(this.testWriteButton);
             this.tabPage2.Location = new System.Drawing.Point(4, 25);
-            this.tabPage2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPage2.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(4);
             this.tabPage2.Size = new System.Drawing.Size(937, 334);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "LiveMesh";
@@ -138,23 +151,23 @@
             // testWriteButton
             // 
             this.testWriteButton.Location = new System.Drawing.Point(8, 39);
-            this.testWriteButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.testWriteButton.Margin = new System.Windows.Forms.Padding(4);
             this.testWriteButton.Name = "testWriteButton";
             this.testWriteButton.Size = new System.Drawing.Size(147, 39);
             this.testWriteButton.TabIndex = 4;
             this.testWriteButton.Text = "Test Write";
             this.testWriteButton.UseVisualStyleBackColor = true;
             // 
-            // alignButton
+            // setColorButton
             // 
-            this.alignButton.Location = new System.Drawing.Point(7, 135);
-            this.alignButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.alignButton.Name = "alignButton";
-            this.alignButton.Size = new System.Drawing.Size(131, 39);
-            this.alignButton.TabIndex = 5;
-            this.alignButton.Text = "align";
-            this.alignButton.UseVisualStyleBackColor = true;
-            this.alignButton.Click += new System.EventHandler(this.alignButton_Click);
+            this.setColorButton.Location = new System.Drawing.Point(297, 51);
+            this.setColorButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.setColorButton.Name = "setColorButton";
+            this.setColorButton.Size = new System.Drawing.Size(131, 39);
+            this.setColorButton.TabIndex = 6;
+            this.setColorButton.Text = "set mesh color";
+            this.setColorButton.UseVisualStyleBackColor = true;
+            this.setColorButton.Click += new System.EventHandler(this.setColorButton_Click);
             // 
             // Form1
             // 
@@ -186,6 +199,7 @@
         private System.Windows.Forms.TextBox outputTextBox;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button alignButton;
+        private System.Windows.Forms.Button setColorButton;
     }
 }
 
