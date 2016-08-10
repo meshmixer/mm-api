@@ -677,6 +677,32 @@ public:
 			"packingWidth" : float 
 			"packingHeight" : float 
 			"packingBorder" : float 
+		[dropPart]							(start with AppendActionCommand_DropPartAtPoint)
+			"radius" : float range [0, inf]   (IN SCENE COORDINATES!!)
+			"radiusWorld" : float 
+			"angle"  : float range [0, 2pi]
+			"bend" : float range [0, inf]
+			"bulge" : float range [-180,180]
+			"offset" : float range [-inf, inf]
+			"scale" : float range [0.0001, inf]
+			"scaleFalloff" : float range [0.0001, 1]
+			"smoothRadius" : float range [0, inf]
+			"tweakRaduis" : float range [0.0001, inf]
+			"deformType" : integer				COILS = 0, RotInvCoord = 1  (default=0)
+			"optimize" : boolean 
+			"flip" : boolean 
+			"createVolume" : boolean 
+			"position" : vector3f *** must be point on surface ***
+		[dropSolidPart]						(start with AppendActionCommand_DropSolidPartAtPoint)
+			"radius" : float 
+			"radiusWorld" : float 
+			"angle" : float 
+			"offset" : float 
+			"offsetWorld" : float 
+			"operationType" : integer			AppendToMesh = 0, CreateNewObject = 1, BooleanUnion = 2, BooleanSubtract = 3
+			"flip" : boolean 
+			"position" : vector3f 
+			"initialFrameX" : vector3f 
 	 */
 	void AppendToolParameterCommand( std::string paramName, float fValue );
 	void AppendToolParameterCommand( std::string paramName, int nValue );
@@ -713,6 +739,9 @@ public:
 			"setActivePivot"	// argument is integer ID of PivotSO
 	 *	 [planeCut]
 			"setActivePivot"	// argument is integer ID of PivotSO
+	 *   [align]
+			"setSourcePivot"	// argument is integer ID of PivotSO
+			"setDestPivot"		// argument is integer ID of PivotSO
 	 *   [makeSolid]
 			"update"
 	 *   [makePattern]
@@ -926,6 +955,8 @@ public:
 	Key AppendSceneCommand_SetVertexColor(int nObjectID, int nVertexID, vec3f & v );
 	Key AppendSceneCommand_SetTriangleGroup(int nObjectID, int nTriangleID, int nGroupID );
 
+	Key AppendSceneCommand_SetAllVertexColors(int nObjectID, vec3f & v );
+
     Key AppendSceneCommand_AppendVertex( int nObjectID, vec3f & v );
     Key AppendSceneCommand_AppendVertex( int nObjectID, vec3f & v, vec3f & n );
     Key AppendSceneCommand_AppendVertex( int nObjectID, vec3f & v, vec3f & n, vec3f & c );
@@ -1115,24 +1146,22 @@ public:
 	Key AppendActionCommand_LinearBrushStroke3D( const vec3f & v0, const vec3f & v1, int nSteps );
 
 
-	/* Part Drop. During interactive part drop you can also use AppendToolParameterCommand() with following parameters:
-			"radius" : float range [0, inf]   (IN SCENE COORDINATES!!)
-			"angle" : float range [0, 2pi]
-			"position" : 3-float point   *** must be point on surface ***
-
-			"deformType" : values  COILS = 0, RotInvCoord = 1  (default=0)
-			"optimize" : boolean
-			"bend" : float range [0, inf]
-			"bulge" : float range [-180,180]
-			"offset" : float range [-inf, inf]
-			"scale" : float range [0.0001, inf]
-			"scaleFalloff" : float range [0.0001, 1]
-
-			"smoothRadius" : float range [0, inf]
-			"tweakRaduis" : float range [0.0001, inf]
-	*/
-	Key AppendActionCommand_DropPartAtPoint( const char * pPartPath, const frame3f & f, float fRadius, bool bInteractive = false );
-	Key AppendActionCommand_DropSolidPartAtPoint( const char * pPartPath, const frame3f & f, float fRadius, bool bInteractive = false );
+	/* 
+	 * Open/Solid Part Dropping.
+	 *
+	 * During interactive part drop you can use the parameters listed under [dropPart] 
+	 * and [dropSolidPart] above in the AppendToolParameterCommand section. 
+	 *
+	 * Note that the partPath required below must be the full path to the part .obj file,
+	 * typically will be like:
+	 *     C:/Users/<username>/Documents/meshmixer/libraries/parts/default/<subdir>/part_file.obj
+	 * The slash type doesn't matter, we handle that internally.
+	 *
+	 * The radius parameter is in world units. Pass as 0 to use the default auto-radius,
+	 * and pass as -1.0 to use the "original" size, ie same as shift+drop in Meshmixer.
+	 */
+	Key AppendActionCommand_DropPartAtPoint( const char * pPartPath, const frame3f & f, float fRadiusWorld, bool bInteractive = false );
+	Key AppendActionCommand_DropSolidPartAtPoint( const char * pPartPath, const frame3f & f, float fRadiusWorld, bool bInteractive = false );
 	Key AppendActionCommand_UpdateDropPart( const frame3f & f, float fRadius, bool bMinimizeRotation );
 	Key AppendActionCommand_AcceptDropPart( );
 	// [RMS] for any of above, returns whether drop was successful or not. Only returns new GroupIDs when drop is completed
@@ -1353,7 +1382,9 @@ private:
 
 		CreateMeshObject = 50,
 		GetObjectUUID = 51,
-		FindObjectByUUID = 52
+		FindObjectByUUID = 52,
+
+		SetAllVertexColors = 53
 	};
 	struct SceneCmd {
 		SceneCmdType eType;

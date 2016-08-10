@@ -2075,6 +2075,18 @@ StoredCommands::Key StoredCommands::AppendSceneCommand_SetTriangleGroup(int nObj
 	return append_command(c);
 }
 
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_SetAllVertexColors(int nObjectID, vec3f & v )
+{
+	Command c;  
+	MMAPI_INIT_SCENE_COMMAND(c, SetAllVertexColors);
+	c.c.scene.nObjectIDs.append(nObjectID);
+	c.c.scene.f = make_frame3f(v.x,v.y,v.z);
+	return append_command(c);
+}
+
+
+
 StoredCommands::Key StoredCommands::AppendSceneCommand_AppendVertex( int nObjectID, vec3f & v )
 {
 	Command c;  
