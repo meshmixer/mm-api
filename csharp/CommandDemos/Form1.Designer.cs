@@ -33,13 +33,14 @@
             this.queriesButton = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.setColorButton = new System.Windows.Forms.Button();
             this.alignButton = new System.Windows.Forms.Button();
             this.outputTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.testWriteButton = new System.Windows.Forms.Button();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.setColorButton = new System.Windows.Forms.Button();
+            this.smoothGroupsButton = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -91,6 +92,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.smoothGroupsButton);
             this.tabPage1.Controls.Add(this.setColorButton);
             this.tabPage1.Controls.Add(this.alignButton);
             this.tabPage1.Controls.Add(this.outputTextBox);
@@ -106,6 +108,17 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Basic Stuff";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // setColorButton
+            // 
+            this.setColorButton.Location = new System.Drawing.Point(297, 51);
+            this.setColorButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.setColorButton.Name = "setColorButton";
+            this.setColorButton.Size = new System.Drawing.Size(131, 39);
+            this.setColorButton.TabIndex = 6;
+            this.setColorButton.Text = "set mesh color";
+            this.setColorButton.UseVisualStyleBackColor = true;
+            this.setColorButton.Click += new System.EventHandler(this.setColorButton_Click);
             // 
             // alignButton
             // 
@@ -158,16 +171,16 @@
             this.testWriteButton.Text = "Test Write";
             this.testWriteButton.UseVisualStyleBackColor = true;
             // 
-            // setColorButton
+            // smoothGroupsButton
             // 
-            this.setColorButton.Location = new System.Drawing.Point(297, 51);
-            this.setColorButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.setColorButton.Name = "setColorButton";
-            this.setColorButton.Size = new System.Drawing.Size(131, 39);
-            this.setColorButton.TabIndex = 6;
-            this.setColorButton.Text = "set mesh color";
-            this.setColorButton.UseVisualStyleBackColor = true;
-            this.setColorButton.Click += new System.EventHandler(this.setColorButton_Click);
+            this.smoothGroupsButton.Location = new System.Drawing.Point(297, 135);
+            this.smoothGroupsButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.smoothGroupsButton.Name = "smoothGroupsButton";
+            this.smoothGroupsButton.Size = new System.Drawing.Size(131, 39);
+            this.smoothGroupsButton.TabIndex = 7;
+            this.smoothGroupsButton.Text = "smooth groups";
+            this.smoothGroupsButton.UseVisualStyleBackColor = true;
+            this.smoothGroupsButton.Click += new System.EventHandler(this.smoothGroupsButton_Click);
             // 
             // Form1
             // 
@@ -200,6 +213,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button alignButton;
         private System.Windows.Forms.Button setColorButton;
+        private System.Windows.Forms.Button smoothGroupsButton;
     }
 }
 

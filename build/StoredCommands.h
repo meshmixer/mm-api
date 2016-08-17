@@ -417,6 +417,7 @@ public:
 			"preserveBoundary" : boolean 
 			"preserveGroupBorders" : boolean 
 			"projectToTarget" : boolean 
+			"createNewGroups" : boolean
 		[mirror]				- Mirror tool
 			"origin" : vector3f 
 			"normal" : vector3f 
@@ -522,6 +523,8 @@ public:
 			"operationType" : integer 
 			"directionConstraint" : integer 
 			"solveIterations" : integer 
+			"startPosition" : vector3 (read-only, in scene coordinates - use utility command to modify)
+			"endPosition"   : vector3 (read-only, in scene coordinates - use utility command to modify)
         [createPivot]           - Create Pivot tool
              "offset" : float
              "offsetWorld" : float
@@ -775,6 +778,9 @@ public:
 			"setDirectionMode" : int  NormalDirection = 0, XAxis = 1, YAxis = 2, ZAxis = 3
 	 *   [alignToTarget]
 			"improveSolution"
+	 *   [addTube]
+			"setStartPoint"  : vec3
+			"setEndPoint"    : vec3
 	 *   [volumeBrush]
 			"setPrimary":    "drag","draw","draw2","flatten","inflate","pinch","move","spikes","paintVertex","attract",
 						     "bubbleSmooth","shrinkSmooth","robustSmooth",
@@ -884,6 +890,10 @@ public:
 
     Key AppendSceneCommand_SetObjectFrame( int nObjectID, const frame3f & f );
         bool GetSceneCommandResult_SetObjectFrame( Key k );
+
+	// list all face groups in mesh object (warning: can overflow buffer if # of groups is very large)
+	Key AppendSceneCommand_ListFaceGroups( int nObjectID );
+		bool GetSceneCommandResult_ListFaceGroups( Key k, std::vector<int> & vGroupIDs );
 
 	// visibility
 	Key AppendSceneCommand_SetVisible( int nObjectID );
@@ -1384,7 +1394,8 @@ private:
 		GetObjectUUID = 51,
 		FindObjectByUUID = 52,
 
-		SetAllVertexColors = 53
+		SetAllVertexColors = 53,
+		ListFaceGroups = 54
 	};
 	struct SceneCmd {
 		SceneCmdType eType;

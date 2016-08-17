@@ -1830,7 +1830,7 @@ StoredCommands::Key StoredCommands::AppendSceneCommand_GetObjectFrame( int nObje
  }
 
 
- StoredCommands::Key StoredCommands::AppendSceneCommand_SetObjectFrame( int nObjectID, const frame3f & f )
+StoredCommands::Key StoredCommands::AppendSceneCommand_SetObjectFrame( int nObjectID, const frame3f & f )
 {
 	Command c;  c.init();
 	c.eType = SceneCommand;
@@ -1846,6 +1846,27 @@ StoredCommands::Key StoredCommands::AppendSceneCommand_GetObjectFrame( int nObje
 	Command & c = m_vCommands[k];
 	return ( c.r.scene.OK == 0 ) ? false : true;
  }
+
+
+
+
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_ListFaceGroups( int nObjectID )
+{
+	Command c;  c.init();
+	c.eType = SceneCommand;
+	c.c.scene.eType = ListFaceGroups;
+	c.c.scene.nObjectIDs.append(nObjectID);
+	return append_command(c);
+}
+bool StoredCommands::GetSceneCommandResult_ListFaceGroups( Key k, std::vector<int> & vGroupIDs )
+{
+	if ( k >= m_vCommands.size() || m_vCommands[k].r.select.OK == 0)
+		return false;
+	Command & c = m_vCommands[k];
+	mmsc_extract_vector( vGroupIDs, c.r.scene.nObjectIDs );
+	return true;
+}
 
 
 

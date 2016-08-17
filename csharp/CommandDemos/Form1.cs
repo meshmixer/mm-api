@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
+using mm;
 
 namespace examples
 {
@@ -37,6 +38,14 @@ namespace examples
         {
             set_mesh_color_test();
         }
+
+
+
+        private void smoothGroupsButton_Click(object sender, EventArgs e)
+        {
+            smooth_groups_test();
+        }
+
 
         private void plane_cut_test()
         {
@@ -101,6 +110,16 @@ namespace examples
             return v.ToList();
         }
 
+        private Vector3 get_pivot_location(mm.RemoteControl rc, int pivotID)
+        {
+            StoredCommands sc = new StoredCommands();
+            uint key = sc.AppendSceneCommand_GetObjectFrame(pivotID);
+            rc.ExecuteCommands(sc);
+            frame3f f = new frame3f();
+            bool bOK = sc.GetSceneCommandResult_GetObjectFrame(key, f);
+            return new Vector3(f.origin_x, f.origin_y, f.origin_z);
+        }
+
         private void align_test()
         {
             mm.RemoteControl rc = new mm.RemoteControl();
@@ -123,10 +142,40 @@ namespace examples
             sc.AppendToolUtilityCommand("setDestPivot", destPivotID);
             //sc.AppendToolParameterCommand("flip", true);
             sc.AppendCompleteToolCommand("accept");
+        }
 
+
+        private void smooth_groups_test()
+        {
+            mm.RemoteControl rc = new mm.RemoteControl();
+            rc.Initialize();
+
+            List<int> o = get_selected_objects(rc);
+            int id = o[0];
+
+            StoredCommands sc = new StoredCommands();
+            uint key1 = sc.AppendSceneCommand_ListFaceGroups(id);
             rc.ExecuteCommands(sc);
+            vectori groupv = new vectori();
+            sc.GetSceneCommandResult_ListFaceGroups(key1, groupv);
+            var vGroups = groupv.ToList();
+
+            foreach (int g in vGroups)
+            {
+                StoredCommands cmd = new StoredCommands();
+                vectori v = new vectori() { g };
+                cmd.AppendSelectCommand_ByFaceGroups(v);
+                cmd.AppendBeginToolCommand("smoothBoundary");
+                cmd.AppendToolParameterCommand("preserveGroupBorders", false);
+                cmd.AppendToolParameterCommand("preserveBoundary", true);
+                cmd.AppendCompleteToolCommand("accept");
+                cmd.AppendCompleteToolCommand("cancel");
+                rc.ExecuteCommands(cmd);
+            }
+
             rc.Shutdown();
         }
+
 
 
         private void set_mesh_color_test()

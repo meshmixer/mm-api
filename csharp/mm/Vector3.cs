@@ -29,5 +29,12 @@ namespace mm
             f.setitem(0, v[0]); f.setitem(1, v[1]); f.setitem(2, v[2]);
             return f;
         }
+
+        public vec3f toVec3()
+        {
+            vec3f f = new vec3f();
+            f.x = v[0]; f.y = v[1]; f.z = v[2];
+            return f;
+        }
     }
 }
