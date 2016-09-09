@@ -17,6 +17,15 @@ namespace mm
         public void Set(floatArray f) { v[0] = f.getitem(0); v[1] = f.getitem(1); v[2] = f.getitem(2); }
 
 
+        public Vector3 Add(Vector3 a)
+        {
+            return new Vector3(v[0] + a.v[0], v[1] + a.v[1], v[2] + a.v[2]);
+        }
+        public Vector3 Multiply(float s)
+        {
+            return new Vector3(s * v[0], s * v[1], s * v[2]);
+        }
+
         public float this[int key]
         {
             get { return v[key]; }

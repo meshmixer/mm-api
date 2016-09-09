@@ -279,6 +279,52 @@ namespace examples
 
 
 
+
+        private frame3f get_pivot_frame(mm.RemoteControl rc, int pivotID)
+        {
+            StoredCommands sc = new StoredCommands();
+            uint key = sc.AppendSceneCommand_GetObjectFrame(pivotID);
+            rc.ExecuteCommands(sc);
+            frame3f f = new frame3f();
+            bool bOK = sc.GetSceneCommandResult_GetObjectFrame(key, f);
+            return f;
+        }
+
+        private void pivotTransformButton_Click(object sender, EventArgs e)
+        {
+            mm.RemoteControl rc = new mm.RemoteControl();
+            rc.Initialize();
+
+            // in world units
+            Vector3 frameTranslation = new Vector3(0, 0, 20);
+
+            int objectID = get_object_id(rc, "object");
+            int pivotID = get_object_id(rc, "pivot");
+
+            List<int> selected = get_selected_objects(rc);
+            System.Diagnostics.Debug.Assert(selected != null && selected.Count == 1 && selected[0] == objectID, "the mesh you want to move must be selected");
+
+            frame3f pivotFrame = get_pivot_frame(rc, pivotID);
+            Vector3 x = new Vector3(pivotFrame.tan1_x, pivotFrame.tan1_y, pivotFrame.tan1_z);
+            Vector3 y = new Vector3(pivotFrame.tan2_x, pivotFrame.tan2_y, pivotFrame.tan2_z);
+            Vector3 z = new Vector3(pivotFrame.origin_x, pivotFrame.origin_y, pivotFrame.origin_z);
+            Vector3 worldTranslation = x.Multiply(frameTranslation[0]);
+            worldTranslation = worldTranslation.Add(y.Multiply(frameTranslation[1]));
+            worldTranslation = worldTranslation.Add(z.Multiply(frameTranslation[2]));
+
+            vec3f translate = worldTranslation.toVec3();
+
+            StoredCommands sc = new StoredCommands();
+            sc.AppendBeginToolCommand("transform");
+            sc.AppendToolParameterCommand("translationWorld", translate);
+            rc.ExecuteCommands(sc);
+
+
+            rc.Shutdown();
+        }
+
+
+
         private void queriesButton_Click(object sender, EventArgs e)
         {
             mm.RemoteControl rc = new mm.RemoteControl();
@@ -303,6 +349,7 @@ namespace examples
             pm.InitializeToTestMesh();
             pm.Write("c:\\scratch\\livemesh_test.bin");
         }
+
 
 
 

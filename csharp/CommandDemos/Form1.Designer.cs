@@ -33,6 +33,7 @@
             this.queriesButton = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.smoothGroupsButton = new System.Windows.Forms.Button();
             this.setColorButton = new System.Windows.Forms.Button();
             this.alignButton = new System.Windows.Forms.Button();
             this.outputTextBox = new System.Windows.Forms.TextBox();
@@ -40,7 +41,7 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.testWriteButton = new System.Windows.Forms.Button();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.smoothGroupsButton = new System.Windows.Forms.Button();
+            this.pivotTransformButton = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -92,6 +93,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.pivotTransformButton);
             this.tabPage1.Controls.Add(this.smoothGroupsButton);
             this.tabPage1.Controls.Add(this.setColorButton);
             this.tabPage1.Controls.Add(this.alignButton);
@@ -108,6 +110,17 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Basic Stuff";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // smoothGroupsButton
+            // 
+            this.smoothGroupsButton.Location = new System.Drawing.Point(297, 135);
+            this.smoothGroupsButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.smoothGroupsButton.Name = "smoothGroupsButton";
+            this.smoothGroupsButton.Size = new System.Drawing.Size(131, 39);
+            this.smoothGroupsButton.TabIndex = 7;
+            this.smoothGroupsButton.Text = "smooth groups";
+            this.smoothGroupsButton.UseVisualStyleBackColor = true;
+            this.smoothGroupsButton.Click += new System.EventHandler(this.smoothGroupsButton_Click);
             // 
             // setColorButton
             // 
@@ -171,16 +184,16 @@
             this.testWriteButton.Text = "Test Write";
             this.testWriteButton.UseVisualStyleBackColor = true;
             // 
-            // smoothGroupsButton
+            // pivotTransformButton
             // 
-            this.smoothGroupsButton.Location = new System.Drawing.Point(297, 135);
-            this.smoothGroupsButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.smoothGroupsButton.Name = "smoothGroupsButton";
-            this.smoothGroupsButton.Size = new System.Drawing.Size(131, 39);
-            this.smoothGroupsButton.TabIndex = 7;
-            this.smoothGroupsButton.Text = "smooth groups";
-            this.smoothGroupsButton.UseVisualStyleBackColor = true;
-            this.smoothGroupsButton.Click += new System.EventHandler(this.smoothGroupsButton_Click);
+            this.pivotTransformButton.Location = new System.Drawing.Point(7, 178);
+            this.pivotTransformButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.pivotTransformButton.Name = "pivotTransformButton";
+            this.pivotTransformButton.Size = new System.Drawing.Size(131, 39);
+            this.pivotTransformButton.TabIndex = 8;
+            this.pivotTransformButton.Text = "pivot xform";
+            this.pivotTransformButton.UseVisualStyleBackColor = true;
+            this.pivotTransformButton.Click += new System.EventHandler(this.pivotTransformButton_Click);
             // 
             // Form1
             // 
@@ -214,6 +227,7 @@
         private System.Windows.Forms.Button alignButton;
         private System.Windows.Forms.Button setColorButton;
         private System.Windows.Forms.Button smoothGroupsButton;
+        private System.Windows.Forms.Button pivotTransformButton;
     }
 }
 
