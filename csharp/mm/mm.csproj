@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="g3Conversion.cs" />
     <Compile Include="g3Extensions.cs" />
     <Compile Include="PackedMesh.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

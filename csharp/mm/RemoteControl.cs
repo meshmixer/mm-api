@@ -737,7 +737,7 @@ namespace mm
             return (bOK) ? g3Extensions.ToVector3f(v) : Vector3f.Invalid;
         }
 
-        public Vector3f[] GetVertexPositionInRange(int nObjectID, int nVertexIDStart, int nCount)
+        public Vector3f[] GetVertexPositionInRange(int nObjectID, int nVertexIDStart, int nCount, bool bInWorld = true)
         {
             StoredCommands sc = new StoredCommands();
             uint[] keys = new uint[nCount];
@@ -750,6 +750,10 @@ namespace mm
                 bool bOK = sc.GetSceneCommandResult_GetVertexPosition(keys[k], v);
                 vPositions[k] = (bOK) ? g3Extensions.ToVector3f(v) : Vector3f.Invalid;
             }
+
+            if (bInWorld)
+                ToWorld(vPositions, nCount);
+
             return vPositions;
         }
 
@@ -775,6 +779,53 @@ namespace mm
                 ExecuteCommands(sc);
             }
         }
+
+
+
+        public int GetTriangleCount(int nObjectID)
+        {
+            StoredCommands sc = new StoredCommands();
+            uint key = sc.AppendSceneCommand_GetTriangleCount(nObjectID);
+            ExecuteCommands(sc);
+            any_result r = new any_result();
+            bool bOK = sc.GetSceneCommandResult_GetTriangleCount(key, r);
+            return (bOK) ? r.i : -1;
+        }
+
+
+        public Index3i[] GetTrianglesInRange(int nObjectID, int nTriangleIDStart, int nCount)
+        {
+            StoredCommands sc = new StoredCommands();
+            uint[] keys = new uint[nCount];
+            for ( int k = 0; k < nCount; ++k)
+                keys[k] = sc.AppendSceneCommand_GetTriangleIndices(nObjectID, nTriangleIDStart+k);
+            ExecuteCommands(sc);
+            Index3i[] vTriangles = new Index3i[nCount];
+            for (int k = 0; k < nCount; ++k) {
+                vec3i v = new vec3i();
+                bool bOK = sc.GetSceneCommandResult_GetTriangleIndices(keys[k], v);
+                vTriangles[k] = (bOK) ? g3Extensions.ToIndex3i(v) : Index3i.Max;
+            }
+            return vTriangles;
+        }
+
+
+        public int[] GetFaceGroupsInRange(int nObjectID, int nTriangleIDStart, int nCount)
+        {
+            StoredCommands sc = new StoredCommands();
+            uint[] keys = new uint[nCount];
+            for ( int k = 0; k < nCount; ++k)
+                keys[k] = sc.AppendSceneCommand_GetTriangleGroup(nObjectID, nTriangleIDStart+k);
+            ExecuteCommands(sc);
+            int[] vGroups = new int[nCount];
+            for (int k = 0; k < nCount; ++k) {
+                any_result r = new any_result();
+                bool bOK = sc.GetSceneCommandResult_GetTriangleGroup(keys[k], r);
+                vGroups[k] = (bOK) ? r.i : -1;
+            }
+            return vGroups;
+        }
+
 
     }
 }

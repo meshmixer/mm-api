@@ -35,5 +35,11 @@ namespace mm
             vec.x = v[0]; vec.y = v[1]; vec.z = v[2];
             return vec;
         }
+
+
+        public static Index3i ToIndex3i(vec3i ijk)
+        {
+            return new Index3i(ijk.i, ijk.j, ijk.k);
+        }
     }
 }
