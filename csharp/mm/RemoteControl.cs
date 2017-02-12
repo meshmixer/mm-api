@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
+using g3;
 
 namespace mm
 {
@@ -110,7 +111,7 @@ namespace mm
         public frame3f WorldFrame()
         {
             frame3f f = new frame3f();
-            Vector3 vOriginS = ToScene(new Vector3(0, 0, 0));
+            Vector3f vOriginS = ToScene(new Vector3f(0, 0, 0));
             f.origin_x = vOriginS[0]; f.origin_y = vOriginS[1]; f.origin_z = vOriginS[2];
 
             f.tan1_x = 1.0f; f.tan1_y = 0.0f; f.tan1_z = 0.0f;
@@ -194,16 +195,16 @@ namespace mm
 
 
 
-        public Frame3 GetObjectFrame(int id)
+        public mmFrame GetObjectFrame(int id)
         {
             StoredCommands sc = new StoredCommands();
             uint key = sc.AppendSceneCommand_GetObjectFrame(id);
             ExecuteCommands(sc);
             frame3f f = new frame3f();
             sc.GetSceneCommandResult_GetObjectFrame(key, f);
-            return new Frame3(f);
+            return new mmFrame(f);
         }
-        public void SetObjectFrame(int id, Frame3 newFrame)
+        public void SetObjectFrame(int id, mmFrame newFrame)
         {
             frame3f f = newFrame.toFrame3f();
             StoredCommands sc = new StoredCommands();
@@ -346,13 +347,13 @@ namespace mm
             sc.AppendToolParameterCommand(paramName, b);
             ExecuteCommands(sc);
         }
-        public void SetToolParameter(string paramName, Vector3 v)
+        public void SetToolParameter(string paramName, Vector3f v)
         {
             StoredCommands sc = new StoredCommands();
             sc.AppendToolParameterCommand(paramName, v[0], v[1], v[2]);
             ExecuteCommands(sc);
         }
-        public void SetToolParameter(string paramName, Matrix3 m)
+        public void SetToolParameter(string paramName, mmMatrix m)
         {
             StoredCommands sc = new StoredCommands();
             sc.AppendToolParameterCommand(paramName, m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8]);
@@ -373,8 +374,8 @@ namespace mm
                 } else if (t.Equals(typeof(bool))) {
                     sc.AppendToolParameterCommand(entry.Key, (bool)entry.Value);
                     nValid++;
-                } else if (t.Equals(typeof(Vector3))) {
-                    Vector3 v = (Vector3)entry.Value;
+                } else if (t.Equals(typeof(Vector3f))) {
+                    Vector3f v = (Vector3f)entry.Value;
                     sc.AppendToolParameterCommand(entry.Key, v[0], v[1], v[2]);
                     nValid++;
                 }
@@ -420,7 +421,7 @@ namespace mm
             b = r.b;
             return bOK;
         }
-        public bool GetToolParameter(string paramName, ref Vector3 v)
+        public bool GetToolParameter(string paramName, ref Vector3f v)
         {
             any_result r = new any_result();
             bool bOK = GetToolParameter(paramName, ref r);
@@ -497,14 +498,14 @@ namespace mm
             ExecuteCommands(sc);
         }
 
-        public void SelectInsideBox(Vector3 min, Vector3 max)
+        public void SelectInsideBox(Vector3f min, Vector3f max)
         {
             StoredCommands sc = new StoredCommands();
             sc.AppendSelectCommand_InsideBox(min[0], max[0], min[1], max[1], min[2], max[2]);
             ExecuteCommands(sc);
         }
 
-        public void SelectRayHitTriangle(Vector3 o, Vector3 d)
+        public void SelectRayHitTriangle(Vector3f o, Vector3f d)
         {
             StoredCommands sc = new StoredCommands();
             uint key = sc.AppendSelectCommand_FirstTriangleIntersectingRay(o[0], o[1], o[2], d[0], d[1], d[2]);
@@ -529,7 +530,7 @@ namespace mm
             return tmp.ToList();
         }
 
-        public void SelectedFacesBoundingBox(ref Box3 box)
+        public void SelectedFacesBoundingBox(ref AxisAlignedBox3f box)
         {
             StoredCommands sc = new StoredCommands();
             uint key = sc.AppendQueryCommand_GetSelectedFacesBoundingBox();
@@ -538,14 +539,14 @@ namespace mm
             sc.GetQueryResult_GetSelectedFacesBoundingBox(key, min.cast(), max.cast());
             box.Min.Set(min); box.Max.Set(max);
         }
-        public Vector3 SelectedFacesCentroid()
+        public Vector3f SelectedFacesCentroid()
         {
             StoredCommands sc = new StoredCommands();
             uint key = sc.AppendQueryCommand_GetSelectedFacesCentroid();
             ExecuteCommands(sc);
             floatArray c = new floatArray(3);
             sc.GetQueryResult_GetSelectedFacesCentroid(key, c.cast());
-            return new Vector3(c);
+            return g3Extensions.ToVector3f(c);
         }
 
 
@@ -561,7 +562,7 @@ namespace mm
 
 
 
-        public Frame3 NearestSurfacePoint(Vector3 queryPt)
+        public mmFrame NearestSurfacePoint(Vector3f queryPt)
         {
             StoredCommands sc = new StoredCommands();
             uint key = sc.AppendQueryCommand_FindNearestPoint(queryPt[0], queryPt[1], queryPt[2]);
@@ -569,7 +570,7 @@ namespace mm
 
             frame3f f = new frame3f();
             sc.GetQueryResult_FindNearestPoint(key, f);
-            return new Frame3(f);
+            return new mmFrame(f);
         }
 
 
@@ -591,25 +592,25 @@ namespace mm
             return f.getitem(0);
         }
 
-        public Vector3 ToWorld(Vector3 vScene) {
+        public Vector3f ToWorld(Vector3f vScene) {
             StoredCommands sc = new StoredCommands();
             floatArray f = vScene.toFloatArray();
             uint key = sc.AppendQueryCommand_ConvertPointToWorld(f.cast());
             ExecuteCommands(sc);
             sc.GetQueryResult_ConvertPointToWorld(key, f.cast());
-            return new Vector3(f);
+            return g3Extensions.ToVector3f(f);
         }
-        public Vector3 ToScene(Vector3 vWorld) {
+        public Vector3f ToScene(Vector3f vWorld) {
             StoredCommands sc = new StoredCommands();
             floatArray f = vWorld.toFloatArray();
             uint key = sc.AppendQueryCommand_ConvertPointToScene(f.cast());
             ExecuteCommands(sc);
             sc.GetQueryResult_ConvertPointToScene(key, f.cast());
-            return new Vector3(f);
+            return g3Extensions.ToVector3f(f);
         }
 
 
-        public void ToWorld(Vector3[] vScenePoints, int nBatchSize)
+        public void ToWorld(Vector3f[] vScenePoints, int nBatchSize)
         {
             int nBatches = vScenePoints.Length / nBatchSize;
             uint[] keys = new uint[nBatchSize];
@@ -619,24 +620,24 @@ namespace mm
                 int iStart = j * nBatchSize;
                 int iUseSize = (j == nBatches) ? (vScenePoints.Length - nBatches * nBatchSize) : nBatchSize;
                 for (int k = 0; k < iUseSize; ++k) {
-                    if (vScenePoints[iStart + k] != Vector3.Invalid) {
+                    if (vScenePoints[iStart + k] != Vector3f.Invalid) {
                         floatArray f = vScenePoints[iStart + k].toFloatArray();
                         keys[k] = sc.AppendQueryCommand_ConvertPointToWorld(f.cast());
                     }
                 }
                 ExecuteCommands(sc);
                 for (int k = 0; k < iUseSize; ++k) {
-                    if (vScenePoints[iStart + k] != Vector3.Invalid) {
+                    if (vScenePoints[iStart + k] != Vector3f.Invalid) {
                         floatArray f = vScenePoints[iStart + k].toFloatArray();
                         sc.GetQueryResult_ConvertPointToScene(keys[k], f.cast());
-                        vScenePoints[iStart+k] = new Vector3(f);
+                        vScenePoints[iStart+k] = g3Extensions.ToVector3f(f);
                     }
                 }
             }
         }
 
 
-        public void SetView(Vector3 vPosition, Vector3 vTarget, Vector3 vUp)
+        public void SetView(Vector3f vPosition, Vector3f vTarget, Vector3f vUp)
         {
             StoredCommands sc = new StoredCommands();
             sc.CameraControl_Begin();
@@ -666,7 +667,7 @@ namespace mm
 
 
 
-        public bool FindRayIntersection(Vector3 o, Vector3 d, ref Vector3 vHit)
+        public bool FindRayIntersection(Vector3f o, Vector3f d, ref Vector3f vHit)
         {
             StoredCommands sc = new StoredCommands();
             uint key = sc.AppendQueryCommand_FindRayIntersection(o[0], o[1], o[2], d[0], d[1], d[2]);
@@ -674,11 +675,11 @@ namespace mm
             frame3f frame = new frame3f();
             bool bHit = sc.GetQueryResult_FindRayIntersection(key, frame);
             if (bHit)
-                vHit = new Vector3(frame.origin_x, frame.origin_y, frame.origin_z);
+                vHit = new Vector3f(frame.origin_x, frame.origin_y, frame.origin_z);
             return bHit;
         }
 
-        public void ObjectBoundingBox(int objectID, ref Box3 box)
+        public void ObjectBoundingBox(int objectID, ref AxisAlignedBox3f box)
         {
             StoredCommands sc = new StoredCommands();
             uint key = sc.AppendQueryCommand_GetObjectBoundingBox(objectID);
@@ -689,7 +690,7 @@ namespace mm
         }
 
 
-        public void SelectionBoundingBox(ref Box3 box)
+        public void SelectionBoundingBox(ref AxisAlignedBox3f box)
         {
             StoredCommands sc = new StoredCommands();
             uint key = sc.AppendQueryCommand_GetBoundingBox();
@@ -726,41 +727,41 @@ namespace mm
         }
 
 
-        public Vector3 GetVertexPosition(int nObjectID, int nVertexID)
+        public Vector3f GetVertexPosition(int nObjectID, int nVertexID)
         {
             StoredCommands sc = new StoredCommands();
             uint key = sc.AppendSceneCommand_GetVertexPosition(nObjectID, nVertexID);
             ExecuteCommands(sc);
             vec3f v = new vec3f();
             bool bOK = sc.GetSceneCommandResult_GetVertexPosition(key, v);
-            return (bOK) ? new Vector3(v) : new Vector3(Vector3.Invalid);
+            return (bOK) ? g3Extensions.ToVector3f(v) : Vector3f.Invalid;
         }
 
-        public Vector3[] GetVertexPositionInRange(int nObjectID, int nVertexIDStart, int nCount)
+        public Vector3f[] GetVertexPositionInRange(int nObjectID, int nVertexIDStart, int nCount)
         {
             StoredCommands sc = new StoredCommands();
             uint[] keys = new uint[nCount];
             for ( int k = 0; k < nCount; ++k)
                 keys[k] = sc.AppendSceneCommand_GetVertexPosition(nObjectID, nVertexIDStart+k);
             ExecuteCommands(sc);
-            Vector3[] vPositions = new Vector3[nCount];
+            Vector3f[] vPositions = new Vector3f[nCount];
             for (int k = 0; k < nCount; ++k) {
                 vec3f v = new vec3f();
                 bool bOK = sc.GetSceneCommandResult_GetVertexPosition(keys[k], v);
-                vPositions[k] = (bOK) ? new Vector3(v) : new Vector3(Vector3.Invalid);
+                vPositions[k] = (bOK) ? g3Extensions.ToVector3f(v) : Vector3f.Invalid;
             }
             return vPositions;
         }
 
 
 
-        public void SetVertexColor(int nObjectID, int nVertexID, Vector3 vColor)
+        public void SetVertexColor(int nObjectID, int nVertexID, Vector3f vColor)
         {
             StoredCommands sc = new StoredCommands();
             sc.AppendSceneCommand_SetVertexColor(nObjectID, nVertexID, vColor.toVec3f());
             ExecuteCommands(sc);
         }
-        public void SetVertexColors(int nObjectID, Vector3[] vColors, int nBatchSize)
+        public void SetVertexColors(int nObjectID, Vector3f[] vColors, int nBatchSize)
         {
             int nBatches = vColors.Length / nBatchSize;
             for (int j = 0; j <= nBatches; ++j) {
@@ -768,7 +769,7 @@ namespace mm
                 int iStart = j * nBatchSize;
                 int iUseSize = (j == nBatches) ? (vColors.Length - nBatches * nBatchSize) : nBatchSize;
                 for (int k = 0; k < iUseSize; ++k) {
-                    if (vColors[iStart + k] != Vector3.Invalid)
+                    if (vColors[iStart + k] != Vector3f.Invalid)
                         sc.AppendSceneCommand_SetVertexColor(nObjectID, iStart + k, vColors[iStart + k].toVec3f());
                 }
                 ExecuteCommands(sc);

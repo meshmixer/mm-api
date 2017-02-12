@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
 using mm;
+using g3;
 
 namespace examples
 {
@@ -110,14 +111,14 @@ namespace examples
             return v.ToList();
         }
 
-        private Vector3 get_pivot_location(mm.RemoteControl rc, int pivotID)
+        private Vector3f get_pivot_location(mm.RemoteControl rc, int pivotID)
         {
             StoredCommands sc = new StoredCommands();
             uint key = sc.AppendSceneCommand_GetObjectFrame(pivotID);
             rc.ExecuteCommands(sc);
             frame3f f = new frame3f();
             bool bOK = sc.GetSceneCommandResult_GetObjectFrame(key, f);
-            return new Vector3(f.origin_x, f.origin_y, f.origin_z);
+            return new Vector3f(f.origin_x, f.origin_y, f.origin_z);
         }
 
         private void align_test()
@@ -296,7 +297,7 @@ namespace examples
             rc.Initialize();
 
             // in world units
-            Vector3 frameTranslation = new Vector3(0, 0, 20);
+            Vector3f frameTranslation = new Vector3f(0, 0, 20);
 
             int objectID = get_object_id(rc, "object");
             int pivotID = get_object_id(rc, "pivot");
@@ -305,14 +306,13 @@ namespace examples
             System.Diagnostics.Debug.Assert(selected != null && selected.Count == 1 && selected[0] == objectID, "the mesh you want to move must be selected");
 
             frame3f pivotFrame = get_pivot_frame(rc, pivotID);
-            Vector3 x = new Vector3(pivotFrame.tan1_x, pivotFrame.tan1_y, pivotFrame.tan1_z);
-            Vector3 y = new Vector3(pivotFrame.tan2_x, pivotFrame.tan2_y, pivotFrame.tan2_z);
-            Vector3 z = new Vector3(pivotFrame.origin_x, pivotFrame.origin_y, pivotFrame.origin_z);
-            Vector3 worldTranslation = x.Multiply(frameTranslation[0]);
-            worldTranslation = worldTranslation.Add(y.Multiply(frameTranslation[1]));
-            worldTranslation = worldTranslation.Add(z.Multiply(frameTranslation[2]));
+            Vector3f x = new Vector3f(pivotFrame.tan1_x, pivotFrame.tan1_y, pivotFrame.tan1_z);
+            Vector3f y = new Vector3f(pivotFrame.tan2_x, pivotFrame.tan2_y, pivotFrame.tan2_z);
+            Vector3f z = new Vector3f(pivotFrame.origin_x, pivotFrame.origin_y, pivotFrame.origin_z);
+            Vector3f worldTranslation = frameTranslation[0] * x
+                + frameTranslation[1] * y + frameTranslation[2] * z;
 
-            vec3f translate = worldTranslation.toVec3();
+            vec3f translate = worldTranslation.toVec3f();
 
             StoredCommands sc = new StoredCommands();
             sc.AppendBeginToolCommand("transform");
@@ -330,8 +330,9 @@ namespace examples
             mm.RemoteControl rc = new mm.RemoteControl();
             rc.Initialize();
 
-            mm.Vector3 Min = new mm.Vector3(), Max = new mm.Vector3();
-            rc.SelectionBoundingBox(ref Min, ref Max);
+            AxisAlignedBox3f bounds = new AxisAlignedBox3f();
+            rc.SelectionBoundingBox(ref bounds);
+            Vector3f Min = bounds.Min, Max = bounds.Max;
 
             outputTextBox.Text = String.Format("Bounding Box [{0},{1},{2}]  [{3},{4},{5}]",
                 Min[0], Min[1], Min[2], Max[0], Max[1], Max[2]);
