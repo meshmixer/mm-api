@@ -1,0 +1,3 @@
+[submodule "csharp/geometry3Sharp"]
+	path = csharp/geometry3Sharp
+	url = https://github.com/gradientspace/geometry3Sharp
