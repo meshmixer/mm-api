@@ -1,7 +1,7 @@
 # Autodesk Meshmixer API  (mm-api)  
 v0.0 2016  
 copyright (c) 2014-2016 Autodesk Corporation    http://www.autodesk.com  
-contact:   Ryan.Schmidt@Autodesk.com       http://autodeskresearch.com/people/ryanschmidt  
+Contact:    meshmixer@autodesk.com    http://meshmixer.com
 See LICENSE file for license information  
 
 **WARNING** This API distribution is compatible with meshmixer 3.0 and 32-bit Python 2.7.
