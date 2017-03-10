@@ -58,3 +58,5 @@ cpp/**/*.suo
 # certain local files
 rms_*.bat
 
+csharp/MeshExtractor/bin/
+csharp/MeshExtractor/obj/

@@ -1,5 +1,5 @@
 /********************************************************************
- * (C) Copyright 2014 by Autodesk, Inc. All Rights Reserved. By using
+ * (C) Copyright 2016 by Autodesk, Inc. All Rights Reserved. By using
  * this code,  you  are  agreeing  to the terms and conditions of the
  * License  Agreement  included  in  the documentation for this code.
  * AUTODESK  MAKES  NO  WARRANTIES,  EXPRESS  OR  IMPLIED,  AS TO THE
@@ -26,12 +26,20 @@ namespace mm {
 
 class MainWindow;
 
+template <typename Type, size_t N>
+struct wrapped_array {
+	Type data[N];
+};
+
 
 struct vec3f {
 	float x,y,z;
 };
+struct vec3i {
+	int i,j,k;
+};
 struct mat3f {
-	float data[9];
+	wrapped_array<float, 9> m;
 };
 struct frame3f {
 	float origin_x, origin_y, origin_z;
@@ -237,8 +245,13 @@ public:
 
 		[select]			- start face selection tool
 			"size" : float 
-			"brushType" : integer 
+			"radiusWorld" : float 
+			"creaseAngleThreshold" : float 
+			"brushType" : integer			SphereVolume = 0, SphereDisc = 1, SurfaceUV = 2
+			"expandMode" : integer			GeodesicDistance = 0, LocalCreaseAngleDeviation = 1, ColorSimilarity = 2
 			"symmetry" : boolean 
+			"allowBackFaces" : boolean 
+			"restrictToExterior" : boolean 
 		[volumeBrush]		- start volume brush tool
 			"strength" : float  range [0,1]
 			"size" : float 
@@ -271,6 +284,7 @@ public:
 			"scale" : float 
 			"boundaryRotate" : float 
 			"replaceType" : integer   values:  MinimalFill = 0, FlatRefinedMesh = 1, MVCPlanarDeformation = 2
+			"createNewGroups" : boolean 
 		[discard]			- Discard tool
 		[reduce]			- Reduce tool
 			"percentage" : float 
@@ -292,12 +306,15 @@ public:
              "transitionWidth" : float
              "transitionWidthWorld" : float
              "normalThreshold" : float
+			 "sharpThreshold" : float 
              "goalType" : integer
                     RelativeDensity = 0, AdaptiveDensity = 1, TargetEdgeLength = 2, LinearSubdivision = 3
              "iterations" : integer
              "boundaryMode" : integer
                     FreeBoundary = 0, FixedBoundary = 1, RefinedFixedBoundary = 2
              "preserveGroups" : boolean
+			"smoothAcrossGroups" : boolean 
+			"findSharpEdges" : boolean 
 
 		[extrude]			- Extrude tool
 			"offset" : float   range [-inf, inf]
@@ -305,6 +322,7 @@ public:
 			"density" : float  range [0,1]
 			"endType" : integer   values: Offset = 0, Flat = 1
 			"directionType" : integer  values: Normal = 0, Constant = 1, XAxis = 2, YAxis = 3,	ZAxis = 4
+			"preserveGroups" : boolean 
 		[extract]			- Extract tool
 			"offset" : float 
 			"endType" : integer  values: OffsetDistance = 0,	 PlanarFlat = 1
@@ -316,6 +334,7 @@ public:
 			"softenWorld" : float 
 			"connected" : boolean 
 			"fixedBoundary" : boolean 
+			"preserveGroups" : boolean 
 		[handle]			- Handle tool
 			"smooth" : float 
 			"refine" : float 
@@ -342,6 +361,11 @@ public:
              "preserveGroups" : boolean
              "preserveBoundary" : boolean
              "findSharpEdges" : boolean
+		[alignToTarget]
+			"toleranceWorld" : float 
+			"sourceType" : integer 
+			"transformMode" : integer 
+			"maxIterations" : integer 
 		[flipNormals]		- Flip Normals tool
 		[fitPrimitive]		- Fit Primitive tool
 			"primitiveType" : integer
@@ -349,7 +373,7 @@ public:
                     Disc_Centroid = 5, Linear_Sweep = 6, Convex_Hull = 7
 			"singlePrimitive" : boolean
 			"createNewObjects" : boolean 
-
+			"meshDensity" : integer 
 		[makePart]			- Convert (selection) To Open Part
 		[makeSolidPart]		- Convert (selection) To Solid Part
 		[makePolygon]		- Convert (selection) to Stamp polygon
@@ -357,7 +381,8 @@ public:
 		[smooth]			- Smooth tool
 			"smooth" : float 
 			"scale" : float 
-			"reduceType" : integer 
+			"smoothType" : integer					Cotan = 0, Uniform = 1, Membrane = 2
+			"constraintRings" : integer 
 		[faceTransform]		- Transform tool
 			"harden" : float 
 			"pivotFrameMode" : integer 
@@ -390,6 +415,8 @@ public:
 			"iterations" : integer 
 			"expandLoops" : integer 
 			"preserveBoundary" : boolean 
+			"preserveGroupBorders" : boolean 
+			"projectToTarget" : boolean 
 		[mirror]				- Mirror tool
 			"origin" : vector3f 
 			"normal" : vector3f 
@@ -403,7 +430,11 @@ public:
 			"translation" : vector3f
             "translationWorld" : vector3f
 			"scale" : vector3f 
+			"dimensions" : vector3f 
 			"rotation" : matrix3f 
+			"enableSnapping" : boolean 
+			"absoluteSnapping" : boolean 
+			"snapStepSize" : float 
             "initialFrameOrigin" : vector3f
             "initialFrameOrientation" : matrix3f
 		[align]					- Align tool
@@ -423,17 +454,23 @@ public:
 		[closeCracks]			- Close Cracks tool
 		[generateFaceGroups]	- Generate Face Groups tool
 			"angleThreshold" : float 
+			"mode" : integer						OpeningAngle = 0, NormalDeviation = 1
+			"smallGroupThreshold" : integer 
 		[makeSolid]				- Make Solid tool
+			"solidCellSize" : float 
+			"meshCellSize" : float 
 			"offsetDistance" : float 
 			"offsetDistanceWorld" : float 
 			"minThickness" : float 
 			"minThicknessWorld" : float 
 			"edgeCollapseThresh" : float 
-			"solidType" : integer 
+			"solidType" : integer				Blocky = 0, Fast = 1, Accurate = 2, FastSharp = 3
 			"solidResolution" : integer 
 			"meshResolution" : integer 
+			"colorTransferMode" : integer    		NoColorTransfer = 0, AutoColorTransfer = 1, TransferVertexColors = 2, TransferMaterials = 3
 			"closeHoles" : boolean 
-			"transferFaceGroups" : boolean
+			"autoRepair" : boolean 
+			"transferFaceGroups" : boolean 
 		[hollow]				- Hollow tool
 			"offsetDistance" : float 
 			"offsetDistanceWorld" : float 
@@ -499,20 +536,47 @@ public:
              "linkToTarget" : boolean
      
 		[combine]				- Combine tool (multiple selected objects)
+
 		[union]					- Boolean Union 
 		[difference]			- Boolean Difference
 		[intersection]			- Boolean Intersection
+			"targetLengthScale" : float 
+			"robustModeDelta" : float 
+			"operationType" : integer			Union = 0, Difference = 1, Intersection = 2
+			"solutionType" : integer			FastApproximate = 0, Precise = 1, ExtraPrecise = 2
+			"maxRefineDepth" : integer 
+			"previewIterations" : integer 
+			"mergeRings" : integer 
+			"preserveGroupBoundaryEdges" : boolean 
+			"postReduce" : boolean 
+			"useIntersectionCurves" : boolean 
+			"robustMode" : boolean 
 
 		[inspector]				- Inspector tool
 			"smallComponentThreshold" : float 
 			"replaceType" : integer 
 		[units]					- Units/Dimensions tool
+			"units" : int	Centimeters = 1, Inches = 2, Millimeters = 3, Meters = 4, Feet = 5
 			"worldX" : float 
 			"worldY" : float 
 			"worldZ" : float 
+			"activeDimensionWorld" : float 
+			"activeDimensionTarget" : float 
+			"averageDeviation" : float 
+			"maxDeviation" : float 
 		[measure]				- Measure tool
+			"snapMode" : integer			SnapNone = 0, SnapToVertices = 1, SnapToEdges = 2, SnapToFacegroupBorders = 3
+			"dimensionValid" : boolean 
+			"dimension" : float 
+			"minDimension" : float 
+			"maxDimension" : float 
+			"queryPosition" : vector3f 
 		[stability]				- Stability analysis tool
 			"contactTolerance" : float 
+			"isStable" : boolean
+			"volume" : float
+			"surfaceArea" : float
+			"centerOfMassWorld" : vector3f
 		[strength]				- Strength analysis tool
 			"showSections" : boolean 
 		[overhangs]				- Overhangs/Support-Generation tool
@@ -540,6 +604,14 @@ public:
 		[thickness]				- Thickness analysis tool
 			"minThickness" : float 
 			"minThicknessWorld" : float 
+			"minFeatureSize" : float 
+			"minFeatureSizeWorld" : float 
+			"coneAngle" : float 
+			"grazingThresh" : float 
+			"wallThresh" : float 
+			"coneSamples" : integer 
+			"wallsOnly" : boolean 
+			"bakeVertexColors" : boolean 
 		[orientation]			- Orientation optimization tool
 			"overhangAngleDeg" : float 
 			"strengthWeight" : float 
@@ -549,6 +621,7 @@ public:
 			"origin" : vector3f 
 			"translation" : vector3f 
 			"rotation" : matrix3f 
+			"containInPrintVolume" : boolean 
 		[layout]				- Print Bed layout/packing tool
 			"borderWidth" : float 
 			"transformationType" : integer  Translate2D=0, Translate2D_Rotate2D=1
@@ -556,14 +629,62 @@ public:
 			"bedOrigin" : integer			RearLeftCorner = 0, Centered = 1
 			"packMetric" : integer		    Circular=0, Square=2, Left-to-Right=3
 		[deviation]				- Deviation measurement between two selected meshes
+			"maxDeviation" : float 
 			"maxDeviationWorld" : float 
+			"measuredMaxDeviationWorld" : float
+			"symmetric"	: bool
 		[clearance]				- Clearance measurement between two selected meshes
+			"minClearance" : float
+			"minClearanceWorld" : float
+			"measuredMinClearanceWorld" : float
+			"symmetric"	: bool
+		[meshQuery]
+			"snapMode" : integer 
+			"colorMode" : integer 
+			"triAspectRatio" : float 
+			"triMinAngle" : float 
+			"triMaxAngle" : float 
+			"vertexGaussCurvature" : float 
+			"vertexMeanCurvature" : float 
+			"colorMinInteriorAngle" : float 
+			"colorMaxInteriorAngle" : float 
+			"colorMinCurvature" : float 
+			"colorMaxCurvature" : float 
+			"colorInvalidRange" : float 
+			"vertexID" : integer 
+			"edgeID" : integer 
+			"triangleID" : integer 
+			"groupID" : integer 
+		[generateComplex]
+			"postSmoothAlpha" : float 
+			"offsetDistance" : float 
+			"offsetDistanceWorld" : float 
+			"mode" : integer 
+			"refineIters" : integer 
+			"remesh" : boolean 
+			"projectToFlat" : boolean 
+		[exportSVG]
+			"svgType" : integer 
+			"boundaryMode" : integer 
+			"faceFillColorMode" : integer 
+			"boundaryFillColorMode" : integer 
+			"includeEdges" : boolean 
+			"includeFaces" : boolean 
+		[unwrap]
+			"elementMode" : integer				UnwrapByComponents = 0, UnwrapByGroups = 1
+			"algorithm" : integer				AsRigidAsPossible = 0, DiscreteConformal = 1
+			"packingMode" : integer 			Centered = 0, Linear = 1, AutoPack = 2 
+			"packingWidth" : float 
+			"packingHeight" : float 
+			"packingBorder" : float 
 	 */
 	void AppendToolParameterCommand( std::string paramName, float fValue );
 	void AppendToolParameterCommand( std::string paramName, int nValue );
 	void AppendToolParameterCommand( std::string paramName, bool bValue );
 	void AppendToolParameterCommand( std::string paramName, float x, float y, float z );
 	void AppendToolParameterCommand( std::string paramName, float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22 );
+	void AppendToolParameterCommand( std::string paramName, vec3f v);
+	void AppendToolParameterCommand( std::string paramName, mat3f m );
 
 	Key AppendGetToolParameterCommand( std::string paramName );
 
@@ -573,6 +694,8 @@ public:
 	bool GetToolParameterCommandResult( Key k, bool & bValue );
 	bool GetToolParameterCommandResult( Key k, float & x, float & y, float & z );
 	bool GetToolParameterCommandResult( Key k, float & m00, float & m01, float & m02, float & m10, float & m11, float & m12, float & m20, float & m21, float & m22 );
+	bool GetToolParameterCommandResult( Key k, vec3f & v );
+	bool GetToolParameterCommandResult( Key k, mat3f & m );
 
 	// [RMS] not yet implemented for most Tools...
 	Key AppendToolQuery_NewGroups();
@@ -584,6 +707,12 @@ public:
 
 	/*
 	 * [RMS] handle cases where tool has explicit operation, like makeSolid update
+	 *	 [any tool]
+			"resetToDefaults"
+	 *	 [transform]
+			"setActivePivot"	// argument is integer ID of PivotSO
+	 *	 [planeCut]
+			"setActivePivot"	// argument is integer ID of PivotSO
 	 *   [makeSolid]
 			"update"
 	 *   [makePattern]
@@ -604,15 +733,33 @@ public:
 			"generateSupport"
 			"removeSupport"
 			"convertToSolid" :   NewObject=0, ReplaceExisting=1
+	 *   [generateComplex]
+			"autoGenerate"
+	 *   [meshQuery]
+			"setQueryPoint"	 : vec3
+	 *   [createPivot]
+			"dropPivot"
+	 *   [measure]
+			"setSourcePoint" : vec3
+			"setDestPoint"	 : vec3
+			"setMeasureMode" : int    MinInteriorDistance = 0, MinExteriorDistance = 1, MaxInteriorDistance = 2, MaxExteriorDistance = 3,  FixedPointPair = 4, PositionQuery = 5, CylinderFit = 6
+			"setDirectionMode" : int  NormalDirection = 0, XAxis = 1, YAxis = 2, ZAxis = 3
+	 *   [alignToTarget]
+			"improveSolution"
 	 *   [volumeBrush]
 			"setPrimary":    "drag","draw","draw2","flatten","inflate","pinch","move","spikes","paintVertex","attract",
 						     "bubbleSmooth","shrinkSmooth","robustSmooth",
 						     "refine","reduce","adaptiveReduce","zipperEdge"
 			"setSecondary":  "bubbleSmooth","shrinkSmooth","robustSmooth"
+	 *   [surfaceBrush]
+			"setPrimary":    "draw","draw2","draw2","drawmax","inflate","paintVertex","blur",
+						     "bubbleSmooth","shrinkSmooth","robustSmooth"
+			"setSecondary":  "bubbleSmooth","shrinkSmooth","robustSmooth"
 	 */
 	void AppendToolUtilityCommand( std::string commandName );
 	void AppendToolUtilityCommand( std::string commandName, int nValue );
 	void AppendToolUtilityCommand( std::string commandName, std::string sValue );
+	void AppendToolUtilityCommand( std::string commandName, const vec3f & p );
 	void AppendToolUtilityCommand( std::string commandName, const vec3f & v0, const vec3f & v1, float r0, float r1 );
 
 
@@ -652,6 +799,7 @@ public:
     // create pivot in scene
     Key AppendSceneCommand_CreatePivot( frame3f f );
         bool GetSceneCommandResult_CreatePivot( Key k, int & nObjectID );
+		bool GetSceneCommandResult_CreatePivot( Key k, any_result & nObjectID );
     
     // link pivot to object. If object ID is invalid, pivot is unlinked
     Key AppendSceneCommand_LinkPivot( int nPivotID, int nLinkToID );
@@ -684,9 +832,29 @@ public:
 		bool GetSceneCommandResult_GetObjectName( Key k, std::vector<unsigned char> & objectName );		// [RMS] for SWIG
 	Key AppendSceneCommand_SetObjectName(int nObjectID, const std::string & objectName );
 
+	Key AppendSceneCommand_GetObjectUUID(int nObjectID);
+		bool GetSceneCommandResult_GetObjectUUID( Key k, std::string & objectUUID );
+		bool GetSceneCommandResult_GetObjectUUID( Key k, std::vector<unsigned char> & objectUUID );		// [RMS] for SWIG
+
+
 	Key AppendSceneCommand_FindObjectByName(const std::string & objectName);
 		bool GetSceneCommandResult_FindObjectByName( Key k, int & nObjectID );
 		bool GetSceneCommandResult_FindObjectByName( Key k, any_result & nObjectID );
+
+	Key AppendSceneCommand_FindObjectByUUID(const std::string & objectUUID);
+		bool GetSceneCommandResult_FindObjectByUUID( Key k, int & nObjectID );
+		bool GetSceneCommandResult_FindObjectByUUID( Key k, any_result & nObjectID );
+
+	// -1 = Unknown, 1 = Mesh, 2 = Complex, 3 = Pivot, 4 = LiveMesh, 5 = Reference
+    Key AppendSceneCommand_GetObjectType( int nObjectID );
+        bool GetSceneCommandResult_GetObjectType( Key k, int & nObjectType );
+        bool GetSceneCommandResult_GetObjectType( Key k, any_result & nObjectType );
+
+    Key AppendSceneCommand_GetObjectFrame( int nObjectID );
+        bool GetSceneCommandResult_GetObjectFrame( Key k, frame3f & f );
+
+    Key AppendSceneCommand_SetObjectFrame( int nObjectID, const frame3f & f );
+        bool GetSceneCommandResult_SetObjectFrame( Key k );
 
 	// visibility
 	Key AppendSceneCommand_SetVisible( int nObjectID );
@@ -709,6 +877,69 @@ public:
 		bool GetSceneCommandResult_CreateTrackingLiveMesh( Key k, std::string & portName );
 		bool GetSceneCommandResult_CreateTrackingLiveMesh( Key k, std::vector<unsigned char> & portName );
 	Key AppendSceneCommand_HaltTrackingLiveMesh( const char * pPortName );
+
+
+	Key AppendSceneCommand_SelectPrinter( const char * pPrinterName );
+
+
+	/*
+	 * Mesh modification commands
+	 */
+
+    // create pivot in scene
+    Key AppendSceneCommand_CreateMesh();
+        bool GetSceneCommandResult_CreateMesh( Key k, int & nObjectID );
+		bool GetSceneCommandResult_CreateMesh( Key k, any_result & nObjectID );
+
+	// Discard un-used vertex and triangle IDs, and pack the rest into contiguous IDs.
+	// You **MUST** use this on existing Mesh objects before you use per-vertex/triangle commands, otherwise the results will be garbage
+	Key AppendSceneCommand_CompactMesh( int nObjectID );
+
+	// notify mesh that it has been modified. If you use Set or Append commands below, you will not see changes
+	// reflected until you run this command
+	Key AppendSceneCommand_UpdateMesh( int nObjectID );
+
+    Key AppendSceneCommand_GetVertexCount( int nObjectID );
+        bool GetSceneCommandResult_GetVertexCount( Key k, int & nCount );
+        bool GetSceneCommandResult_GetVertexCount( Key k, any_result & nCount );
+    Key AppendSceneCommand_GetTriangleCount( int nObjectID );
+        bool GetSceneCommandResult_GetTriangleCount( Key k, int & nCount );
+        bool GetSceneCommandResult_GetTriangleCount( Key k, any_result & nCount );
+
+    Key AppendSceneCommand_GetVertexPosition( int nObjectID, int nVertexID );
+        bool GetSceneCommandResult_GetVertexPosition( Key k, vec3f & v );
+    Key AppendSceneCommand_GetVertexNormal( int nObjectID, int nVertexID );
+        bool GetSceneCommandResult_GetVertexNormal( Key k, vec3f & v );
+    Key AppendSceneCommand_GetVertexColor( int nObjectID, int nVertexID );
+        bool GetSceneCommandResult_GetVertexColor( Key k, vec3f & v );
+    Key AppendSceneCommand_GetVertexInfo( int nObjectID, int nVertexID );		// more efficient than each of above sequentially
+        bool GetSceneCommandResult_GetVertexInfo( Key k, vec3f & v, vec3f & n, vec3f & c );
+
+    Key AppendSceneCommand_GetTriangleIndices( int nObjectID, int nTriangleID );
+        bool GetSceneCommandResult_GetTriangleIndices( Key k, vec3i & t );
+    Key AppendSceneCommand_GetTriangleGroup( int nObjectID, int nTriangleID );
+        bool GetSceneCommandResult_GetTriangleGroup( Key k, int & nGroupID );
+        bool GetSceneCommandResult_GetTriangleGroup( Key k, any_result & nGroupID );
+
+	Key AppendSceneCommand_SetVertexPosition(int nObjectID, int nVertexID, vec3f & v );
+	Key AppendSceneCommand_SetVertexNormal(int nObjectID, int nVertexID, vec3f & v );
+	Key AppendSceneCommand_SetVertexColor(int nObjectID, int nVertexID, vec3f & v );
+	Key AppendSceneCommand_SetTriangleGroup(int nObjectID, int nTriangleID, int nGroupID );
+
+    Key AppendSceneCommand_AppendVertex( int nObjectID, vec3f & v );
+    Key AppendSceneCommand_AppendVertex( int nObjectID, vec3f & v, vec3f & n );
+    Key AppendSceneCommand_AppendVertex( int nObjectID, vec3f & v, vec3f & n, vec3f & c );
+        bool GetSceneCommandResult_AppendVertex( Key k, int & nNewVertexID );
+        bool GetSceneCommandResult_AppendVertex( Key k, any_result & nNewVertexID );
+    Key AppendSceneCommand_AppendTriangle( int nObjectID, vec3i & t );
+    Key AppendSceneCommand_AppendTriangle( int nObjectID, vec3i & t, int nGroupID );
+        bool GetSceneCommandResult_AppendTriangle( Key k, int & nNewTriID );
+        bool GetSceneCommandResult_AppendTriangle( Key k, any_result & nNewTriID );
+
+    Key AppendSceneCommand_AllocateNewGroupID( int nObjectID );
+        bool GetSceneCommandResult_AllocateNewGroupID( Key k, int & nNewGroupID );
+        bool GetSceneCommandResult_AllocateNewGroupID( Key k, any_result & nNewGroupID );
+
 
 
 	/*
@@ -782,7 +1013,21 @@ public:
 	// Find all objects intersecting first object
 	Key AppendQueryCommand_FindIntersectingObjects( int nObjectID );
 		bool GetQueryResult_FindIntersectingObjects( Key k, std::vector<int> & vObjects );
-	
+
+	// list number of holes in current object
+	Key AppendQueryCommand_ListNumberOfHoles( );
+		bool GetQueryResult_ListNumberOfHoles( Key k, int & nHoles );
+		bool GetQueryResult_ListNumberOfHoles( Key k, any_result & nHoles );
+
+	// get bounding box of hole
+	Key AppendQueryCommand_FindClosestHole( const vec3f & p );
+		bool GetQueryResult_FindClosestHole( Key k, int & nHoleID );
+		bool GetQueryResult_FindClosestHole( Key k, any_result & nHoleID );
+
+	// get bounding box of hole
+	Key AppendQueryCommand_GetHoleBoundingBox( int nHoleID );
+		bool GetQueryResult_GetHoleBoundingBox( Key k, float fMin[3], float fMax[3] );
+
 
 	/*
 	 *  SELECTION COMMANDS
@@ -793,7 +1038,7 @@ public:
 	void AppendSelectCommand_All( );
 
 	// commands:
-	//  "selectVisible"    nArgument 0=Replace 1=Append 2=Remove
+	//  "selectVisible"
 	//  "expandToConnected"
 	//  "expandToGroups"
 	//  "expandByOneRing"
@@ -807,34 +1052,57 @@ public:
 
 	// parameter is 3D point
 	Key AppendSelectCommand_NearestComponent( float cx, float cy, float cz );
+	Key AppendSelectCommand_NearestComponent( float cx, float cy, float cz, int nMode );
 	Key AppendSelectCommand_ContainingComponent( float cx, float cy, float cz );
+	Key AppendSelectCommand_ContainingComponent( float cx, float cy, float cz, int nMode );
 
 	// parameters are ray origin & direction
 	Key AppendSelectCommand_FirstComponentIntersectingRay( float ox, float oy, float oz, float dx, float dy, float dz );
+	Key AppendSelectCommand_FirstComponentIntersectingRay( float ox, float oy, float oz, float dx, float dy, float dz, int nMode );
 	Key AppendSelectCommand_AllComponentsIntersectingRay( float ox, float oy, float oz, float dx, float dy, float dz );
+	Key AppendSelectCommand_AllComponentsIntersectingRay( float ox, float oy, float oz, float dx, float dy, float dz, int nMode );
 
 	// parameter is 3D point
 	Key AppendSelectCommand_NearestTriangle( float cx, float cy, float cz );
+	Key AppendSelectCommand_NearestTriangle( float cx, float cy, float cz, int nMode );
 
 	// parameters are ray origin & direction
 	Key AppendSelectCommand_FirstTriangleIntersectingRay( float ox, float oy, float oz, float dx, float dy, float dz );
+	Key AppendSelectCommand_FirstTriangleIntersectingRay( float ox, float oy, float oz, float dx, float dy, float dz, int nMode );
 	Key AppendSelectCommand_AllTrianglesIntersectingRay( float ox, float oy, float oz, float dx, float dy, float dz );
+	Key AppendSelectCommand_AllTrianglesIntersectingRay( float ox, float oy, float oz, float dx, float dy, float dz, int nMode );
 
 	// parameter is sphere center/radius
 	Key AppendSelectCommand_InsideSphere( float cx, float cy, float cz, float r );
+	Key AppendSelectCommand_InsideSphere( float cx, float cy, float cz, float r, int nMode );
 		bool GetSelectCommandResult_InsideSphere( Key k );
 
 	Key AppendSelectCommand_InsideBox( float xmin, float xmax, float ymin, float ymax, float zmin, float zmax );
+	Key AppendSelectCommand_InsideBox( float xmin, float xmax, float ymin, float ymax, float zmin, float zmax, int nMode );
 		bool GetSelectCommandResult_InsideBox( Key k );
 
 	Key AppendSelectCommand_IntersectingObject( int nObjectID, int nMode );
 
 	Key AppendSelectCommand_ByFaceGroups( const std::vector<int> & vGroupIDs );
+	Key AppendSelectCommand_ByFaceGroups( const std::vector<int> & vGroupIDs, int nMode );
 		bool GetSelectCommandResult_ByFaceGroups( Key k );
 
+	Key AppendSelectCommand_HoleBorderRing( int nHoleID, int nMode );
+		bool GetSelectCommandResult_HoleBorderRing( Key k );
+
+	// WARNING: this may overflow the command buffer over UDP sockets
 	Key AppendSelectCommand_ListSelectedFaceGroups();
 		bool GetSelectCommandResult_ListSelectedFaceGroups( Key k, std::vector<int> & vGroupIDs );
 
+	// WARNING: this may overflow the command buffer over UDP sockets
+	Key AppendSelectCommand_ListSelectedTriangles();
+		bool GetSelectCommandResult_ListSelectedTriangles( Key k, std::vector<int> & vTriangleIDs );
+
+	Key AppendSelectCommand_ByTriangleID( const std::vector<int> & vTriangles, int nMode );
+
+
+	Key AppendSelectCommand_HasValidSelection();
+		bool GetSelectCommandResult_HasValidSelection( Key k );
 
 	
 
@@ -874,6 +1142,7 @@ public:
 
 	Key AppendActionCommand_InsertPolygon( float x, float y, float z, float fRadius );
 	bool GetActionCommandResult_InsertPolygon( Key k, int & nNewGroupID );
+	bool GetActionCommandResult_InsertPolygon( Key k, any_result & nNewGroupID );
 
 
 
@@ -1054,7 +1323,36 @@ private:
 		ReleaseLiveMeshLock = 25,
 		NotifyLiveMeshUpdated = 26,
 		CreateTrackingLiveMesh = 27,
-		HaltTrackingLiveMesh = 28
+		HaltTrackingLiveMesh = 28,
+
+		GetObjectType = 29,
+		GetObjectFrame = 30,
+		SetObjectFrame = 31,
+
+		SelectPrinter = 32,
+
+
+		CompactMeshObject = 33,
+		GetVertexCount = 34,
+		GetTriangleCount = 35,
+		GetVertexPosition = 36,
+		GetVertexNormal = 37,
+		GetVertexColor = 38,
+		GetTriangleIndices = 39,
+		GetTriangleGroup = 40,
+		SetVertexPosition = 41,
+		SetVertexNormal = 42,
+		SetVertexColor = 43,
+		SetTriangleGroup = 44,
+		AppendVertex = 45,
+		AppendTriangle = 46,
+		UpdateMesh = 47,
+		AllocateNewGroupID = 48,
+		GetVertexInfo = 49,
+
+		CreateMeshObject = 50,
+		GetObjectUUID = 51,
+		FindObjectByUUID = 52
 	};
 	struct SceneCmd {
 		SceneCmdType eType;
@@ -1066,6 +1364,7 @@ private:
 		int OK;
 		fstring str;
 		vector_int nObjectIDs;
+		frame3f f;
 	};
 
 
@@ -1088,7 +1387,12 @@ private:
 		ListSelectedFaceGroups = 11,
 
 		SelectUtility = 12,
-		SelectIntersectingObject = 13
+		SelectIntersectingObject = 13,
+		HasValidSelection = 14,
+		SelectHoleBorderRing = 15,
+
+		ListSelectedTriangles = 16,
+		SelectTriangles = 17
 	};
 	struct SelectCmd {
 		SelectCmdType eType;
@@ -1160,7 +1464,10 @@ private:
 		ObjectIntersectionQuery = 11,
 		FindIntersectingObjects = 12,
 		SetObjectTypeFilter = 13,
-		ClearObjectTypeFilter = 14
+		ClearObjectTypeFilter = 14,
+		ListNumberOfHoles = 15,
+		GetHoleBoundingBox = 16,
+		FindClosestHole = 17
 	};
 	struct SpatialQueryCmd {
 		SpatialQueryType eType;

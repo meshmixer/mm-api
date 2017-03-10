@@ -1,5 +1,5 @@
 /********************************************************************
- * (C) Copyright 2014 by Autodesk, Inc. All Rights Reserved. By using
+ * (C) Copyright 2016 by Autodesk, Inc. All Rights Reserved. By using
  * this code,  you  are  agreeing  to the terms and conditions of the
  * License  Agreement  included  in  the documentation for this code.
  * AUTODESK  MAKES  NO  WARRANTIES,  EXPRESS  OR  IMPLIED,  AS TO THE
@@ -70,16 +70,60 @@ inline static void mmsc_extract_string_from_vector( std::string & str, const Sto
 	char buf[4096];
 	for ( unsigned int k = 0; k < vSource.nElements; ++k ) {
 		scAssert(vSource.data[k] < 255);
-		buf[k] = vSource.data[k];
+		buf[k] = static_cast<char>(vSource.data[k]);
 	}
 	buf[vSource.nElements] = '\0';
 	str = std::string(buf);
 }
 
-inline vec3f make_vec3f(float x, float y, float z)
+inline static vec3f make_vec3f(float x, float y, float z)
 {
 	vec3f v = {x,y,z};
 	return v;
+}
+inline static frame3f make_frame3f(float x, float y, float z)
+{
+	frame3f f;
+	f.origin_x = x; f.origin_y = y; f.origin_z = z;
+	return f;
+}
+inline static frame3f make_frame3f(float x, float y, float z, float nx, float ny, float nz)
+{
+	frame3f f;
+	f.origin_x = x; f.origin_y = y; f.origin_z = z;
+	f.normal_x = nx; f.normal_y = ny; f.normal_z = nz;
+	return f;
+}
+inline static frame3f make_frame3f(float x, float y, float z, float nx, float ny, float nz, float ax, float ay, float az, float bx, float by, float bz)
+{
+	frame3f f;
+	f.origin_x = x; f.origin_y = y; f.origin_z = z;
+	f.normal_x = nx; f.normal_y = ny; f.normal_z = nz;
+	f.tan1_x = ax; f.tan1_y = ay; f.tan1_z = az;
+	f.tan2_x = bx; f.tan2_y = by; f.tan2_z = bz;
+	return f;
+}
+inline static vec3f get_origin(frame3f f) 
+{
+	vec3f v = {f.origin_x, f.origin_y, f.origin_z};
+	return v;
+}
+inline static vec3f get_normal(frame3f f) 
+{
+	vec3f v = {f.normal_x, f.normal_y, f.normal_z};
+	return v;
+}
+inline static vec3f get_tan1(frame3f f) 
+{
+	vec3f v = {f.tan1_x, f.tan1_y, f.tan1_z};
+	return v;
+}
+inline mat3f make_mat3f(float f[9]) 
+{
+	mat3f m;
+	for ( int j = 0; j < 9; ++j) 
+		m.m.data[j] = f[j];
+	return m;
 }
 inline void make_mat3f(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22, float mat[9])
 {
@@ -89,7 +133,7 @@ inline void make_mat3f(float m00, float m01, float m02, float m10, float m11, fl
 }
 inline void make_mat3f(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22, mat3f & m)
 {
-	make_mat3f(m00,m01,m02,m10,m11,m12,m20,m21,m22,m.data);
+	make_mat3f(m00,m01,m02,m10,m11,m12,m20,m21,m22,m.m.data);
 }
 inline void unpack_mat3f(float & m00, float & m01, float & m02, float & m10, float & m11, float & m12, float & m20, float & m21, float & m22, const float mat[9])
 {
@@ -99,7 +143,7 @@ inline void unpack_mat3f(float & m00, float & m01, float & m02, float & m10, flo
 }
 inline void unpack_mat3f(float & m00, float & m01, float & m02, float & m10, float & m11, float & m12, float & m20, float & m21, float & m22, const mat3f & m)
 {
-	unpack_mat3f(m00,m01,m02,m10,m11,m12,m20,m21,m22,m.data);
+	unpack_mat3f(m00,m01,m02,m10,m11,m12,m20,m21,m22,m.m.data);
 }
 
 
@@ -187,7 +231,7 @@ void StoredCommands::Store(BinarySerializer & s)
 					s.append( c.c.toolparam.v.vec.y );
 					s.append( c.c.toolparam.v.vec.z );
 				} else if ( c.c.toolparam.eType == ToolParam_Mat3 || c.c.toolparam.eType == ToolParam_Utility_Mat3 ) {
-					s.append( c.c.toolparam.v.mat3.data, 9 );
+					s.append( c.c.toolparam.v.mat3.m.data, 9 );
 				} else if ( c.c.toolparam.eType == ToolParam_String || c.c.toolparam.eType == ToolParam_Utility_String ) {
 					s.append( c.c.toolparam.v.str.nSize );
 					if ( c.c.toolparam.v.str.nSize > 0 )
@@ -330,7 +374,7 @@ void StoredCommands::Restore(BinarySerializer & s)
 					s.restore( c.c.toolparam.v.vec.y );
 					s.restore( c.c.toolparam.v.vec.z );
 				} else if ( c.c.toolparam.eType == ToolParam_Mat3 || c.c.toolparam.eType == ToolParam_Utility_Mat3 ) {
-					s.restore( c.c.toolparam.v.mat3.data, 9 );
+					s.restore( c.c.toolparam.v.mat3.m.data, 9 );
 				} else if ( c.c.toolparam.eType == ToolParam_String || c.c.toolparam.eType == ToolParam_Utility_String ) {
 					s.restore( c.c.toolparam.v.str.nSize );
 					if ( c.c.toolparam.v.str.nSize > 0 )
@@ -455,7 +499,7 @@ void StoredCommands::Store_Results(rms::BinarySerializer & s)
 					s.append( c.r.toolparam.v.vec.y );
 					s.append( c.r.toolparam.v.vec.z );
 				} else if ( c.r.toolparam.eType == ToolParam_Get_Mat3 ) {
-					s.append( c.r.toolparam.v.mat3.data, 9 );
+					s.append( c.r.toolparam.v.mat3.m.data, 9 );
 				} else
 					s.append( c.r.toolparam.v.i );
 				break;
@@ -469,6 +513,7 @@ void StoredCommands::Store_Results(rms::BinarySerializer & s)
 				s.append( c.r.scene.nObjectIDs.nElements );
 				if ( c.r.scene.nObjectIDs.nElements > 0 )
 					s.append( c.r.scene.nObjectIDs.data, c.r.scene.nObjectIDs.nElements );
+				append_frame3f(s, c.r.scene.f);
 				break;
 
 			case SelectCommand:
@@ -570,7 +615,7 @@ void StoredCommands::Restore_Results(BinarySerializer & s)
 					s.restore( c.r.toolparam.v.vec.y );
 					s.restore( c.r.toolparam.v.vec.z );
 				} else if ( c.r.toolparam.eType == ToolParam_Get_Mat3 ) {
-					s.restore( c.r.toolparam.v.mat3.data, 9 );
+					s.restore( c.r.toolparam.v.mat3.m.data, 9 );
 				} else
 					s.restore( c.r.toolparam.v.i );
 				break;
@@ -584,6 +629,7 @@ void StoredCommands::Restore_Results(BinarySerializer & s)
 				s.restore( c.r.scene.nObjectIDs.nElements );
 				if ( c.r.scene.nObjectIDs.nElements > 0 )
 					s.restore( c.r.scene.nObjectIDs.data, c.r.scene.nObjectIDs.nElements );
+				restore_frame3f(s, c.r.scene.f);
 				break;
 
 			case SelectCommand:
@@ -1014,7 +1060,24 @@ void StoredCommands::AppendToolParameterCommand( std::string paramName, float m0
 	append_command(c);
 }
 
-
+void StoredCommands::AppendToolParameterCommand( std::string paramName, vec3f v )
+{
+	Command c;  c.init();
+	c.eType = ToolParameterCommand;
+	sprintf_s(c.c.toolparam.name, sizeof(c.c.toolparam.name), "%s", paramName.c_str());
+	c.c.toolparam.eType = ToolParam_Vec3;
+	c.c.toolparam.v.vec = v;
+	append_command(c);
+}
+void StoredCommands::AppendToolParameterCommand( std::string paramName, mat3f m )
+{
+	Command c;  c.init();
+	c.eType = ToolParameterCommand;
+	sprintf_s(c.c.toolparam.name, sizeof(c.c.toolparam.name), "%s", paramName.c_str());
+	c.c.toolparam.eType = ToolParam_Mat3;
+	c.c.toolparam.v.mat3 = m;
+	append_command(c);
+}
 
 
 
@@ -1104,7 +1167,24 @@ bool StoredCommands::GetToolParameterCommandResult( Key k, float & m00, float & 
 	} 
 	return false;
 }
-
+bool StoredCommands::GetToolParameterCommandResult( Key k, vec3f & v )
+{
+	any_result r;
+	if ( GetToolParameterCommandResult(k,r) && r.type == 3 ) {
+		v.x = r.x; v.y = r.y; v.z = r.z;
+		return true;
+	} 
+	return false;
+}
+bool StoredCommands::GetToolParameterCommandResult( Key k, mat3f & m)
+{
+	any_result r;
+	if ( GetToolParameterCommandResult(k,r) && r.type == 4 ) {
+		m = make_mat3f(r.m);
+		return true;
+	} 
+	return false;
+}
 
 
 StoredCommands::Key StoredCommands::AppendToolQuery_NewGroups()
@@ -1238,6 +1318,15 @@ void StoredCommands::AppendToolUtilityCommand( std::string commandName, std::str
 	c.c.toolparam.v.str = __tofstr(sValue.c_str());
 	append_command(c);
 }
+void StoredCommands::AppendToolUtilityCommand( std::string commandName, const vec3f & p )
+{
+	Command c;  c.init();
+	c.eType = ToolParameterCommand;
+	sprintf_s(c.c.toolparam.name, sizeof(c.c.toolparam.name), "%s", commandName.c_str());
+	c.c.toolparam.eType = ToolParam_Utility_Vec3;
+	c.c.toolparam.v.vec = p;
+	append_command(c);
+}
 void StoredCommands::AppendToolUtilityCommand( std::string commandName, const vec3f & v0, const vec3f & v1, float r0, float r1 )
 {
 	Command c;  c.init();
@@ -1257,7 +1346,9 @@ void StoredCommands::AppendToolUtilityCommand( std::string commandName, const ve
 
 #define MMAPI_SCENE_COMMAND(cmdtype) Command c; c.init(); c.eType = SceneCommand; c.c.scene.eType = cmdtype; append_command(c);
 #define MMAPI_SCENE_COMMAND_STR(cmdtype, pString) Command c; c.init(); c.eType = SceneCommand; c.c.scene.eType = cmdtype; c.c.scene.str = __tofstr(pString); return append_command(c);
+#define MMAPI_SCENE_COMMAND_OBJ(cmdtype, nObjectID) Command c; c.init(); c.eType = SceneCommand; c.c.scene.eType = cmdtype; c.c.scene.nObjectIDs.append(nObjectID); return append_command(c);
 
+#define MMAPI_SCENE_RESPONSE_ANYINT(IntFuncName, keyname, retvalname) int intval; if ( IntFuncName(keyname, intval) ) { retvalname.type = 1; retvalname.i = intval; return true;	} return false;
 
 
 bool StoredCommands::GetSceneCommandResult_IsOK( Key k )
@@ -1373,6 +1464,17 @@ bool StoredCommands::GetSceneCommandResult_CreatePivot( Key k, int & nObjectID )
     nObjectID = c.r.scene.nObjectIDs.data[0];
     return true;
 }
+bool StoredCommands::GetSceneCommandResult_CreatePivot( Key k, any_result & nObjectID )
+{
+	int nid;
+	if ( GetSceneCommandResult_CreatePivot(k, nid) ) {
+		nObjectID.type = 1;
+		nObjectID.i = nid;
+		return true;
+	}
+	return false;
+}
+
 
 
 StoredCommands::Key StoredCommands::AppendSceneCommand_LinkPivot( int nPivotID, int nLinkToID )
@@ -1589,6 +1691,37 @@ StoredCommands::Key StoredCommands::AppendSceneCommand_SetObjectName(int nObject
 	return append_command(c);
 }
 
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_GetObjectUUID(int nObjectID)
+{
+	Command c;  c.init();
+	c.eType = SceneCommand;
+	c.c.scene.eType = GetObjectUUID;
+	c.c.scene.nObjectIDs.append(nObjectID);
+	return append_command(c);
+}
+bool StoredCommands::GetSceneCommandResult_GetObjectUUID( Key k, std::string & objectUUID )
+{
+	if ( k >= m_vCommands.size() )
+		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK != 0 )
+		objectUUID = std::string(c.r.scene.str.data);
+	return ( c.r.scene.OK == 0 ) ? false : true;
+}
+bool StoredCommands::GetSceneCommandResult_GetObjectUUID( Key k, std::vector<unsigned char> & objectUUID )
+{
+	std::string objUUID;
+	if ( GetSceneCommandResult_GetObjectUUID(k, objUUID) ) {
+		for ( unsigned int k = 0; k < objUUID.length(); ++k )
+			objectUUID.push_back(objUUID[k]);
+		objectUUID.push_back('\0');
+		return true;
+	} 
+	return false;
+}
+
+
 StoredCommands::Key StoredCommands::AppendSceneCommand_FindObjectByName(const std::string & objectName)
 {
 	Command c;  c.init();
@@ -1619,6 +1752,123 @@ bool StoredCommands::GetSceneCommandResult_FindObjectByName( Key k, any_result &
 
 
 
+StoredCommands::Key StoredCommands::AppendSceneCommand_FindObjectByUUID(const std::string & objectUUID)
+{
+	Command c;  c.init();
+	c.eType = SceneCommand;
+	c.c.scene.eType = FindObjectByUUID;
+	c.c.scene.str = __tofstr(objectUUID.c_str());
+	return append_command(c);
+}
+bool StoredCommands::GetSceneCommandResult_FindObjectByUUID( Key k, int & nObjectID )
+{
+	if ( k >= m_vCommands.size() )
+		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK != 0 )
+		nObjectID = c.r.scene.nObjectIDs.data[0];
+	return ( c.r.scene.OK == 0 ) ? false : true;
+}
+bool StoredCommands::GetSceneCommandResult_FindObjectByUUID( Key k, any_result & nObjectID )
+{
+	int nObjID;
+	if ( GetSceneCommandResult_FindObjectByUUID(k, nObjID) ) {
+		nObjectID.type = 1;
+		nObjectID.i = nObjID;
+		return true;
+	}
+	return false;
+}
+
+
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_GetObjectType( int nObjectID )
+{
+	Command c;  c.init();
+	c.eType = SceneCommand;
+	c.c.scene.eType = GetObjectType;
+	c.c.scene.nObjectIDs.append(nObjectID);
+	return append_command(c);
+}
+bool StoredCommands::GetSceneCommandResult_GetObjectType( StoredCommands::Key k, int & nObjectType )
+{
+	if ( k >= m_vCommands.size() )
+		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK != 0 )
+		nObjectType = c.r.scene.nObjectIDs.data[0];
+	return ( c.r.scene.OK == 0 ) ? false : true;
+}
+bool StoredCommands::GetSceneCommandResult_GetObjectType( Key k, any_result & nObjectType )
+{
+	int ntype;
+	if ( GetSceneCommandResult_GetObjectType(k, ntype) ) {
+		nObjectType.type = 1;
+		nObjectType.i = ntype;
+		return true;
+	}
+	return false;
+}
+
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_GetObjectFrame( int nObjectID )
+{
+	Command c;  c.init();
+	c.eType = SceneCommand;
+	c.c.scene.eType = GetObjectFrame;
+	c.c.scene.nObjectIDs.append(nObjectID);
+	return append_command(c);
+}
+ bool StoredCommands::GetSceneCommandResult_GetObjectFrame( StoredCommands::Key k, frame3f & f )
+ {
+	if ( k >= m_vCommands.size() )
+		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK != 0 )
+		f = c.r.scene.f;
+	return ( c.r.scene.OK == 0 ) ? false : true;
+ }
+
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_SetObjectFrame( int nObjectID, const frame3f & f )
+{
+	Command c;  c.init();
+	c.eType = SceneCommand;
+	c.c.scene.eType = SetObjectFrame;
+	c.c.scene.nObjectIDs.append(nObjectID);
+	c.c.scene.f = f;
+	return append_command(c);
+}
+ bool StoredCommands::GetSceneCommandResult_SetObjectFrame( StoredCommands::Key k )
+ {
+	if ( k >= m_vCommands.size() )
+		return false;
+	Command & c = m_vCommands[k];
+	return ( c.r.scene.OK == 0 ) ? false : true;
+ }
+
+
+
+
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_ListFaceGroups( int nObjectID )
+{
+	Command c;  c.init();
+	c.eType = SceneCommand;
+	c.c.scene.eType = ListFaceGroups;
+	c.c.scene.nObjectIDs.append(nObjectID);
+	return append_command(c);
+}
+bool StoredCommands::GetSceneCommandResult_ListFaceGroups( Key k, std::vector<int> & vGroupIDs )
+{
+	if ( k >= m_vCommands.size() || m_vCommands[k].r.select.OK == 0)
+		return false;
+	Command & c = m_vCommands[k];
+	mmsc_extract_vector( vGroupIDs, c.r.scene.nObjectIDs );
+	return true;
+}
+
+
 
 StoredCommands::Key StoredCommands::AppendSceneCommand_SetVisible( int nObjectID )
 {
@@ -1639,6 +1889,311 @@ StoredCommands::Key StoredCommands::AppendSceneCommand_ShowAll()
 	Command c;  
 	MMAPI_INIT_SCENE_COMMAND(c, ShowAll);
 	return append_command(c);
+}
+
+
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_SelectPrinter( const char * pPrinterName )
+{
+	MMAPI_SCENE_COMMAND_STR(SelectPrinter, pPrinterName);
+}
+
+
+
+
+
+
+
+
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_CreateMesh( )
+{
+    Command c;  MMAPI_INIT_SCENE_COMMAND(c, CreateMeshObject);
+    return append_command(c);
+}
+bool StoredCommands::GetSceneCommandResult_CreateMesh( Key k, int & nObjectID )
+{
+    if ( k >= m_vCommands.size() )        return false;
+    Command & c = m_vCommands[k];
+    if ( c.r.scene.OK == 0 )	        return false;
+    nObjectID = c.r.scene.nObjectIDs.data[0];
+    return true;
+}
+bool StoredCommands::GetSceneCommandResult_CreateMesh( Key k, any_result & nObjectID )
+{
+	MMAPI_SCENE_RESPONSE_ANYINT(GetSceneCommandResult_CreateMesh, k, nObjectID);
+}
+
+
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_CompactMesh( int nObjectID )
+{
+	MMAPI_SCENE_COMMAND_OBJ(CompactMeshObject, nObjectID);
+}
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_UpdateMesh( int nObjectID )
+{
+	MMAPI_SCENE_COMMAND_OBJ(UpdateMesh, nObjectID);
+}
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_GetVertexCount( int nObjectID )
+{
+	MMAPI_SCENE_COMMAND_OBJ(GetVertexCount, nObjectID);
+}
+bool StoredCommands::GetSceneCommandResult_GetVertexCount( Key k, int & nCount )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK != 0 )			nCount = c.r.scene.nObjectIDs.data[0];
+	return ( c.r.scene.OK == 0 ) ? false : true;
+}
+bool StoredCommands::GetSceneCommandResult_GetVertexCount( Key k, any_result & nCount )
+{
+	MMAPI_SCENE_RESPONSE_ANYINT(GetSceneCommandResult_GetTriangleCount, k, nCount);
+}
+StoredCommands::Key StoredCommands::AppendSceneCommand_GetTriangleCount( int nObjectID )
+{
+	MMAPI_SCENE_COMMAND_OBJ(GetTriangleCount, nObjectID);
+}
+bool StoredCommands::GetSceneCommandResult_GetTriangleCount( Key k, int & nCount )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK != 0 )			nCount = c.r.scene.nObjectIDs.data[0];
+	return ( c.r.scene.OK == 0 ) ? false : true;
+}
+bool StoredCommands::GetSceneCommandResult_GetTriangleCount( Key k, any_result & nCount )
+{
+	MMAPI_SCENE_RESPONSE_ANYINT(GetSceneCommandResult_GetTriangleCount, k, nCount);
+}
+
+
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_GetVertexPosition( int nObjectID, int nVertexID )
+{
+	Command c;  
+	MMAPI_INIT_SCENE_COMMAND(c, GetVertexPosition);
+	c.c.scene.nObjectIDs.append(nObjectID);		c.c.scene.nObjectIDs.append(nVertexID);
+	return append_command(c);
+}
+bool StoredCommands::GetSceneCommandResult_GetVertexPosition( Key k, vec3f & v )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK != 0 ) { v = get_origin(c.r.scene.f); } 
+	return ( c.r.scene.OK == 0 ) ? false : true;
+}
+StoredCommands::Key StoredCommands::AppendSceneCommand_GetVertexNormal( int nObjectID, int nVertexID )
+{
+	Command c;  
+	MMAPI_INIT_SCENE_COMMAND(c, GetVertexNormal);
+	c.c.scene.nObjectIDs.append(nObjectID);		c.c.scene.nObjectIDs.append(nVertexID);
+	return append_command(c);
+}
+bool StoredCommands::GetSceneCommandResult_GetVertexNormal( Key k, vec3f & v )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK != 0 ) { v = get_origin(c.r.scene.f); } 
+	return ( c.r.scene.OK == 0 ) ? false : true;
+}
+StoredCommands::Key StoredCommands::AppendSceneCommand_GetVertexColor( int nObjectID, int nVertexID )
+{
+	Command c;  
+	MMAPI_INIT_SCENE_COMMAND(c, GetVertexColor);
+	c.c.scene.nObjectIDs.append(nObjectID);		c.c.scene.nObjectIDs.append(nVertexID);
+	return append_command(c);
+}
+bool StoredCommands::GetSceneCommandResult_GetVertexColor( Key k, vec3f & v )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK != 0 ) { v = get_origin(c.r.scene.f); } 
+	return ( c.r.scene.OK == 0 ) ? false : true;
+}
+StoredCommands::Key StoredCommands::AppendSceneCommand_GetVertexInfo( int nObjectID, int nVertexID )
+{
+	Command c;  
+	MMAPI_INIT_SCENE_COMMAND(c, GetVertexInfo);
+	c.c.scene.nObjectIDs.append(nObjectID);		c.c.scene.nObjectIDs.append(nVertexID);
+	return append_command(c);
+}
+bool StoredCommands::GetSceneCommandResult_GetVertexInfo( Key k, vec3f & v, vec3f & n, vec3f & col )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK != 0 ) { v = get_origin(c.r.scene.f); n = get_normal(c.r.scene.f); col = get_tan1(c.r.scene.f); }
+	return ( c.r.scene.OK == 0 ) ? false : true;
+}
+
+
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_GetTriangleIndices( int nObjectID, int nTriangleID )
+{
+	Command c;  
+	MMAPI_INIT_SCENE_COMMAND(c, GetTriangleIndices);
+	c.c.scene.nObjectIDs.append(nObjectID);		c.c.scene.nObjectIDs.append(nTriangleID);
+	return append_command(c);
+}
+bool StoredCommands::GetSceneCommandResult_GetTriangleIndices( Key k, vec3i & t )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK != 0 ) {
+		t.i = c.r.scene.nObjectIDs.data[0]; t.j = c.r.scene.nObjectIDs.data[1]; t.k = c.r.scene.nObjectIDs.data[2];
+	}
+	return ( c.r.scene.OK == 0 ) ? false : true;
+}
+StoredCommands::Key StoredCommands::AppendSceneCommand_GetTriangleGroup( int nObjectID, int nTriangleID )
+{
+	Command c;  
+	MMAPI_INIT_SCENE_COMMAND(c, GetTriangleGroup);
+	c.c.scene.nObjectIDs.append(nObjectID);		c.c.scene.nObjectIDs.append(nTriangleID);
+	return append_command(c);
+}
+bool StoredCommands::GetSceneCommandResult_GetTriangleGroup( Key k, int & nGroupID )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK != 0 ) 
+		nGroupID = c.r.scene.nObjectIDs.data[0];
+	return ( c.r.scene.OK == 0 ) ? false : true;
+}
+bool StoredCommands::GetSceneCommandResult_GetTriangleGroup( Key k, any_result & nGroupID )
+{
+	MMAPI_SCENE_RESPONSE_ANYINT(GetSceneCommandResult_GetTriangleGroup, k, nGroupID);
+}
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_SetVertexPosition(int nObjectID, int nVertexID, vec3f & v )
+{
+	Command c;  
+	MMAPI_INIT_SCENE_COMMAND(c, SetVertexPosition);
+	c.c.scene.nObjectIDs.append(nObjectID);		c.c.scene.nObjectIDs.append(nVertexID);
+	c.c.scene.f = make_frame3f(v.x,v.y,v.z);
+	return append_command(c);
+}
+StoredCommands::Key StoredCommands::AppendSceneCommand_SetVertexNormal(int nObjectID, int nVertexID, vec3f & v )
+{
+	Command c;  
+	MMAPI_INIT_SCENE_COMMAND(c, SetVertexNormal);
+	c.c.scene.nObjectIDs.append(nObjectID);		c.c.scene.nObjectIDs.append(nVertexID);
+	c.c.scene.f = make_frame3f(v.x,v.y,v.z);
+	return append_command(c);
+}
+StoredCommands::Key StoredCommands::AppendSceneCommand_SetVertexColor(int nObjectID, int nVertexID, vec3f & v )
+{
+	Command c;  
+	MMAPI_INIT_SCENE_COMMAND(c, SetVertexColor);
+	c.c.scene.nObjectIDs.append(nObjectID);		c.c.scene.nObjectIDs.append(nVertexID);
+	c.c.scene.f = make_frame3f(v.x,v.y,v.z);
+	return append_command(c);
+}
+StoredCommands::Key StoredCommands::AppendSceneCommand_SetTriangleGroup(int nObjectID, int nTriangleID, int nGroupID )
+{
+	Command c;  
+	MMAPI_INIT_SCENE_COMMAND(c, SetTriangleGroup);
+	c.c.scene.nObjectIDs.append(nObjectID);		c.c.scene.nObjectIDs.append(nTriangleID);		c.c.scene.nObjectIDs.append(nGroupID);
+	return append_command(c);
+}
+
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_SetAllVertexColors(int nObjectID, vec3f & v )
+{
+	Command c;  
+	MMAPI_INIT_SCENE_COMMAND(c, SetAllVertexColors);
+	c.c.scene.nObjectIDs.append(nObjectID);
+	c.c.scene.f = make_frame3f(v.x,v.y,v.z);
+	return append_command(c);
+}
+
+
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_AppendVertex( int nObjectID, vec3f & v )
+{
+	Command c;  
+	MMAPI_INIT_SCENE_COMMAND(c, AppendVertex);
+	c.c.scene.nObjectIDs.append(nObjectID); c.c.scene.nObjectIDs.append(-1); c.c.scene.nObjectIDs.append(-1);
+	c.c.scene.f = make_frame3f(v.x,v.y,v.z);
+	return append_command(c);
+}
+StoredCommands::Key StoredCommands::AppendSceneCommand_AppendVertex( int nObjectID, vec3f & v, vec3f & n )
+{
+	Command c;  
+	MMAPI_INIT_SCENE_COMMAND(c, AppendVertex);
+	c.c.scene.nObjectIDs.append(nObjectID); c.c.scene.nObjectIDs.append(1); c.c.scene.nObjectIDs.append(-1);
+	c.c.scene.f = make_frame3f(v.x,v.y,v.z, n.x,n.y,n.z);
+	return append_command(c);
+}
+StoredCommands::Key StoredCommands::AppendSceneCommand_AppendVertex( int nObjectID, vec3f & v, vec3f & n, vec3f & col )
+{
+	Command c;  
+	MMAPI_INIT_SCENE_COMMAND(c, AppendVertex);
+	c.c.scene.nObjectIDs.append(nObjectID); c.c.scene.nObjectIDs.append(1); c.c.scene.nObjectIDs.append(1);
+	c.c.scene.f = make_frame3f(v.x,v.y,v.z, n.x,n.y,n.z, col.x,col.y,col.z,  0,0,0);
+	return append_command(c);
+}
+bool StoredCommands::GetSceneCommandResult_AppendVertex( Key k, int & nNewVertexID )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK != 0 ) 
+		nNewVertexID = c.r.scene.nObjectIDs.data[0];
+	return ( c.r.scene.OK == 0 ) ? false : true;
+}
+bool StoredCommands::GetSceneCommandResult_AppendVertex( Key k, any_result & nNewVertexID )
+{
+	MMAPI_SCENE_RESPONSE_ANYINT(GetSceneCommandResult_AppendVertex, k, nNewVertexID);
+}
+
+
+
+
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_AppendTriangle( int nObjectID, vec3i & t )
+{
+	Command c;  
+	MMAPI_INIT_SCENE_COMMAND(c, AppendTriangle);
+	c.c.scene.nObjectIDs.append(nObjectID); 
+	c.c.scene.nObjectIDs.append(t.i);	c.c.scene.nObjectIDs.append(t.j);	c.c.scene.nObjectIDs.append(t.k);   c.c.scene.nObjectIDs.append(-1);
+	return append_command(c);
+}
+StoredCommands::Key StoredCommands::AppendSceneCommand_AppendTriangle( int nObjectID, vec3i & t, int nGroupID )
+{
+	Command c;  
+	MMAPI_INIT_SCENE_COMMAND(c, AppendTriangle);
+	c.c.scene.nObjectIDs.append(nObjectID); 
+	c.c.scene.nObjectIDs.append(t.i);	c.c.scene.nObjectIDs.append(t.j);	c.c.scene.nObjectIDs.append(t.k);   c.c.scene.nObjectIDs.append(nGroupID);
+	return append_command(c);
+}
+bool StoredCommands::GetSceneCommandResult_AppendTriangle( Key k, int & nNewTriID )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK != 0 ) 
+		nNewTriID = c.r.scene.nObjectIDs.data[0];
+	return ( c.r.scene.OK == 0 ) ? false : true;
+}
+bool StoredCommands::GetSceneCommandResult_AppendTriangle( Key k, any_result & nNewTriID )
+{
+	MMAPI_SCENE_RESPONSE_ANYINT(GetSceneCommandResult_AppendTriangle, k, nNewTriID);
+}
+
+
+StoredCommands::Key StoredCommands::AppendSceneCommand_AllocateNewGroupID( int nObjectID )
+{
+	MMAPI_SCENE_COMMAND_OBJ(AllocateNewGroupID, nObjectID);
+}
+bool StoredCommands::GetSceneCommandResult_AllocateNewGroupID( Key k, int & nNewGroupID )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.scene.OK != 0 ) 
+		nNewGroupID = c.r.scene.nObjectIDs.data[0];
+	return ( c.r.scene.OK == 0 ) ? false : true;
+}
+bool StoredCommands::GetSceneCommandResult_AllocateNewGroupID( Key k, any_result & nNewGroupID )
+{
+	MMAPI_SCENE_RESPONSE_ANYINT(GetSceneCommandResult_AllocateNewGroupID, k, nNewGroupID);
 }
 
 
@@ -1723,7 +2278,7 @@ StoredCommands::Key StoredCommands::AppendQueryCommand_GetObjectBoundingBox( int
 {
 	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, ObjectBoundingBoxQuery);
 
-	c.c.spatial.p.x = nObjectID;
+	c.c.spatial.p.x = (float)nObjectID;
 	return append_command(c);
 }
 bool StoredCommands::GetQueryResult_GetObjectBoundingBox( Key k, float fMin[3], float fMax[3] )
@@ -1740,7 +2295,7 @@ StoredCommands::Key StoredCommands::AppendQueryCommand_GetObjectLocalFrame( int 
 {
 	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, ObjectLocalFrameQuery);
 
-	c.c.spatial.p.x = nObjectID;
+	c.c.spatial.p.x = (float)nObjectID;
 	return append_command(c);
 }
 bool StoredCommands::GetQueryResult_GetObjectLocalFrame( Key k, frame3f * pFrame )
@@ -1812,7 +2367,7 @@ bool StoredCommands::GetQueryResult_IsInsideObject( Key k )
 StoredCommands::Key StoredCommands::AppendQueryCommand_SetObjectTypeFilter( int nFilter )
 {
 	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, SetObjectTypeFilter);
-	c.c.spatial.p.x = nFilter;
+	c.c.spatial.p.x = (float)nFilter;
 	return append_command(c);
 }
 StoredCommands::Key StoredCommands::AppendQueryCommand_ClearObjectTypeFilter()
@@ -1878,7 +2433,7 @@ bool StoredCommands::GetQueryResult_FindObjectsWithinDistance( Key k, std::vecto
 StoredCommands::Key StoredCommands::AppendQueryCommand_TestIntersection( int nObjectID, int nTestWithObjectID )
 {
 	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, ObjectIntersectionQuery);
-	c.c.spatial.p.x = nObjectID; c.c.spatial.p.y = nTestWithObjectID;
+	c.c.spatial.p.x = (float)nObjectID; c.c.spatial.p.y = (float)nTestWithObjectID;
 	return append_command(c);
 }
 bool StoredCommands::GetQueryResult_TestIntersection( Key k )
@@ -1892,7 +2447,7 @@ bool StoredCommands::GetQueryResult_TestIntersection( Key k )
 StoredCommands::Key StoredCommands::AppendQueryCommand_FindIntersectingObjects( int nObjectID )
 {
 	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, FindIntersectingObjects);
-	c.c.spatial.p.x = nObjectID;
+	c.c.spatial.p.x = (float)nObjectID;
 	return append_command(c);
 }
 bool StoredCommands::GetQueryResult_FindIntersectingObjects( Key k, std::vector<int> & vObjects )
@@ -1906,9 +2461,63 @@ bool StoredCommands::GetQueryResult_FindIntersectingObjects( Key k, std::vector<
 
 
 
+StoredCommands::Key StoredCommands::AppendQueryCommand_ListNumberOfHoles()
+{
+	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, ListNumberOfHoles);
+	return append_command(c);
+}
+bool StoredCommands::GetQueryResult_ListNumberOfHoles( Key k, int & nHoles )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.spatial.OK == 0 )			return false;
+	nHoles = (int)c.r.spatial.v.data[0];
+	return true;
+}
+bool StoredCommands::GetQueryResult_ListNumberOfHoles( Key k, any_result & nHoles )
+{
+	return GetQueryResult_FindNearestObject(k, nHoles.i);
+}
 
 
 
+StoredCommands::Key StoredCommands::AppendQueryCommand_FindClosestHole(const vec3f & p)
+{
+	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, FindClosestHole);
+	c.c.spatial.p = p;
+	return append_command(c);
+}
+bool StoredCommands::GetQueryResult_FindClosestHole( Key k, int & nHoleID )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.spatial.OK == 0 )			return false;
+	nHoleID = (int)c.r.spatial.v.data[0];
+	return true;
+}
+bool StoredCommands::GetQueryResult_FindClosestHole( Key k, any_result & nHoleID )
+{
+	return GetQueryResult_FindNearestObject(k, nHoleID.i);
+}
+
+
+
+StoredCommands::Key StoredCommands::AppendQueryCommand_GetHoleBoundingBox( int nHoleID )
+{
+	Command c;  	MMAPI_INIT_SQUERY_COMMAND(c, GetHoleBoundingBox);
+	c.c.spatial.p.x = (float)nHoleID;
+	return append_command(c);
+}
+bool StoredCommands::GetQueryResult_GetHoleBoundingBox( Key k, float fMin[3], float fMax[3] )
+{
+	if ( k >= m_vCommands.size() )		return false;
+	Command & c = m_vCommands[k];
+	if ( c.r.spatial.OK == 0 )			return false;
+
+	fMin[0] = c.r.spatial.v.data[0];	fMin[1] = c.r.spatial.v.data[1];	fMin[2] = c.r.spatial.v.data[2];
+	fMax[0] = c.r.spatial.v.data[3];	fMax[1] = c.r.spatial.v.data[4];	fMax[2] = c.r.spatial.v.data[5];
+	return true;
+}
 
 
 
@@ -1944,37 +2553,56 @@ void StoredCommands::AppendSelectUtilityCommand( std::string commandName, int nA
 }
 
 
-
 StoredCommands::Key StoredCommands::AppendSelectCommand_NearestComponent( float cx, float cy, float cz )
+{
+	return AppendSelectCommand_NearestComponent(cx,cy,cz,0);
+}
+StoredCommands::Key StoredCommands::AppendSelectCommand_NearestComponent( float cx, float cy, float cz, int nMode )
 {
 	Command c;  
 	MMAPI_INIT_SELECT_COMMAND(c, SelectNearestComponent);
 	c.c.select.p.x = cx;	c.c.select.p.y = cy;	c.c.select.p.z = cz;
+	c.c.select.n = nMode;
 	return append_command(c);
 }
 StoredCommands::Key StoredCommands::AppendSelectCommand_ContainingComponent( float cx, float cy, float cz )
 {
+	return AppendSelectCommand_ContainingComponent(cx,cy,cz, 0);
+}
+StoredCommands::Key StoredCommands::AppendSelectCommand_ContainingComponent( float cx, float cy, float cz, int nMode)
+{
 	Command c;  
 	MMAPI_INIT_SELECT_COMMAND(c, SelectContainingComponent);
 	c.c.select.p.x = cx;	c.c.select.p.y = cy;	c.c.select.p.z = cz;
+	c.c.select.n = nMode;
 	return append_command(c);
 }
 
 
 StoredCommands::Key StoredCommands::AppendSelectCommand_FirstComponentIntersectingRay( float ox, float oy, float oz, float dx, float dy, float dz )
 {
+	return AppendSelectCommand_FirstComponentIntersectingRay(ox,oy,oz, dx,dy,dz, 0);
+}
+StoredCommands::Key StoredCommands::AppendSelectCommand_FirstComponentIntersectingRay( float ox, float oy, float oz, float dx, float dy, float dz, int nMode )
+{
 	Command c;  
 	MMAPI_INIT_SELECT_COMMAND(c, SelectFirstComponentIntersectingRay);
 	c.c.select.p.x = ox;	c.c.select.p.y = oy;	c.c.select.p.z = oz;
 	c.c.select.d.x = dx;	c.c.select.d.y = dy;	c.c.select.d.z = dz;
+	c.c.select.n = nMode;
 	return append_command(c);
 }
 StoredCommands::Key StoredCommands::AppendSelectCommand_AllComponentsIntersectingRay( float ox, float oy, float oz, float dx, float dy, float dz )
+{
+	return AppendSelectCommand_AllComponentsIntersectingRay(ox,oy,oz, dx,dy,dz, 0);
+}
+StoredCommands::Key StoredCommands::AppendSelectCommand_AllComponentsIntersectingRay( float ox, float oy, float oz, float dx, float dy, float dz, int nMode )
 {
 	Command c;  
 	MMAPI_INIT_SELECT_COMMAND(c, SelectAllComponentsIntersectingRay);
 	c.c.select.p.x = ox;	c.c.select.p.y = oy;	c.c.select.p.z = oz;
 	c.c.select.d.x = dx;	c.c.select.d.y = dy;	c.c.select.d.z = dz;
+	c.c.select.n = nMode;
 	return append_command(c);
 }
 
@@ -1982,40 +2610,58 @@ StoredCommands::Key StoredCommands::AppendSelectCommand_AllComponentsIntersectin
 // parameter is 3D point
 StoredCommands::Key StoredCommands::AppendSelectCommand_NearestTriangle( float cx, float cy, float cz )
 {
+	return AppendSelectCommand_NearestTriangle(cx,cy,cz,1);
+}
+StoredCommands::Key StoredCommands::AppendSelectCommand_NearestTriangle( float cx, float cy, float cz, int nMode )
+{
 	Command c;  
 	MMAPI_INIT_SELECT_COMMAND(c, SelectNearestTriangle);
 	c.c.select.p.x = cx;	c.c.select.p.y = cy;	c.c.select.p.z = cz;
+	c.c.select.n = nMode;
 	return append_command(c);
 }
 
 // parameters are ray origin & direction
 StoredCommands::Key StoredCommands::AppendSelectCommand_FirstTriangleIntersectingRay( float ox, float oy, float oz, float dx, float dy, float dz )
 {
+	return AppendSelectCommand_FirstTriangleIntersectingRay(ox,oy,oz,dx,dy,dz,1);
+}
+StoredCommands::Key StoredCommands::AppendSelectCommand_FirstTriangleIntersectingRay( float ox, float oy, float oz, float dx, float dy, float dz, int nMode )
+{
 	Command c;  
 	MMAPI_INIT_SELECT_COMMAND(c, SelectFirstTriangleIntersectingRay);
 	c.c.select.p.x = ox;	c.c.select.p.y = oy;	c.c.select.p.z = oz;
 	c.c.select.d.x = dx;	c.c.select.d.y = dy;	c.c.select.d.z = dz;
+	c.c.select.n = nMode;
 	return append_command(c);
 }
 StoredCommands::Key StoredCommands::AppendSelectCommand_AllTrianglesIntersectingRay( float ox, float oy, float oz, float dx, float dy, float dz )
+{
+	return AppendSelectCommand_AllTrianglesIntersectingRay(ox,oy,oz,dx,dy,dz,1);
+}
+StoredCommands::Key StoredCommands::AppendSelectCommand_AllTrianglesIntersectingRay( float ox, float oy, float oz, float dx, float dy, float dz, int nMode )
 {
 	Command c;  
 	MMAPI_INIT_SELECT_COMMAND(c, SelectAllTrianglesIntersectingRay);
 	c.c.select.p.x = ox;	c.c.select.p.y = oy;	c.c.select.p.z = oz;
 	c.c.select.d.x = dx;	c.c.select.d.y = dy;	c.c.select.d.z = dz;
+	c.c.select.n = nMode;
 	return append_command(c);
 }
-
 
 
 
 
 StoredCommands::Key StoredCommands::AppendSelectCommand_InsideSphere( float cx, float cy, float cz, float r )
 {
+	return AppendSelectCommand_InsideSphere(cx, cy, cz, r, 0);
+}
+StoredCommands::Key StoredCommands::AppendSelectCommand_InsideSphere( float cx, float cy, float cz, float r, int nMode )
+{
 	Command c;  
 	MMAPI_INIT_SELECT_COMMAND(c, SelectInsideSphere);
 	c.c.select.p.x = cx;	c.c.select.p.y = cy;	c.c.select.p.z = cz;
-	c.c.select.r = r;
+	c.c.select.n = nMode;
 	return append_command(c);
 }
 bool StoredCommands::GetSelectCommandResult_InsideSphere( Key k )
@@ -2028,10 +2674,15 @@ bool StoredCommands::GetSelectCommandResult_InsideSphere( Key k )
 
 StoredCommands::Key StoredCommands::AppendSelectCommand_InsideBox( float xmin, float xmax, float ymin, float ymax, float zmin, float zmax )
 {
+	return AppendSelectCommand_InsideBox( xmin, xmax, ymin, ymax, zmin, zmax, 0 );
+}
+StoredCommands::Key StoredCommands::AppendSelectCommand_InsideBox( float xmin, float xmax, float ymin, float ymax, float zmin, float zmax, int nMode )
+{
 	Command c;  
 	MMAPI_INIT_SELECT_COMMAND(c, SelectInsideBox);
 	c.c.select.p.x = xmin;	c.c.select.p.y = ymin;	c.c.select.p.z = zmin;
 	c.c.select.d.x = xmax;	c.c.select.d.y = ymax;	c.c.select.d.z = zmax;
+	c.c.select.n = nMode;
 	return append_command(c);
 }
 bool StoredCommands::GetSelectCommandResult_InsideBox( Key k )
@@ -2053,13 +2704,16 @@ StoredCommands::Key StoredCommands::AppendSelectCommand_IntersectingObject( int 
 }
 
 
-
-
 StoredCommands::Key StoredCommands::AppendSelectCommand_ByFaceGroups( const std::vector<int> & vGroupIDs )
+{
+	return AppendSelectCommand_ByFaceGroups(vGroupIDs, 0);
+}
+StoredCommands::Key StoredCommands::AppendSelectCommand_ByFaceGroups( const std::vector<int> & vGroupIDs, int nMode )
 {
 	Command c;  
 	MMAPI_INIT_SELECT_COMMAND(c, SelectFaceGroups);
 	mmsc_init_vector( c.c.select.vGroups, vGroupIDs );
+	c.c.select.r = (float)nMode;
 	return append_command(c);
 }
 bool StoredCommands::GetSelectCommandResult_ByFaceGroups( Key k )
@@ -2067,6 +2721,50 @@ bool StoredCommands::GetSelectCommandResult_ByFaceGroups( Key k )
 	if ( k >= m_vCommands.size() )
 		return false;
 	return ( m_vCommands[k].r.select.OK == 0 ) ? false : true;
+}
+
+
+StoredCommands::Key StoredCommands::AppendSelectCommand_HoleBorderRing( int nHoleID, int nMode )
+{
+	Command c;  
+	MMAPI_INIT_SELECT_COMMAND(c, SelectHoleBorderRing);
+	c.c.select.n = nHoleID;
+	c.c.select.r = (float)nMode;
+	return append_command(c);
+}
+bool StoredCommands::GetSelectCommandResult_HoleBorderRing( Key k )
+{
+	if ( k >= m_vCommands.size() )
+		return false;
+	return ( m_vCommands[k].r.select.OK == 0 ) ? false : true;
+}
+
+
+
+StoredCommands::Key StoredCommands::AppendSelectCommand_ByTriangleID( const std::vector<int> & vTriangles, int nMode )
+{
+	Command c;  
+	MMAPI_INIT_SELECT_COMMAND(c, SelectTriangles);
+	mmsc_init_vector(c.c.select.vGroups, vTriangles);
+	c.c.select.n = nMode;
+	return append_command(c);
+}
+
+
+
+StoredCommands::Key StoredCommands::AppendSelectCommand_ListSelectedTriangles()
+{
+	Command c;  
+	MMAPI_INIT_SELECT_COMMAND(c, ListSelectedTriangles);
+	return append_command(c);
+}
+bool StoredCommands::GetSelectCommandResult_ListSelectedTriangles( Key k, std::vector<int> & vTriangleIDs )
+{
+	if ( k >= m_vCommands.size() || m_vCommands[k].r.select.OK == 0)
+		return false;
+	Command & c = m_vCommands[k];
+	mmsc_extract_vector( vTriangleIDs, c.r.select.vGroups );
+	return true;
 }
 
 
@@ -2087,6 +2785,19 @@ bool StoredCommands::GetSelectCommandResult_ListSelectedFaceGroups( Key k, std::
 }
 
 
+StoredCommands::Key StoredCommands::AppendSelectCommand_HasValidSelection()
+{
+	Command c;  
+	MMAPI_INIT_SELECT_COMMAND(c, HasValidSelection);
+	return append_command(c);
+}
+bool StoredCommands::GetSelectCommandResult_HasValidSelection( Key k )
+{
+	if ( k >= m_vCommands.size() )
+		return false;
+	Command & c = m_vCommands[k];
+	return (m_vCommands[k].r.select.OK != 0);
+}
 
 
 
@@ -2144,6 +2855,18 @@ StoredCommands::Key StoredCommands::AppendActionCommand_DropPartAtPoint( const c
 	return append_command(c);
 }
 
+StoredCommands::Key StoredCommands::AppendActionCommand_DropSolidPartAtPoint( const char * pPartPath, const frame3f & f, float fRadius, bool bInteractive )
+{
+	Command c; c.init();
+	c.eType = PartCommand;
+	c.c.part.eType = DropSolidPart;
+	c.c.part.filename = __tofstr(pPartPath);
+	c.c.part.f = f;
+	c.c.part.r = fRadius;
+	c.c.part.bFlag = bInteractive;
+	return append_command(c);
+}
+
 StoredCommands::Key StoredCommands::AppendActionCommand_UpdateDropPart( const frame3f & f, float fRadius, bool bMinimizeRotation )
 {
 	Command c; c.init();
@@ -2188,7 +2911,16 @@ bool StoredCommands::GetActionCommandResult_InsertPolygon( StoredCommands::Key k
 	nNewGroupID = m_vCommands[k].r.stamp.nNewGroupID;
 	return true;
 }
-
+bool StoredCommands::GetActionCommandResult_InsertPolygon( Key k, any_result & nNewGroupID )
+{
+	int gid;
+	if ( GetActionCommandResult_InsertPolygon(k, gid) ) {
+		nNewGroupID.type = 1;
+		nNewGroupID.i = gid;
+		return true;
+	}
+	return false;
+}
 
 
 

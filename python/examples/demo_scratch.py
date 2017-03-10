@@ -6,6 +6,10 @@ import os
 import mmapi
 from mmRemote import *
 import mm
+from mm.mm_math import *
+from mm.convert import *
+
+import ctypes
 
 # initialize connection
 remote = mmRemote()
@@ -57,11 +61,30 @@ remote.connect()
 #pivot_id = mm.create_pivot(remote, f)
 #link_ok = mm.link_pivot(remote, pivot_id, objects[0])
 
-cmd2 = mmapi.StoredCommands()
-cmd2.AppendBeginToolCommand("select")
-cmd2.ViewControl_TakeFocus();
-remote.runCommand(cmd2)
+#cmd2 = mmapi.StoredCommands()
+#cmd2.AppendBeginToolCommand("select")
+#cmd2.ViewControl_TakeFocus();
+#remote.runCommand(cmd2)
 
+#mm.begin_tool(remote, "volumeBrush")
+#mm.tool_utility_command(remote, "setPrimary", "drag")
+#mm.tool_utility_command(remote, "setSecondary", "bubbleSmooth")
+
+#mm.select_printer(remote, "replicator 2")
+
+
+#mm.begin_tool(remote, "remesh")
+#mm.set_toolparam(remote, "goalType", 2)
+
+# mmapi.mat3f param read/write
+#mm.begin_tool(remote, "transform");
+#mat1 = to_mat3f( (0.36,0.48,-0.8, -0.8,0.6,0, 0.48,0.64,0.6) )
+#mm.set_toolparam(remote, "rotation", mat1)
+#mat2 = mm.get_toolparam_mat3f(remote, "rotation")
+
+obj_list = mm.list_objects(remote)
+uuid = mm.get_object_uuid(remote, obj_list[0])
+(found, id) = mm.find_object_by_uuid(remote, uuid)
 
 #done!
 remote.shutdown();
